@@ -5,8 +5,8 @@ import 'package:flutter/widgets.dart';
 
 class DatabaseVerificationProvider extends ChangeNotifier {
 
-  RemoteDatabaseRepository _remoteRepo = FirebaseRemoteDatabaseRepository();
-  LocalDatabaseRepository _localRepo = SQLiteLocalDatabaseRepository();
+  RemoteDatabaseRepository _remoteRepo;
+  LocalDatabaseRepository _localRepo;
 
   bool startUpVerificationDone = false;
   bool localDatabaseUpToDate = false;
@@ -16,29 +16,45 @@ class DatabaseVerificationProvider extends ChangeNotifier {
   bool get readyToStart => startUpVerificationDone && localDatabaseUpToDate && currentLocalDatabaseExists;
 
 
-  DatabaseVerificationProvider() {
-    _performStartUpProcess();
+  DatabaseVerificationProvider({@required RemoteDatabaseRepository remoteRepo, @required LocalDatabaseRepository localRepo})
+  : assert(remoteRepo != null),
+    assert(localRepo != null)
+  {
+    _remoteRepo = remoteRepo;
+    _localRepo = localRepo;
+    performStartUpProcess();
   }
 
 
-  _performStartUpProcess() async {
-    bool remoteDataFetched = true;
-    bool localDataFetched = true;
+  performStartUpProcess() async {
+    int remoteVersion;
+    int localVersion;
+    bool updateSuccessful = false;
 
-    int remoteVersion = await _remoteRepo.currentDatabaseVersion()
-      .catchError((e) => remoteDataFetched = false);
-    int localVersion = await _localRepo.currentDatabaseVersion()
-      .catchError((e) => localDataFetched = true);
-
-    if (remoteVersion != localVersion) {
+    try {
+      remoteVersion = await _remoteRepo.currentDatabaseVersion();
+    } catch(e) {
+    }
+    try {
+      localVersion = await _localRepo.currentDatabaseVersion();
+    } catch(e) {
+    }
+      
+    if (remoteVersion != null && localVersion != null && remoteVersion != localVersion) {
       String remoteDatabaseContent = await _remoteRepo.getDatabaseContentJson();
       _ModelsTuple models = _getModelsFromJSON(remoteDatabaseContent);
-      _localRepo.updateStaticDatabase(models?.themes, models?.questions);
+      try {
+        await _localRepo.updateStaticDatabase(models?.themes, models?.questions);
+        updateSuccessful = true;
+      } catch(e) {
+      }
     }
 
-    this.unableToFetchRemoteData = !remoteDataFetched;
-    this.currentLocalDatabaseExists = localDataFetched;
-    this.localDatabaseUpToDate = true;
+
+    this.unableToFetchRemoteData = remoteVersion == null;
+    this.currentLocalDatabaseExists = localVersion != null;
+    this.localDatabaseUpToDate = updateSuccessful;
+    this.startUpVerificationDone = true;
     notifyListeners();
   }
 
