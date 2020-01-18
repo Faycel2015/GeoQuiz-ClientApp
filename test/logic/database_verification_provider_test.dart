@@ -1,5 +1,6 @@
 import 'package:app/logic/database_verification_provider.dart';
 import 'package:app/models/models.dart';
+import 'package:app/repositories/database_content_container.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -45,7 +46,7 @@ class TestLocalDatabaseRepository extends LocalDatabaseRepository {
   Future<int> currentDatabaseVersion() {
     throw UnimplementedError();
   }
-  Future<void> updateStaticDatabase(List<QuizTheme> themes, List<QuizQuestion> questions) {
+  Future<void> updateStaticDatabase(DatabaseContentContainer databaseContentContainer) {
     throw UnimplementedError();
   }
 }
@@ -67,7 +68,7 @@ class Test2LocalDatabaseRepository extends LocalDatabaseRepository {
   Future<int> currentDatabaseVersion() async {
     return 1;
   }
-  Future<void> updateStaticDatabase(List<QuizTheme> themes, List<QuizQuestion> questions) {
+  Future<void> updateStaticDatabase(DatabaseContentContainer databaseContentContainer) {
     throw UnimplementedError();
   }
 }

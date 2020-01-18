@@ -1,4 +1,5 @@
 import 'package:app/models/models.dart';
+import 'package:app/repositories/database_content_container.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -26,6 +27,7 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
 
   int _currentVersion;
   DatabaseContentContainer _content;
+
 
   _init() async {
     final StorageReference _ref = _firebaseStorage.ref().child("database.json");
@@ -62,10 +64,4 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
 
 
 
-class DatabaseContentContainer {
-  List<QuizQuestion> questions;
-  List<QuizTheme> themes;
-  
-  DatabaseContentContainer({this.questions, this.themes});
-}
 

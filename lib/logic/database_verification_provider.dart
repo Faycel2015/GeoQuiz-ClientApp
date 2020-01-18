@@ -1,3 +1,4 @@
+import 'package:app/repositories/database_content_container.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
 import 'package:flutter/widgets.dart';
@@ -46,7 +47,7 @@ class DatabaseVerificationProvider extends ChangeNotifier {
     if (remoteVersion != null && localVersion != null && remoteVersion != localVersion) {
       try {
         DatabaseContentContainer remoteDatabaseContent = await _remoteRepo.getDatabaseContent();
-        await _localRepo.updateStaticDatabase(remoteDatabaseContent?.themes, remoteDatabaseContent?.questions);
+        await _localRepo.updateStaticDatabase(remoteDatabaseContent);
         updateSuccessful = true;
       } catch(e) {
       }
