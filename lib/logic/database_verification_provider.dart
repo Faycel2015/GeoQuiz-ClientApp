@@ -1,4 +1,3 @@
-import 'package:app/models/models.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
 import 'package:flutter/widgets.dart';
@@ -15,7 +14,7 @@ class DatabaseVerificationProvider extends ChangeNotifier {
   bool unableToFetchRemoteData = true;
   bool currentLocalDatabaseExists = false;
 
-  bool get readyToStart => startUpVerificationDone && localDatabaseUpToDate && currentLocalDatabaseExists;
+  bool get readyToStart => startUpVerificationDone && currentLocalDatabaseExists;
 
 
   DatabaseVerificationProvider({@required RemoteDatabaseRepository remoteRepo, @required LocalDatabaseRepository localRepo})
@@ -58,6 +57,7 @@ class DatabaseVerificationProvider extends ChangeNotifier {
     this.localDatabaseUpToDate = updateSuccessful;
     this.startUpVerificationDone = true;
     notifyListeners();
+    print("""unableToFetchRemoteData: $unableToFetchRemoteData\ncurrentLocalDatabaseExists: $currentLocalDatabaseExists\nlocalDatabaseUpToDate: $localDatabaseUpToDate\nstartUpVerificationDone:$startUpVerificationDone""");
   }
 }
 

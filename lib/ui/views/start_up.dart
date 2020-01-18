@@ -5,27 +5,16 @@ import 'package:provider/provider.dart';
 
 
 class StartUpView extends StatelessWidget {
+
+  final bool error;
+
+  StartUpView({Key key, this.error = false}) : super(key: key);
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Consumer<DatabaseVerificationProvider>(
-        builder: (context, provider, _) {
-          if (provider.startUpVerificationDone ) {
-            if (provider.localDatabaseUpToDate && provider.currentLocalDatabaseExists)
-              goToHomePage(context);
-            else
-              return StartUpErrorWidget();
-          }
-          return Text("loading...");
-        }
-      ),
+      body: Text("loading...")
     );
-  }
-
-  goToHomePage(context) {
-    Navigator.pushReplacement(context, MaterialPageRoute(
-      builder: (context) => Text("ok")
-    ));
   }
 }
 

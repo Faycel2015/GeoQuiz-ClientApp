@@ -28,7 +28,15 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: StartUpView(),
+      home: Consumer<DatabaseVerificationProvider>(
+        builder: (context, provider, _) {
+          if (!provider.startUpVerificationDone) {
+            return StartUpView(error: provider.currentLocalDatabaseExists??false);
+          } else {
+            return Text("ok");
+          }
+        }
+      ),
     );
   }
 }
