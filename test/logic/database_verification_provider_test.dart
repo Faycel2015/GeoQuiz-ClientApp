@@ -34,7 +34,7 @@ class TestRemoteDatabaseRepository extends RemoteDatabaseRepository {
   Future<List<String>> downloadStorage() {
     throw UnimplementedError();
   }
-  Future<String> getDatabaseContentJson() {
+  Future<DatabaseContentContainer> getDatabaseContent() {
     throw UnimplementedError();
   }
 }
@@ -58,7 +58,7 @@ class Test2RemoteDatabaseRepository extends RemoteDatabaseRepository {
   Future<List<String>> downloadStorage() {
     throw UnimplementedError();
   }
-  Future<String> getDatabaseContentJson() {
+  Future<DatabaseContentContainer> getDatabaseContent() {
     throw UnimplementedError();
   }
 }

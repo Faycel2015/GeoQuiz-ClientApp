@@ -3,6 +3,8 @@ import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
 import 'package:flutter/widgets.dart';
 
+
+
 class DatabaseVerificationProvider extends ChangeNotifier {
 
   RemoteDatabaseRepository _remoteRepo;
@@ -34,22 +36,22 @@ class DatabaseVerificationProvider extends ChangeNotifier {
     try {
       remoteVersion = await _remoteRepo.currentDatabaseVersion();
     } catch(e) {
+      print(e);
     }
     try {
       localVersion = await _localRepo.currentDatabaseVersion();
     } catch(e) {
+      print(e);
     }
       
     if (remoteVersion != null && localVersion != null && remoteVersion != localVersion) {
-      String remoteDatabaseContent = await _remoteRepo.getDatabaseContentJson();
-      _ModelsTuple models = _getModelsFromJSON(remoteDatabaseContent);
       try {
-        await _localRepo.updateStaticDatabase(models?.themes, models?.questions);
+        DatabaseContentContainer remoteDatabaseContent = await _remoteRepo.getDatabaseContent();
+        await _localRepo.updateStaticDatabase(remoteDatabaseContent?.themes, remoteDatabaseContent?.questions);
         updateSuccessful = true;
       } catch(e) {
       }
     }
-
 
     this.unableToFetchRemoteData = remoteVersion == null;
     this.currentLocalDatabaseExists = localVersion != null;
@@ -57,16 +59,5 @@ class DatabaseVerificationProvider extends ChangeNotifier {
     this.startUpVerificationDone = true;
     notifyListeners();
   }
-
-  _ModelsTuple _getModelsFromJSON(String json) {
-    return _ModelsTuple();
-  }
 }
 
-
-class _ModelsTuple {
-  List<QuizQuestion> questions;
-  List<QuizTheme> themes;
-  
-  _ModelsTuple({this.questions, this.themes});
-}

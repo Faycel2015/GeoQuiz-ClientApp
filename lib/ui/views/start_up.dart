@@ -34,8 +34,8 @@ class StartUpView extends StatelessWidget {
 class StartUpErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      
+    return Text(
+      "error"
     );
   }
 }
