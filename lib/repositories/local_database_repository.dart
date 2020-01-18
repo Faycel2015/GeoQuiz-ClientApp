@@ -13,7 +13,7 @@ abstract class LocalDatabaseRepository {
 
 
 
-class SQLiteLocalDatabaseProvider implements LocalDatabaseRepository {
+class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
   @override
   Future<int> getDatabaseVersion() {
     return null;

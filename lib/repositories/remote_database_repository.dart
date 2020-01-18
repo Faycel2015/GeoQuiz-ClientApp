@@ -17,7 +17,7 @@ abstract class RemoteDatabaseRepository {
 }
 
 
-class FirebaseRemoteDatabaseDownloader implements RemoteDatabaseRepository {
+class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
 
   @override
   Future<int> currentDatabaseVersion() async {
