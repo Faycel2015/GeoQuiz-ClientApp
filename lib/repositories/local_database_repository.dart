@@ -1,8 +1,8 @@
 
 import 'package:app/models/models.dart';
 import 'package:app/repositories/database_content_container.dart';
-import 'package:app/repositories/remote_database_repository.dart';
 import 'package:sqflite/sqflite.dart';
+
 
 abstract class LocalDatabaseRepository {
 
@@ -58,7 +58,17 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
       _db.insert(QUESTIONS_TABLE, q.toMap());
     }
     await close();
-    return null;
+  }
+
+  Future<List<QuizTheme>> getThemes() async {
+    List<QuizTheme> themes = List();
+    await open();
+    List<Map<String, Object>> themesData = await _db.query(THEMES_TABLE);
+    for (var t in themesData) {
+      themes.add(QuizTheme.fromJSON(data: t));
+    }
+    await close();
+    return themes;
   }
 
 }

@@ -25,27 +25,15 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
 
   FirebaseStorage _firebaseStorage = FirebaseStorage();
 
-  int _currentVersion;
-  DatabaseContentContainer _content;
+  static const VERSION_FILENAME = "version";
+  static const DATABASE_FILENAME = "database";
 
-
-  _init() async {
-    final StorageReference _ref = _firebaseStorage.ref().child("database.json");
-    String fileURL = await _ref.getDownloadURL();
-    final http.Response downloadData = await http.get(fileURL);
-    Map<String, Object> map = jsonDecode(utf8.decode(downloadData.bodyBytes));
-    _currentVersion = map["version"];
-    List<QuizTheme> themes = List();
-    for (Map<String, Object> themesData in map["themes"]) {
-      themes.add(QuizTheme.fromJSON(data: themesData));
-    }
-  }
 
   @override
   Future<int> currentDatabaseVersion() async {
-    if (_currentVersion == null)
-      await _init();
-    return _currentVersion;
+    String contentFile = await  _getContentFile(VERSION_FILENAME);
+    int version = int.parse(contentFile);
+    return version;
   }
 
   @override
@@ -55,9 +43,20 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
 
   @override
   Future<DatabaseContentContainer> getDatabaseContent() async {
-    if (_content == null)
-      await _init();
-    return _content;
+    String databaseContent = await _getContentFile(DATABASE_FILENAME);
+    Map<String, Object> map = jsonDecode(databaseContent);
+    List<QuizTheme> themes = List();
+    for (Map<String, Object> themesData in map["themes"]) {
+      themes.add(QuizTheme.fromJSON(data: themesData));
+    }
+    return DatabaseContentContainer(themes: themes);
+  }
+
+  Future<String> _getContentFile(String path) async {
+    final StorageReference _ref = _firebaseStorage.ref().child(path);
+    String fileURL = await _ref.getDownloadURL();
+    final http.Response downloadData = await http.get(fileURL);
+    return utf8.decode(downloadData.bodyBytes);
   }
 }
 
