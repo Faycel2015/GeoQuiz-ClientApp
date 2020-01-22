@@ -26,7 +26,7 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
   FirebaseStorage _firebaseStorage = FirebaseStorage();
 
   static const VERSION_FILENAME = "version";
-  static const DATABASE_FILENAME = "database";
+  static const DATABASE_FILENAME = "database.json";
 
 
   @override

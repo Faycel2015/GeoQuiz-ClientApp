@@ -3,13 +3,14 @@ import 'package:app/repositories/local_database_repository.dart';
 import 'package:flutter/widgets.dart';
 
 
-class QuizProvider extends ChangeNotifier {
+class ThemesProvider extends ChangeNotifier {
 
   final SQLiteLocalDatabaseRepository _localRepo;
 
-  QuizProvider({@required SQLiteLocalDatabaseRepository localRepo}) : _localRepo = localRepo;
+  ThemesProvider({@required SQLiteLocalDatabaseRepository localRepo}) : _localRepo = localRepo;
 
   List<QuizTheme> themes;
+  bool error = false;
 
 
   loadThemes() async {

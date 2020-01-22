@@ -19,7 +19,9 @@ class QuizTheme extends Model {
 
   @override
   Map<String, Object> toMap() {
-    return null;
+    return {
+      "title": title
+    };
   }
 
 }
@@ -32,7 +34,7 @@ class QuizQuestion extends Model {
 
   @override
   Map<String, Object> toMap() {
-    return null;
+    return {};
   }
 
 }

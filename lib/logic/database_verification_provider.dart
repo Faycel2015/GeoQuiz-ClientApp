@@ -35,11 +35,13 @@ class DatabaseVerificationProvider extends ChangeNotifier {
 
     try {
       remoteVersion = await _remoteRepo.currentDatabaseVersion();
+      print("remoteVersion: $remoteVersion");
     } catch(e) {
       print(e);
     }
     try {
       localVersion = await _localRepo.currentDatabaseVersion();
+      print("localVersion: $localVersion");
     } catch(e) {
       print(e);
     }
@@ -47,9 +49,10 @@ class DatabaseVerificationProvider extends ChangeNotifier {
     if (remoteVersion != null && localVersion != null && remoteVersion != localVersion) {
       try {
         DatabaseContentContainer remoteDatabaseContent = await _remoteRepo.getDatabaseContent();
-        await _localRepo.updateStaticDatabase(remoteDatabaseContent);
+        await _localRepo.updateStaticDatabase(remoteVersion, remoteDatabaseContent);
         updateSuccessful = true;
       } catch(e) {
+        print(e);
       }
     }
 

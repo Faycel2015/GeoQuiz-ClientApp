@@ -46,7 +46,7 @@ class TestLocalDatabaseRepository extends LocalDatabaseRepository {
   Future<int> currentDatabaseVersion() {
     throw UnimplementedError();
   }
-  Future<void> updateStaticDatabase(DatabaseContentContainer databaseContentContainer) {
+  Future<void> updateStaticDatabase(int version, DatabaseContentContainer databaseContentContainer) {
     throw UnimplementedError();
   }
 }
@@ -68,7 +68,7 @@ class Test2LocalDatabaseRepository extends LocalDatabaseRepository {
   Future<int> currentDatabaseVersion() async {
     return 1;
   }
-  Future<void> updateStaticDatabase(DatabaseContentContainer databaseContentContainer) {
+  Future<void> updateStaticDatabase(int version, DatabaseContentContainer databaseContentContainer) {
     throw UnimplementedError();
   }
 }

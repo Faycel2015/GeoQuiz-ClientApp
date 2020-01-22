@@ -10,7 +10,7 @@ abstract class LocalDatabaseRepository {
   Future<int> currentDatabaseVersion();
 
   /// Update the static part of the database (themes, questions)
-  Future<void> updateStaticDatabase(DatabaseContentContainer databaseContentContainer);
+  Future<void> updateStaticDatabase(int version, DatabaseContentContainer databaseContentContainer);
 
 }
 
@@ -44,19 +44,23 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
   Future<int> currentDatabaseVersion() async {
     await open();
     int v = await _db.getVersion();
-    close();
+    await close();
     return v;
   }
 
   @override
-  Future<void> updateStaticDatabase(DatabaseContentContainer databaseContentContainer) async {
+  Future<void> updateStaticDatabase(int version, DatabaseContentContainer databaseContentContainer) async {
     await open();
-    for (QuizTheme t in databaseContentContainer.themes) {
-      _db.insert(THEMES_TABLE, t.toMap());
+    print(_db.isOpen);
+    Batch batch = _db.batch();
+    for (QuizTheme t in databaseContentContainer.themes??[]) {
+      batch.insert(THEMES_TABLE, t.toMap());
     }
-    for (QuizQuestion q in databaseContentContainer.questions) {
-      _db.insert(QUESTIONS_TABLE, q.toMap());
+    for (QuizQuestion q in databaseContentContainer.questions??[]) {
+      batch.insert(QUESTIONS_TABLE, q.toMap());
     }
+    await batch.commit();
+    _db.setVersion(version);
     await close();
   }
 
