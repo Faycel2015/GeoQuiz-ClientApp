@@ -28,17 +28,20 @@ class HomepageView extends StatelessWidget {
 class SelectableThemes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemesProvider>(
-      builder: (context, provider, _) {
-        if (provider.themes != null)
-          return GridView.count(
-            crossAxisCount: 2,
-            children: provider.themes.map((t) => Text(t.title)).toList()
-          );
-        if (provider.error)
-          return Text("error");
-        return Text("Loading");
-      }
+    return LimitedBox(
+      maxHeight: 500,
+          child: Consumer<ThemesProvider>(
+        builder: (context, provider, _) {
+          if (provider.themes != null)
+            return GridView.count(
+              crossAxisCount: 2,
+              children: provider.themes.map((t) => Text(t.title)).toList()
+            );
+          if (provider.error)
+            return Text("error");
+          return Text("Loading");
+        }
+      ),
     );
   }
 }

@@ -1,11 +1,13 @@
 import 'package:app/repositories/database_content_container.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
+import 'package:app/utils/app_logger.dart';
 import 'package:flutter/widgets.dart';
 
 
-
 class DatabaseVerificationProvider extends ChangeNotifier {
+
+  var _logger = AppLogger();
 
   RemoteDatabaseRepository _remoteRepo;
   LocalDatabaseRepository _localRepo;
@@ -36,15 +38,15 @@ class DatabaseVerificationProvider extends ChangeNotifier {
 
     try {
       remoteVersion = await _remoteRepo.currentDatabaseVersion();
-      print("remoteVersion: $remoteVersion");
+      _logger.i("Current remote database version: $remoteVersion");
     } catch(e) {
-      print(e);
+      _logger.w("Unable to fetch the database remote version", e);
     }
     try {
       localVersion = await _localRepo.currentDatabaseVersion();
-      print("localVersion: $localVersion");
+      _logger.i("Current local database version: $localVersion");
     } catch(e) {
-      print(e);
+      _logger.e("Unable to get the database local version", e);
     }
       
     if (remoteVersion != null && localVersion != null && remoteVersion != localVersion) {
@@ -52,8 +54,9 @@ class DatabaseVerificationProvider extends ChangeNotifier {
         DatabaseContentContainer remoteDatabaseContent = await _remoteRepo.getDatabaseContent();
         await _localRepo.updateStaticDatabase(remoteVersion, remoteDatabaseContent);
         updateSuccessful = true;
+        _logger.i("Local database successfully updated");
       } catch(e) {
-        print(e);
+        _logger.e("Unable to update the local database", e);
       }
     }
 
@@ -62,7 +65,18 @@ class DatabaseVerificationProvider extends ChangeNotifier {
     this.localDatabaseUpToDate = updateSuccessful;
     this.startUpVerificationDone = true;
     notifyListeners();
-    print("""unableToFetchRemoteData: $unableToFetchRemoteData\ncurrentLocalDatabaseExists: $currentLocalDatabaseExists\nlocalDatabaseUpToDate: $localDatabaseUpToDate\nstartUpVerificationDone:$startUpVerificationDone""");
+
+    _logger.i("Database verification process done. Here the current provider state :\n${_getStateRepresentation()}");
+  }
+
+  String _getStateRepresentation() {
+    String res = "\tunableToFetchRemoteData: $unableToFetchRemoteData";
+    res += "\n\tcurrentLocalDatabaseExists: $currentLocalDatabaseExists";
+    res += "\n\tlocalDatabaseUpToDate: $localDatabaseUpToDate";
+    res += "\n\tstartUpVerificationDone: $startUpVerificationDone";
+    res += "\n\treadyToStart: $readyToStart";
+    res += "\n\terror: $error";
+    return res;
   }
 }
 

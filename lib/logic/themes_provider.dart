@@ -7,7 +7,9 @@ class ThemesProvider extends ChangeNotifier {
 
   final SQLiteLocalDatabaseRepository _localRepo;
 
-  ThemesProvider({@required SQLiteLocalDatabaseRepository localRepo}) : _localRepo = localRepo;
+  ThemesProvider({@required SQLiteLocalDatabaseRepository localRepo}) : _localRepo = localRepo {
+    loadThemes();
+  }
 
   List<QuizTheme> themes;
   bool error = false;
