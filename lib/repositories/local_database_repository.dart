@@ -12,7 +12,6 @@ abstract class LocalDatabaseRepository {
 
   /// Update the static part of the database (themes, questions)
   Future<void> updateStaticDatabase(int version, DatabaseContentContainer databaseContentContainer);
-
 }
 
 
@@ -67,7 +66,7 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
       batch.insert(DatabaseIdentifiers.QUESTIONS_TABLE, q.toMap());
     }
     try {
-      print(await batch.commit(continueOnError: true));
+      await batch.commit(continueOnError: true);
     } catch(e) {}
     await db.close();
   }

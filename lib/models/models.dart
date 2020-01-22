@@ -21,8 +21,6 @@ class QuizTheme extends Model {
   QuizTheme.fromJSON({@required Map<String, Object> data}) : super(data[DatabaseIdentifiers.THEME_ID]) {
     this.title = data[DatabaseIdentifiers.THEME_TITLE];
     this.icon = data[DatabaseIdentifiers.THEME_ICON];
-    print("type : "+ data[DatabaseIdentifiers.THEME_COLOR].runtimeType.toString());
-
     this.color = data[DatabaseIdentifiers.THEME_COLOR] as int;
     this.entitled = data[DatabaseIdentifiers.THEME_ENTITLED];
   }

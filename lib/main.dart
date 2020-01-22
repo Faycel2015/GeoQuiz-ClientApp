@@ -1,4 +1,5 @@
 import 'package:app/logic/database_verification_provider.dart';
+import 'package:app/logic/quiz_provider.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
@@ -6,6 +7,7 @@ import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/views/homepage.dart';
 import 'package:app/ui/views/start_up.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -35,7 +37,10 @@ void main() async {
         )),
         ChangeNotifierProvider<ThemesProvider>(create: (context) => ThemesProvider(
           localRepo: localRepo,
-        ))
+        )),
+        ChangeNotifierProvider<QuizProvider>(create: (context) => QuizProvider(
+          
+        )),
       ],
       child: GeoQuizApp()
     )
@@ -56,9 +61,7 @@ class GeoQuizApp extends StatelessWidget {
     return MaterialApp(
       title: Strings.appName,
 
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: geoQuizTheme,
 
       home: Consumer<DatabaseVerificationProvider>(
         builder: (context, provider, _) => (!provider.readyToStart)
@@ -71,3 +74,32 @@ class GeoQuizApp extends StatelessWidget {
 
 
 
+final geoQuizTheme = ThemeData(
+  primaryColor: Color(0xFF4D19C7),
+  primaryColorLight: Color(0xFF916DE4),
+  primaryIconTheme: IconThemeData(color: Color(0xFFFFFFFF)),
+  primaryTextTheme: GoogleFonts.righteousTextTheme(),
+
+  accentColor: Color(0xFFFBC519),
+  accentIconTheme: IconThemeData(color: Color(0xFF644F0A)),
+  accentTextTheme: GoogleFonts.righteousTextTheme(),
+
+  colorScheme: ColorScheme(
+    primary: Color(0xFF4D19C7),
+    primaryVariant: Color(0xFF916DE4),
+    onPrimary: Color(0xFFFFFFFF),
+    secondary: Color(0xFFFBC519),
+    secondaryVariant: Color(0xFFFBC519),
+    onSecondary: Color(0xFF644F0A),
+    surface: Color(0xFFFFFFFF),
+    onSurface: Color(0xFF383838),
+    error: Color(0xFFE23539),
+    onError: Color(0xFFFFFFFF),
+    background: Color(0xFF4D19C7),
+    onBackground: Color(0xFFFFFFFF),
+    brightness: Brightness.dark
+  ),
+  brightness: Brightness.dark,
+  
+  textTheme: GoogleFonts.righteousTextTheme()
+);
