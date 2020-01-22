@@ -1,6 +1,7 @@
 
 import 'package:app/models/models.dart';
-import 'package:app/repositories/database_content_container.dart';
+import 'package:app/utils/database_content_container.dart';
+import 'package:app/utils/database_identifiers.dart';
 import 'package:sqflite/sqflite.dart';
 
 
@@ -19,59 +20,66 @@ abstract class LocalDatabaseRepository {
 class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
 
   static const DBNAME = "database.db";
-  static const THEMES_TABLE = "Themes";
-  static const QUESTIONS_TABLE = "Questions";
-  static const LOCALPROGRESSION_TABLE = "LocalProgression";
 
-  Database _db;
-
-
-  open() async {
-    _db = await openDatabase(DBNAME, version: 1,
-      onCreate: (db, version) async {
-        await db.execute("CREATE TABLE $THEMES_TABLE(id TEXT, title TEXT, icon TEXT, color INTEGER, entitled TEXT)");
-        await db.execute("CREATE TABLE $QUESTIONS_TABLE(id TEXT, entitled TEXT, entitledType TEXT, answers TEXT, answersType TEXT, difficulty INTEGER)");
-        await db.execute("CREATE TABLE $LOCALPROGRESSION_TABLE(themeId TEXT, questionAnswered INTEGER)");
-      }
-    );
-  }
-
-  close() async {
-    await _db.close();
-  }
-  
   @override
   Future<int> currentDatabaseVersion() async {
-    await open();
+    var _db = await openDatabase(DBNAME);
     int v = await _db.getVersion();
-    await close();
+    await _db.close();
     return v;
   }
 
   @override
   Future<void> updateStaticDatabase(int version, DatabaseContentContainer databaseContentContainer) async {
-    await open();
-    print(_db.isOpen);
-    Batch batch = _db.batch();
+    await deleteDatabase(DBNAME);
+
+    var db = await openDatabase(
+      DBNAME,
+      version: version,
+      onCreate: (db, _) async {
+        await db.execute('''
+          CREATE TABLE ${DatabaseIdentifiers.THEMES_TABLE} (
+            ${DatabaseIdentifiers.THEME_ID} text primary key,
+            ${DatabaseIdentifiers.THEME_TITLE} text not null,
+            ${DatabaseIdentifiers.THEME_ICON} text not null,
+            ${DatabaseIdentifiers.THEME_COLOR} int not null,
+            ${DatabaseIdentifiers.THEME_ENTITLED} text not null
+          )
+        ''');
+        await db.execute('''
+          CREATE TABLE ${DatabaseIdentifiers.QUESTIONS_TABLE} (
+            ${DatabaseIdentifiers.QUESTION_ID} text primary key,
+            ${DatabaseIdentifiers.QUESTION_ENTITLED} text not null,
+            ${DatabaseIdentifiers.QUESTION_ENTITLED_TYPE} text not null,
+            ${DatabaseIdentifiers.QUESTION_ANSWERS} text not null,
+            ${DatabaseIdentifiers.QUESTION_ANSWERS_TYPE} text not null,
+            ${DatabaseIdentifiers.QUESTION_DIFFICULTY} int not null
+          )
+        ''');
+      }
+    );
+    
+    Batch batch = db.batch();
     for (QuizTheme t in databaseContentContainer.themes??[]) {
-      batch.insert(THEMES_TABLE, t.toMap());
+      batch.insert(DatabaseIdentifiers.THEMES_TABLE, t.toMap());
     }
     for (QuizQuestion q in databaseContentContainer.questions??[]) {
-      batch.insert(QUESTIONS_TABLE, q.toMap());
+      batch.insert(DatabaseIdentifiers.QUESTIONS_TABLE, q.toMap());
     }
-    await batch.commit();
-    _db.setVersion(version);
-    await close();
+    try {
+      print(await batch.commit(continueOnError: true));
+    } catch(e) {}
+    await db.close();
   }
 
   Future<List<QuizTheme>> getThemes() async {
+    var db = await openDatabase(DBNAME);
     List<QuizTheme> themes = List();
-    await open();
-    List<Map<String, Object>> themesData = await _db.query(THEMES_TABLE);
+    List<Map<String, Object>> themesData = await db.query(DatabaseIdentifiers.THEMES_TABLE);
     for (var t in themesData) {
       themes.add(QuizTheme.fromJSON(data: t));
     }
-    await close();
+    await db.close();
     return themes;
   }
 

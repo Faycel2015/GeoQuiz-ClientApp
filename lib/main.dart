@@ -7,6 +7,7 @@ import 'package:app/ui/views/homepage.dart';
 import 'package:app/ui/views/start_up.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite/sqflite.dart';
 
 
 /// Entry point for the application, it will basically run the app.
@@ -17,11 +18,13 @@ import 'package:provider/provider.dart';
 /// We also create our repositories implementation before to launch the app,
 /// and we give these repositories to the providers who need it. This prevents 
 /// having singletons with global states shared throughout the application.
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   var localRepo = SQLiteLocalDatabaseRepository();
   var remoteRepo = FirebaseRemoteDatabaseRepository();
+
+  await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(

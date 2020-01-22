@@ -1,4 +1,5 @@
 
+import 'package:app/utils/database_identifiers.dart';
 import 'package:flutter/widgets.dart';
 
 abstract class Model {
@@ -9,22 +10,35 @@ abstract class Model {
   Map<String, Object> toMap();
 }
 
+
 class QuizTheme extends Model {
 
   String title;
+  String entitled;
+  String icon;
+  int color;
 
-  QuizTheme.fromJSON({@required Map<String, Object> data}) : super(data["id"]) {
-    this.title = data["title"];
+  QuizTheme.fromJSON({@required Map<String, Object> data}) : super(data[DatabaseIdentifiers.THEME_ID]) {
+    this.title = data[DatabaseIdentifiers.THEME_TITLE];
+    this.icon = data[DatabaseIdentifiers.THEME_ICON];
+    print("type : "+ data[DatabaseIdentifiers.THEME_COLOR].runtimeType.toString());
+
+    this.color = data[DatabaseIdentifiers.THEME_COLOR] as int;
+    this.entitled = data[DatabaseIdentifiers.THEME_ENTITLED];
   }
 
   @override
   Map<String, Object> toMap() {
     return {
-      "title": title
+      DatabaseIdentifiers.THEME_ID: id,
+      DatabaseIdentifiers.THEME_TITLE: title,
+      DatabaseIdentifiers.THEME_ICON: icon,
+      DatabaseIdentifiers.THEME_COLOR: color,
+      DatabaseIdentifiers.THEME_ENTITLED: entitled,
     };
   }
-
 }
+
 
 class QuizQuestion extends Model {
 
