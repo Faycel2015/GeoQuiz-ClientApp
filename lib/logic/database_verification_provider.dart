@@ -15,7 +15,8 @@ class DatabaseVerificationProvider extends ChangeNotifier {
   bool unableToFetchRemoteData = true;
   bool currentLocalDatabaseExists = false;
 
-  bool get readyToStart => startUpVerificationDone && currentLocalDatabaseExists;
+  bool get error => !currentLocalDatabaseExists??false;
+  bool get readyToStart => (startUpVerificationDone??false) && (currentLocalDatabaseExists??false);
 
 
   DatabaseVerificationProvider({@required RemoteDatabaseRepository remoteRepo, @required LocalDatabaseRepository localRepo})
