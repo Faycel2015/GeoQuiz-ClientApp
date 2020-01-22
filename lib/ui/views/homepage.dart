@@ -52,7 +52,7 @@ class SelectableThemes extends StatelessWidget {
                 bool isSelected = quizProvider.selectedThemes.contains(t);
                 return ThemeCard(
                   theme: t,
-                  color: isSelected ? Color(t.color) : Theme.of(context).colorScheme.surface,
+                  selected: isSelected,
                   onPressed: () => isSelected ? onDeselectTheme(context, t) : onSelectTheme(context, t),
                 );
               }).toList()
@@ -78,25 +78,27 @@ class SelectableThemes extends StatelessWidget {
 class ThemeCard extends StatelessWidget {
 
   final QuizTheme theme;
-  final Color color;
+  final bool selected;
   final Function onPressed;
 
-  ThemeCard({Key key, @required this.theme, @required this.onPressed, this.color}) : super(key: key);
+  ThemeCard({Key key, @required this.theme, @required this.onPressed, this.selected}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
       onTap: onPressed,
       child: Container(
+        padding: EdgeInsets.all(Dimens.surfacePadding),
         decoration: BoxDecoration(
-          color: color,
+          color: selected ? Color(theme.color) : Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(Dimens.radius),
           boxShadow: [Dimens.shadow]
         ),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(theme.title),
-            SvgPicture.string(theme.icon, height: 50,)
+            SvgPicture.string(theme.icon, height: 50, color: selected ? Colors.white : Color(theme.color))
           ],
         ),
       ),

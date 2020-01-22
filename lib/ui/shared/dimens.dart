@@ -5,6 +5,8 @@ class Dimens {
   static final screenMarginX = 20.0;
   static final screenMarginY = 20.0;
 
+  static final surfacePadding = 15.0;
+
   static final radius = 7.0;
 
   static final shadow = BoxShadow(
