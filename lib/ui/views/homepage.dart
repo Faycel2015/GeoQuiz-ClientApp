@@ -5,7 +5,10 @@ import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/widgets/global_user_progress.dart';
 import 'package:app/ui/widgets/gradient_background.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+
 
 class HomepageView extends StatelessWidget {
   @override
@@ -90,7 +93,12 @@ class ThemeCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(Dimens.radius),
           boxShadow: [Dimens.shadow]
         ),
-        child: Text(theme.title),
+        child: Column(
+          children: <Widget>[
+            Text(theme.title),
+            SvgPicture.string(theme.icon, height: 50,)
+          ],
+        ),
       ),
     );
   }
