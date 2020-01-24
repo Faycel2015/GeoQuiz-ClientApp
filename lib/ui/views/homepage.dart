@@ -8,6 +8,7 @@ import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/views/quiz.dart';
 import 'package:app/ui/widgets/global_user_progress.dart';
 import 'package:app/ui/widgets/gradient_background.dart';
+import 'package:app/utils/snackbar_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
@@ -134,21 +135,32 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
     if (formKey.currentState.validate()) {
       formKey.currentState.save();
       _prepareGameStream = Provider.of<QuizProvider>(context, listen: false)
-        .prepareGame(_selectedThemes).asStream().listen((_) {
+        .prepareGame(_selectedThemes)
+        .catchError(_handlePreparationError)
+        .asStream().listen((_) {
           Navigator.push(context, MaterialPageRoute(
             builder: (context) => QuizView()
           ));
         });
     } else {
-      Scaffold.of(context).showSnackBar(
-        SnackBar(
-          content: Text("Please select themes to play !", style: TextStyle(color: Theme.of(context).colorScheme.onError)),
-          backgroundColor: Theme.of(context).colorScheme.error,
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: Dimens.borderRadius),
-        )
-      );
+      _handleInvalidForm();
     }
+  }
+
+  _handleInvalidForm() {
+    SnackBarHandler.showSnackbar(
+      context: context,
+      content: Text("Please select themes to play !"),
+    );
+  }
+
+  _handlePreparationError(_) {
+    _prepareGameStream?.cancel();
+    SnackBarHandler.showSnackbar(
+      context: context,
+      critical: true,
+      content: Text("Unexpected error occured.")
+    );
   }
 }
 

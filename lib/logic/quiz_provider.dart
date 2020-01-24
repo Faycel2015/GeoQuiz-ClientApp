@@ -13,11 +13,18 @@ class QuizProvider extends ChangeNotifier {
 
   QuizProvider({LocalDatabaseRepository localRepo}) : _localRepo = localRepo;
 
+
   Future<void> prepareGame(Set<QuizTheme> selectedThemes) async {
-    _selectedThemes = selectedThemes;
-    _questions = [];
-    _questionsIterator = _questions.iterator;
-    print("end");
+    try {
+      _selectedThemes = selectedThemes;
+      _questions = await _localRepo.getQuestions(count: 10);
+      if (_questions == null || _questions.length == 0)
+        throw Exception();
+      _questionsIterator = _questions.iterator;
+    } catch (_) {
+      return Future.error(null);
+    }
+
   }
 
   QuizQuestion nextQuestion() {

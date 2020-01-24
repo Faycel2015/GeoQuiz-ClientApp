@@ -89,6 +89,9 @@ final geoQuizTheme = ThemeData(
   accentIconTheme: IconThemeData(color: Color(0xFF644F0A)),
   accentTextTheme: GoogleFonts.righteousTextTheme(),
 
+  backgroundColor: Color(0xFF4E19C8),
+  scaffoldBackgroundColor: Color(0xFF4E19C8),
+
   colorScheme: ColorScheme(
     primary: Color(0xFF4E19C8),
     primaryVariant: Color(0xFF916DE4),

@@ -14,6 +14,10 @@ abstract class LocalDatabaseRepository {
 
   /// Get all themes
   Future<List<QuizTheme>> getThemes();
+
+  /// Get list of questions
+  /// [count] is the number of questions to return
+  Future<List<QuizQuestion>> getQuestions({int count});
 }
 
 
@@ -73,7 +77,7 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
     await db.close();
   }
 
-  
+  @override
   Future<List<QuizTheme>> getThemes() async {
     var db = await openDatabase(DBNAME);
     List<QuizTheme> themes = List();
@@ -85,6 +89,7 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
     return themes;
   }
 
+  @override
   Future<List<QuizQuestion>> getQuestions({int count}) async {
     var db = await openDatabase(DBNAME);
     List<Map<String,Object>> rawQuestions = await db.query(DatabaseIdentifiers.THEMES_TABLE, limit: count);
