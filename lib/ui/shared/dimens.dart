@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
 class Dimens {
-  static final screenMarginX = 20.0;
-  static final screenMarginY = 20.0;
+  Dimens._();
+  
+  static const screenMarginX = 20.0;
+  static const screenMarginY = 20.0;
+  static const screenMargin = EdgeInsets.symmetric(horizontal: screenMarginX, vertical: screenMarginY);
 
-  static final surfacePadding = 15.0;
+  static const surfacePadding = 15.0;
 
-  static final radius = 7.0;
+  static const radius = 7.0;
 
   static final shadow = BoxShadow(
     color: Colors.black.withOpacity(0.5), // color of the shadow

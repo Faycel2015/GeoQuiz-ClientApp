@@ -6,6 +6,7 @@ import 'package:app/repositories/remote_database_repository.dart';
 import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/views/homepage.dart';
 import 'package:app/ui/views/start_up.dart';
+import 'package:app/ui/widgets/basic_scroll_without_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -26,7 +27,7 @@ void main() async {
   var localRepo = SQLiteLocalDatabaseRepository();
   var remoteRepo = FirebaseRemoteDatabaseRepository();
 
-  await deleteDatabase("database.db");
+  // await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(
@@ -63,10 +64,13 @@ class GeoQuizApp extends StatelessWidget {
 
       theme: geoQuizTheme,
   
-      home: Consumer<DatabaseVerificationProvider>(
-        builder: (context, provider, _) => (!provider.readyToStart)
-          ? StartUpView(error: provider.error)
-          : HomepageView()
+      home: ScrollConfiguration(
+        behavior: BasicScrollWithoutGlow(), // we remove glowing animation for all scrollable widgets 
+        child: Consumer<DatabaseVerificationProvider>(
+          builder: (context, provider, _) => (!provider.readyToStart)
+            ? StartUpView(error: provider.error)
+            : HomepageView()
+        ),
       ),
     );
   }
@@ -75,7 +79,7 @@ class GeoQuizApp extends StatelessWidget {
 
 
 final geoQuizTheme = ThemeData(
-  primaryColor: Color(0xFF4D19C7),
+  primaryColor: Color(0xFF4E19C8),
   primaryColorLight: Color(0xFF916DE4),
   primaryIconTheme: IconThemeData(color: Color(0xFFFFFFFF)),
   primaryTextTheme: GoogleFonts.righteousTextTheme(),
@@ -85,7 +89,7 @@ final geoQuizTheme = ThemeData(
   accentTextTheme: GoogleFonts.righteousTextTheme(),
 
   colorScheme: ColorScheme(
-    primary: Color(0xFF4D19C7),
+    primary: Color(0xFF4E19C8),
     primaryVariant: Color(0xFF916DE4),
     onPrimary: Color(0xFFFFFFFF),
     secondary: Color(0xFFFBC519),
@@ -95,11 +99,13 @@ final geoQuizTheme = ThemeData(
     onSurface: Color(0xFF383838),
     error: Color(0xFFE23539),
     onError: Color(0xFFFFFFFF),
-    background: Color(0xFF4D19C7),
+    background: Color(0xFF4E19C8),
     onBackground: Color(0xFFFFFFFF),
     brightness: Brightness.dark
   ),
   brightness: Brightness.dark,
   
-  textTheme: GoogleFonts.righteousTextTheme()
+  textTheme: GoogleFonts.righteousTextTheme(TextTheme(
+    title: TextStyle(fontSize: 45)
+  ).apply(bodyColor: Colors.white))
 );

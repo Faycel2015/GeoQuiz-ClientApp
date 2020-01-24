@@ -13,27 +13,52 @@ class HomepageView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: FloatingActionButton.extended(
-        label: Text("Let's go"),
-        icon: Icon(Icons.chevron_right),
-        onPressed: () {},
-      ),
-
       body: GradientBackground(
         color: Theme.of(context).primaryColor,
-        child: ListView(
-          children: <Widget>[
-            GlobalUserProgressionWidget(),
-            Consumer<ThemesProvider>(
-              builder: (context, themesProvider, _) {
-                if (themesProvider.themes != null)
-                  return QuizConfiguration(themes: themesProvider.themes);
-                else
-                  return Text("Loading...");
-              }
-            ),
-          ],
+        child: SafeArea(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              HomepageHeader(),
+              GlobalUserProgressionWidget(),
+              Expanded(
+                child: Consumer<ThemesProvider>(
+                  builder: (context, themesProvider, _) =>
+                    themesProvider.themes != null
+                    ? QuizConfiguration(themes: themesProvider.themes)
+                    : Text("Loading...")
+                ),
+              ),
+            ],
+          ),
         ),
+      ),
+    );
+  }
+}
+
+class HomepageHeader extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: Dimens.screenMargin,
+      child: Row(
+        children: <Widget>[
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                text: "Hi Romain,",
+                style: Theme.of(context).textTheme.title,
+                children: [TextSpan(
+                  text: "\nTime to play !",
+                  style: TextStyle(fontSize: 30),
+                )]
+              ),
+            )
+          ),
+          
+          Icon(Icons.menu, size: 30,)
+        ],
       ),
     );
   }
@@ -57,25 +82,34 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          SelectableThemesForm(
-            themes: widget.themes,
-            validator: (selectedThemes) => selectedThemes.isEmpty ? "Cannot" : null,
-            onSaved: (selectedThemes) => _selectedThemes = selectedThemes,
-          ),
-          DifficultyChooser(
+    return Stack(
+      children: <Widget>[
+        Form(
+          key: formKey,
+          child: ListView(
+            
+            children: <Widget>[
+              SelectableThemesForm(
+                themes: widget.themes,
+                validator: (selectedThemes) => selectedThemes.isEmpty ? "Cannot" : null,
+                onSaved: (selectedThemes) => _selectedThemes = selectedThemes,
+              ),
+              DifficultyChooser(
 
+              ),
+            ],
           ),
-          RaisedButton(
-            child: Text("Play"),
+        ),
+        Positioned(
+          bottom: Dimens.screenMarginY,
+          right: Dimens.screenMarginX,
+          child: FloatingActionButton.extended(
+            label: Text("Let's go"),
+            icon: Icon(Icons.chevron_right),
             onPressed: onSubmit,
-          )
-        ],
-      ),
+          ),
+        )
+      ],
     );
   }
 
@@ -109,9 +143,9 @@ class SelectableThemesForm extends FormField<Set<QuizTheme>> {
         crossAxisSpacing: 10,
         mainAxisSpacing: 10,
         crossAxisCount: 2,
-        padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX, vertical: Dimens.screenMarginY),
+        padding: Dimens.screenMargin,
         children: themes.map((t) => 
-          InkWell(
+          InkResponse(
             onTap: () {
               if (!state.value.remove(t))
                 state.value.add(t); 
@@ -144,7 +178,7 @@ class ThemeCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(theme.title),
+            Text(theme.title, style: TextStyle(color: Colors.black)),
             SvgPicture.string(theme.icon, height: 50, color: selected ? Colors.white : Color(theme.color))
           ],
         ),

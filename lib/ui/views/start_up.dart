@@ -13,7 +13,7 @@ class StartUpView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Text("loading...")
+      body: Center(child: Text("loading..."))
     );
   }
 }
