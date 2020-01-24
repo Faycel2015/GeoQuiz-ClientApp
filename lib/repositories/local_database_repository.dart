@@ -73,10 +73,11 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
       batch.insert(DatabaseIdentifiers.QUESTIONS_TABLE, q.toMap());
     }
     try {
-      await batch.commit(continueOnError: true);
+      print(await batch.commit(continueOnError: true));
     } catch(e) {}
     await db.close();
   }
+
 
   @override
   Future<List<QuizTheme>> getThemes() async {
@@ -90,23 +91,26 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
     return themes;
   }
 
+
   @override
   Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes}) async {
     if (themes == null || themes.isEmpty)
       return [];
-
     var db = await openDatabase(DBNAME);
+    List<String> themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
     List<Map<String,Object>> rawQuestions = await db.query(
-      DatabaseIdentifiers.THEMES_TABLE, 
-      limit: count,
-      where: "${DatabaseIdentifiers.QUESTION_THEME_ID} IN (${themes.join(',')})"
+      DatabaseIdentifiers.QUESTIONS_TABLE, 
+      // limit: count,
+      // where: "${DatabaseIdentifiers.QUESTION_THEME_ID} IN (${themeIDs.join(',')})"
     );
+    print(rawQuestions);
     List<QuizQuestion> questions = List();
     for (var q in rawQuestions) {
       try {
         var theme = themes.where((t) => t.id == q[DatabaseIdentifiers.QUESTION_THEME_ID]);
         if (theme.isNotEmpty)
           questions.add(QuizQuestion.fromJSON(theme: theme.first, data: q));
+          print("Success");
       } catch (e) {print(e);}
     }
     await db.close();

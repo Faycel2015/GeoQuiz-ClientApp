@@ -21,7 +21,8 @@ class QuizProvider extends ChangeNotifier {
       if (_questions == null || _questions.isEmpty)
         throw Exception();
       _questionsIterator = _questions.iterator;
-    } catch (_) {
+    } catch (e) {
+      print(e);
       return Future.error(null);
     }
 

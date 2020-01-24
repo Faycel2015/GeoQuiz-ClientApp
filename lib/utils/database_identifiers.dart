@@ -9,10 +9,10 @@ class DatabaseIdentifiers {
   static const THEME_ENTITLED = "entitled";
 
   static const QUESTION_ID = "id";
-  static const QUESTION_THEME_ID = "themeId";
+  static const QUESTION_THEME_ID = "theme";
   static const QUESTION_ENTITLED = "entitled";
   static const QUESTION_ANSWERS = "answers";
-  static const QUESTION_ANSWERS_TYPE = "answersType";
-  static const QUESTION_ENTITLED_TYPE = "entitledType";
+  static const QUESTION_ANSWERS_TYPE = "answers_type";
+  static const QUESTION_ENTITLED_TYPE = "entitled_type";
   static const QUESTION_DIFFICULTY = "difficulty";
 }

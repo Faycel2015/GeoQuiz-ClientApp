@@ -48,6 +48,7 @@ class QuizQuestion extends Model {
   int difficulty;
 
   QuizQuestion.fromJSON({@required this.theme, @required Map<String, Object> data}) : super(data["id"]) {
+    this.theme = theme;
     this.entitled = data[DatabaseIdentifiers.QUESTION_ENTITLED];
     this.entitledType = ResourceType.fromString(data[DatabaseIdentifiers.QUESTION_ENTITLED_TYPE]);;
     this.answers = (data[DatabaseIdentifiers.QUESTION_ANSWERS] as String).split("&&");
@@ -59,18 +60,19 @@ class QuizQuestion extends Model {
   Map<String, Object> toMap() {
     return {
       DatabaseIdentifiers.QUESTION_ID: id,
+      DatabaseIdentifiers.QUESTION_THEME_ID: theme.id,
       DatabaseIdentifiers.QUESTION_ENTITLED: entitled,
       DatabaseIdentifiers.QUESTION_ENTITLED_TYPE: entitledType.value,
       DatabaseIdentifiers.QUESTION_ANSWERS: answers.join("&&"),
       DatabaseIdentifiers.QUESTION_ANSWERS_TYPE: answersType.value,
-      DatabaseIdentifiers.QUESTION_DIFFICULTY: difficulty,
+      DatabaseIdentifiers.QUESTION_DIFFICULTY: difficulty??99,
     };
   }
 }
 
 
 class ResourceType {
-  static final ResourceType TEXT = ResourceType._("txt");
+  static final ResourceType TEXT = ResourceType._("text");
   static final ResourceType IMAGE = ResourceType._("img");
   static final ResourceType LOCATION = ResourceType._("location");
 
@@ -80,10 +82,10 @@ class ResourceType {
 
   static ResourceType fromString(String s) {
     switch (s) {
-      case "txt": return TEXT;
+      case "text": return TEXT;
       case "img": return IMAGE;
       case "location": return LOCATION;
-      default: throw Exception();
+      default: throw Exception("Unexpected type");
     }
   }
 

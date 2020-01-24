@@ -1,5 +1,6 @@
 import 'package:app/models/models.dart';
 import 'package:app/utils/database_content_container.dart';
+import 'package:app/utils/database_identifiers.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -41,16 +42,33 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
     return null;
   }
 
+
   @override
   Future<DatabaseContentContainer> getDatabaseContent() async {
     String databaseContent = await _getContentFile(DATABASE_FILENAME);
     Map<String, Object> map = jsonDecode(databaseContent);
+
     List<QuizTheme> themes = List();
-    for (Map<String, Object> themesData in map["themes"]) {
-      themes.add(QuizTheme.fromJSON(data: themesData));
+    for (Map<String, Object> themeData in map["themes"]) {
+      try {
+        var theme = QuizTheme.fromJSON(data: themeData);
+        themes.add(theme);
+      } catch (_) {}
     }
-    return DatabaseContentContainer(themes: themes);
+
+    List<QuizQuestion> questions = List();
+    for (Map<String, Object> questionData in map["questions"]) {
+      try {
+        var theme = themes.where((t) => t.id == questionData[DatabaseIdentifiers.QUESTION_THEME_ID]).first;
+        print("THEME" + theme.id);
+        questions.add(QuizQuestion.fromJSON(data: questionData, theme: theme));
+      } catch(e) {}
+    }
+
+    print("get ${themes.length} themes and ${questions.length} questions");
+    return DatabaseContentContainer(themes: themes, questions: questions);
   }
+
 
   Future<String> _getContentFile(String path) async {
     final StorageReference _ref = _firebaseStorage.ref().child(path);

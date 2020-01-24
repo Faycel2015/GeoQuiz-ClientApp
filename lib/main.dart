@@ -28,7 +28,7 @@ void main() async {
   var localRepo = SQLiteLocalDatabaseRepository();
   var remoteRepo = FirebaseRemoteDatabaseRepository();
 
-  // await deleteDatabase("database.db");
+  await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(
@@ -79,6 +79,8 @@ class GeoQuizApp extends StatelessWidget {
 
 
 
+/// See "documentation" repo to know more about the app theming
+/// https://github.com/GeoQuiz-v2/documents
 final geoQuizTheme = ThemeData(
   primaryColor: Color(0xFF4E19C8),
   primaryColorLight: Color(0xFF916DE4),
@@ -110,7 +112,7 @@ final geoQuizTheme = ThemeData(
   brightness: Brightness.dark,
   
   textTheme: GoogleFonts.righteousTextTheme(TextTheme(
-    title: TextStyle(fontSize: 45, height: 1.0, shadows: [Dimens.textShadow]),
-    body1: TextStyle(fontSize: 15, shadows: [Dimens.textShadow])
+    title: TextStyle(fontSize: 37, height: 1.0, shadows: [Dimens.textShadow]),
+    body1: TextStyle(fontSize: 16, shadows: [Dimens.textShadow])
   ).apply(bodyColor: Colors.white))
 );

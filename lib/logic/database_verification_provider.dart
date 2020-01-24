@@ -52,6 +52,7 @@ class DatabaseVerificationProvider extends ChangeNotifier {
     if (remoteVersion != null && localVersion != null && remoteVersion != localVersion) {
       try {
         DatabaseContentContainer remoteDatabaseContent = await _remoteRepo.getDatabaseContent();
+        for (var t in remoteDatabaseContent.themes)
         await _localRepo.updateStaticDatabase(remoteVersion, remoteDatabaseContent);
         updateSuccessful = true;
         _logger.i("Local database successfully updated");
