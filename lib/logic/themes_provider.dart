@@ -5,9 +5,9 @@ import 'package:flutter/widgets.dart';
 
 class ThemesProvider extends ChangeNotifier {
 
-  final SQLiteLocalDatabaseRepository _localRepo;
+  final LocalDatabaseRepository _localRepo;
 
-  ThemesProvider({@required SQLiteLocalDatabaseRepository localRepo}) : _localRepo = localRepo {
+  ThemesProvider({@required LocalDatabaseRepository localRepo}) : _localRepo = localRepo {
     loadThemes();
   }
 

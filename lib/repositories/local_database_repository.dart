@@ -11,6 +11,9 @@ abstract class LocalDatabaseRepository {
 
   /// Update the static part of the database (themes, questions)
   Future<void> updateStaticDatabase(int version, DatabaseContentContainer databaseContentContainer);
+
+  /// Get all themes
+  Future<List<QuizTheme>> getThemes();
 }
 
 
@@ -70,6 +73,7 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
     await db.close();
   }
 
+  
   Future<List<QuizTheme>> getThemes() async {
     var db = await openDatabase(DBNAME);
     List<QuizTheme> themes = List();
