@@ -1,4 +1,3 @@
-import 'package:app/logic/quiz_provider.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/models/models.dart';
 import 'package:app/ui/shared/dimens.dart';
@@ -21,12 +20,18 @@ class HomepageView extends StatelessWidget {
       ),
 
       body: GradientBackground(
-        color: Color(0xFF6127E8),
+        color: Theme.of(context).primaryColor,
         child: ListView(
           children: <Widget>[
             GlobalUserProgressionWidget(),
-            SelectableThemes(),
-            DifficultyChooser(),
+            Consumer<ThemesProvider>(
+              builder: (context, themesProvider, _) {
+                if (themesProvider.themes != null)
+                  return QuizConfiguration(themes: themesProvider.themes);
+                else
+                  return Text("Loading...");
+              }
+            ),
           ],
         ),
       ),
@@ -35,43 +40,88 @@ class HomepageView extends StatelessWidget {
 }
 
 
-class SelectableThemes extends StatelessWidget {
+class QuizConfiguration extends StatefulWidget {
+  final List<QuizTheme> themes;
+
+  QuizConfiguration({Key key, this.themes}) : super(key: key);
+
+  @override
+  _QuizConfigurationState createState() => _QuizConfigurationState();
+}
+
+
+class _QuizConfigurationState extends State<QuizConfiguration> {
+
+  final formKey = GlobalKey<FormState>();
+  var _selectedThemes = Set<QuizTheme>();
+
   @override
   Widget build(BuildContext context) {
-    return Consumer<ThemesProvider>(
-      builder: (context, themeProvider, _) {
-        if (themeProvider.themes != null)
-          return Consumer<QuizProvider>(
-            builder: (context, quizProvider, _) => GridView.count(
-              shrinkWrap: true,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              crossAxisCount: 2,
-              padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX, vertical: Dimens.screenMarginY),
-              children: themeProvider.themes.map((t) {
-                bool isSelected = quizProvider.selectedThemes.contains(t);
-                return ThemeCard(
-                  theme: t,
-                  selected: isSelected,
-                  onPressed: () => isSelected ? onDeselectTheme(context, t) : onSelectTheme(context, t),
-                );
-              }).toList()
-            ),
-          );
-        if (themeProvider.error)
-          return Text("error");
-        return Text("Loading");
-      }
+    return Form(
+      key: formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          SelectableThemesForm(
+            themes: widget.themes,
+            validator: (selectedThemes) => selectedThemes.isEmpty ? "Cannot" : null,
+            onSaved: (selectedThemes) => _selectedThemes = selectedThemes,
+          ),
+          DifficultyChooser(
+
+          ),
+          RaisedButton(
+            child: Text("Play"),
+            onPressed: onSubmit,
+          )
+        ],
+      ),
     );
   }
 
-  onSelectTheme(context, theme) {
-    Provider.of<QuizProvider>(context, listen: false).addSelectedTheme(theme);
+  onSubmit() {
+    if (formKey.currentState.validate()) {
+      print("validate");
+      formKey.currentState.save();
+      print(_selectedThemes);
+    }
   }
+}
 
-  onDeselectTheme(context, theme) {
-    Provider.of<QuizProvider>(context, listen: false).removeSelectedTheme(theme);
-  }
+
+class SelectableThemesForm extends FormField<Set<QuizTheme>> {
+  SelectableThemesForm({
+    Key key,
+    @required List<QuizTheme> themes,
+    FormFieldSetter<Set<QuizTheme>> onSaved,
+    FormFieldValidator<Set<QuizTheme>> validator,
+    Set<QuizTheme> initialValue,
+    bool autovalidate = false,
+  }) : super(
+    key: key,
+    onSaved: onSaved,
+    validator: validator,
+    initialValue: initialValue??{},
+    autovalidate: autovalidate,
+    builder: (FormFieldState<Set<QuizTheme>> state) => 
+      GridView.count(
+        shrinkWrap: true,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10,
+        crossAxisCount: 2,
+        padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX, vertical: Dimens.screenMarginY),
+        children: themes.map((t) => 
+          InkWell(
+            onTap: () {
+              if (!state.value.remove(t))
+                state.value.add(t); 
+              state.didChange(state.value);
+            },
+            child: ThemeCard(theme: t, selected: state.value.contains(t),)
+          )
+        ).toList(),
+      )
+  );
 }
 
 
@@ -79,15 +129,12 @@ class ThemeCard extends StatelessWidget {
 
   final QuizTheme theme;
   final bool selected;
-  final Function onPressed;
 
-  ThemeCard({Key key, @required this.theme, @required this.onPressed, this.selected}) : super(key: key);
+  ThemeCard({Key key, @required this.theme, this.selected = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onPressed,
-      child: Container(
+    return Container(
         padding: EdgeInsets.all(Dimens.surfacePadding),
         decoration: BoxDecoration(
           color: selected ? Color(theme.color) : Theme.of(context).colorScheme.surface,
@@ -101,7 +148,6 @@ class ThemeCard extends StatelessWidget {
             SvgPicture.string(theme.icon, height: 50, color: selected ? Colors.white : Color(theme.color))
           ],
         ),
-      ),
     );
   }
 }

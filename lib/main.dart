@@ -39,7 +39,7 @@ void main() async {
           localRepo: localRepo,
         )),
         ChangeNotifierProvider<QuizProvider>(create: (context) => QuizProvider(
-          
+
         )),
       ],
       child: GeoQuizApp()
@@ -62,7 +62,7 @@ class GeoQuizApp extends StatelessWidget {
       title: Strings.appName,
 
       theme: geoQuizTheme,
-
+  
       home: Consumer<DatabaseVerificationProvider>(
         builder: (context, provider, _) => (!provider.readyToStart)
           ? StartUpView(error: provider.error)
