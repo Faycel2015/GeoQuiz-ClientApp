@@ -1,6 +1,7 @@
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/models/models.dart';
 import 'package:app/ui/shared/dimens.dart';
+import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/widgets/global_user_progress.dart';
 import 'package:app/ui/widgets/gradient_background.dart';
 import 'package:flutter/material.dart';
@@ -49,10 +50,10 @@ class HomepageHeader extends StatelessWidget {
           Expanded(
             child: RichText(
               text: TextSpan(
-                text: "Hi Romain,",
+                text: "${Strings.homepageTitle},",
                 style: textStyle,
                 children: [TextSpan(
-                  text: "\nTime to play !",
+                  text: "\n${Strings.homepageSubtitle}",
                   style: TextStyle(fontSize: subtitleSize),
                 )]
               ),
@@ -142,8 +143,8 @@ class SelectableThemesForm extends FormField<Set<QuizTheme>> {
     builder: (FormFieldState<Set<QuizTheme>> state) => 
       GridView.count(
         shrinkWrap: true,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+        crossAxisSpacing: 20,
+        mainAxisSpacing: 20,
         crossAxisCount: 2,
         padding: Dimens.screenMargin,
         children: themes.map((t) => 

@@ -3,6 +3,7 @@ import 'package:app/logic/quiz_provider.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
+import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/views/homepage.dart';
 import 'package:app/ui/views/start_up.dart';
@@ -106,6 +107,6 @@ final geoQuizTheme = ThemeData(
   brightness: Brightness.dark,
   
   textTheme: GoogleFonts.righteousTextTheme(TextTheme(
-    title: TextStyle(fontSize: 45, height: 1.0)
+    title: TextStyle(fontSize: 45, height: 1.0, shadows: [Dimens.textShadow])
   ).apply(bodyColor: Colors.white))
 );

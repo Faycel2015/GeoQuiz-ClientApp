@@ -3,7 +3,7 @@ import 'package:flutter/painting.dart';
 
 class Dimens {
   Dimens._();
-  
+
   static const screenMarginX = 20.0;
   static const screenMarginY = 20.0;
   static const screenMargin = EdgeInsets.symmetric(horizontal: screenMarginX, vertical: screenMarginY);
@@ -16,6 +16,12 @@ class Dimens {
     color: Colors.black.withOpacity(0.5), // color of the shadow
     blurRadius: 10, // gaussian attenuation
     spreadRadius: 3 // shadow size
+  );
+
+  static final textShadow = BoxShadow(
+    color: Colors.black.withOpacity(0.5), // color of the shadow
+    blurRadius: 7, // gaussian attenuation
+    spreadRadius: 2 // shadow size
   );
 
 }
