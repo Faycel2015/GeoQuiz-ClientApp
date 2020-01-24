@@ -40,6 +40,8 @@ class HomepageView extends StatelessWidget {
 class HomepageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final textStyle = Theme.of(context).textTheme.title;
+    final subtitleSize = textStyle.fontSize * 0.5;
     return Padding(
       padding: Dimens.screenMargin,
       child: Row(
@@ -48,10 +50,10 @@ class HomepageHeader extends StatelessWidget {
             child: RichText(
               text: TextSpan(
                 text: "Hi Romain,",
-                style: Theme.of(context).textTheme.title,
+                style: textStyle,
                 children: [TextSpan(
                   text: "\nTime to play !",
-                  style: TextStyle(fontSize: 30),
+                  style: TextStyle(fontSize: subtitleSize),
                 )]
               ),
             )
