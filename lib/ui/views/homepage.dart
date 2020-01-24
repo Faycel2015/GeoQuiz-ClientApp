@@ -149,6 +149,7 @@ class SelectableThemesForm extends FormField<Set<QuizTheme>> {
         padding: Dimens.screenMargin,
         children: themes.map((t) => 
           InkResponse(
+            enableFeedback: false, // disable the click sound
             onTap: () {
               if (!state.value.remove(t))
                 state.value.add(t); 
@@ -181,7 +182,8 @@ class ThemeCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(theme.title, style: TextStyle(color: Colors.black)),
+            Text(theme.title, style: Theme.of(context).textTheme.subhead.apply(color: Colors.black)),
+            Expanded(child: Container()),
             SvgPicture.string(theme.icon, height: 50, color: selected ? Colors.white : Color(theme.color))
           ],
         ),

@@ -1,4 +1,3 @@
-
 import 'package:app/models/models.dart';
 import 'package:app/utils/database_content_container.dart';
 import 'package:app/utils/database_identifiers.dart';
@@ -30,12 +29,12 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
 
   @override
   Future<void> updateStaticDatabase(int version, DatabaseContentContainer databaseContentContainer) async {
-    await deleteDatabase(DBNAME);
-
     var db = await openDatabase(
       DBNAME,
       version: version,
-      onCreate: (db, _) async {
+      onOpen: (db) async {
+        await db.execute("DROP TABLE IF EXISTS ${DatabaseIdentifiers.THEMES_TABLE};");
+        await db.execute("DROP TABLE IF EXISTS ${DatabaseIdentifiers.QUESTIONS_TABLE};");
         await db.execute('''
           CREATE TABLE ${DatabaseIdentifiers.THEMES_TABLE} (
             ${DatabaseIdentifiers.THEME_ID} text primary key,

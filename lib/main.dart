@@ -41,7 +41,7 @@ void main() async {
           localRepo: localRepo,
         )),
         ChangeNotifierProvider<QuizProvider>(create: (context) => QuizProvider(
-
+          localRepo: localRepo,
         )),
       ],
       child: GeoQuizApp()
