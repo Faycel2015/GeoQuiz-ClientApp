@@ -85,4 +85,17 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
     return themes;
   }
 
+  Future<List<QuizQuestion>> getQuestions({int count}) async {
+    var db = await openDatabase(DBNAME);
+    List<Map<String,Object>> rawQuestions = await db.query(DatabaseIdentifiers.THEMES_TABLE, limit: count);
+    List<QuizQuestion> questions = List();
+    for (var q in rawQuestions) {
+      try {
+        questions.add(QuizQuestion.fromJSON(data: q));
+      } catch (e) {print(e);}
+    }
+    await db.close();
+    return questions;
+  }
+
 }
