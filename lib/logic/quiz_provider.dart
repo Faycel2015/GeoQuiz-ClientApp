@@ -17,6 +17,7 @@ class QuizProvider extends ChangeNotifier {
     _selectedThemes = selectedThemes;
     _questions = [];
     _questionsIterator = _questions.iterator;
+    print("end");
   }
 
   QuizQuestion nextQuestion() {

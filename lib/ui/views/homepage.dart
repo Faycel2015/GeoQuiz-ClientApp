@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:app/logic/quiz_provider.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/models/models.dart';
 import 'package:app/ui/shared/dimens.dart';
@@ -8,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+
 
 
 class HomepageView extends StatelessWidget {
@@ -83,6 +87,14 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
   final formKey = GlobalKey<FormState>();
   var _selectedThemes = Set<QuizTheme>();
 
+  StreamSubscription _prepareGameStream;
+
+  @override
+  void dispose() {
+    super.dispose();
+    _prepareGameStream?.cancel();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
@@ -115,12 +127,26 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
       ],
     );
   }
+  
 
-  onSubmit() {
+  onSubmit() async {
     if (formKey.currentState.validate()) {
-      print("validate");
       formKey.currentState.save();
-      print(_selectedThemes);
+      _prepareGameStream = Provider.of<QuizProvider>(context, listen: false)
+        .prepareGame(_selectedThemes).asStream().listen((_) {
+          Navigator.push(context, MaterialPageRoute(
+            builder: (context) => Text("Quiz")
+          ));
+        });
+    } else {
+      Scaffold.of(context).showSnackBar(
+        SnackBar(
+          content: Text("Please select themes to play !", style: TextStyle(color: Theme.of(context).colorScheme.onError)),
+          backgroundColor: Theme.of(context).colorScheme.error,
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: Dimens.borderRadius),
+        )
+      );
     }
   }
 }
@@ -176,7 +202,7 @@ class ThemeCard extends StatelessWidget {
         padding: EdgeInsets.all(Dimens.surfacePadding),
         decoration: BoxDecoration(
           color: selected ? Color(theme.color) : Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(Dimens.radius),
+          borderRadius: Dimens.borderRadius,
           boxShadow: [Dimens.shadow]
         ),
         child: Column(

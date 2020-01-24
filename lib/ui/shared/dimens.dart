@@ -11,6 +11,7 @@ class Dimens {
   static const surfacePadding = 15.0;
 
   static const radius = 10.0;
+  static final borderRadius = BorderRadius.circular(10.0);
 
   static final shadow = BoxShadow(
     color: Colors.black.withOpacity(0.5), // color of the shadow
