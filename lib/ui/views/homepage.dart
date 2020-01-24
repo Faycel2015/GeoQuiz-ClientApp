@@ -5,6 +5,7 @@ import 'package:app/logic/themes_provider.dart';
 import 'package:app/models/models.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
+import 'package:app/ui/views/quiz.dart';
 import 'package:app/ui/widgets/global_user_progress.dart';
 import 'package:app/ui/widgets/gradient_background.dart';
 import 'package:flutter/material.dart';
@@ -135,7 +136,7 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
       _prepareGameStream = Provider.of<QuizProvider>(context, listen: false)
         .prepareGame(_selectedThemes).asStream().listen((_) {
           Navigator.push(context, MaterialPageRoute(
-            builder: (context) => Text("Quiz")
+            builder: (context) => QuizView()
           ));
         });
     } else {
