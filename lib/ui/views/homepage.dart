@@ -27,7 +27,7 @@ class HomepageView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               HomepageHeader(),
-              GlobalUserProgressionWidget(),
+              // GlobalUserProgressionWidget(),
               Expanded(
                 child: Consumer<ThemesProvider>(
                   builder: (context, themesProvider, _) =>
@@ -106,14 +106,16 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
           child: ListView(
             
             children: <Widget>[
+              Padding(
+                padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
+                child: Text("Select your themes :"),
+              ),
               SelectableThemesForm(
                 themes: widget.themes,
                 validator: (selectedThemes) => selectedThemes.isEmpty ? "Cannot" : null,
                 onSaved: (selectedThemes) => _selectedThemes = selectedThemes,
               ),
-              DifficultyChooser(
-
-              ),
+              // DifficultyChooser(),
             ],
           ),
         ),

@@ -40,13 +40,14 @@ class QuizTheme extends Model {
 
 class QuizQuestion extends Model {
 
+  QuizTheme theme;
   String entitled;
   ResourceType entitledType;
   List<String> answers;
   ResourceType answersType;
   int difficulty;
 
-  QuizQuestion.fromJSON({@required Map<String, Object> data}) : super(data["id"]) {
+  QuizQuestion.fromJSON({@required this.theme, @required Map<String, Object> data}) : super(data["id"]) {
     this.entitled = data[DatabaseIdentifiers.QUESTION_ENTITLED];
     this.entitledType = ResourceType.fromString(data[DatabaseIdentifiers.QUESTION_ENTITLED_TYPE]);;
     this.answers = (data[DatabaseIdentifiers.QUESTION_ANSWERS] as String).split("&&");

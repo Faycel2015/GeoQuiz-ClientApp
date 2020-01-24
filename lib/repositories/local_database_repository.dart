@@ -17,7 +17,7 @@ abstract class LocalDatabaseRepository {
 
   /// Get list of questions
   /// [count] is the number of questions to return
-  Future<List<QuizQuestion>> getQuestions({int count});
+  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes});
 }
 
 
@@ -54,6 +54,7 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
         await db.execute('''
           CREATE TABLE ${DatabaseIdentifiers.QUESTIONS_TABLE} (
             ${DatabaseIdentifiers.QUESTION_ID} text primary key,
+            ${DatabaseIdentifiers.QUESTION_THEME_ID} text not null,
             ${DatabaseIdentifiers.QUESTION_ENTITLED} text not null,
             ${DatabaseIdentifiers.QUESTION_ENTITLED_TYPE} text not null,
             ${DatabaseIdentifiers.QUESTION_ANSWERS} text not null,
@@ -90,13 +91,22 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
   }
 
   @override
-  Future<List<QuizQuestion>> getQuestions({int count}) async {
+  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes}) async {
+    if (themes == null || themes.isEmpty)
+      return [];
+
     var db = await openDatabase(DBNAME);
-    List<Map<String,Object>> rawQuestions = await db.query(DatabaseIdentifiers.THEMES_TABLE, limit: count);
+    List<Map<String,Object>> rawQuestions = await db.query(
+      DatabaseIdentifiers.THEMES_TABLE, 
+      limit: count,
+      where: "${DatabaseIdentifiers.QUESTION_THEME_ID} IN (${themes.join(',')})"
+    );
     List<QuizQuestion> questions = List();
     for (var q in rawQuestions) {
       try {
-        questions.add(QuizQuestion.fromJSON(data: q));
+        var theme = themes.where((t) => t.id == q[DatabaseIdentifiers.QUESTION_THEME_ID]);
+        if (theme.isNotEmpty)
+          questions.add(QuizQuestion.fromJSON(theme: theme.first, data: q));
       } catch (e) {print(e);}
     }
     await db.close();
