@@ -3,9 +3,13 @@ import 'package:app/utils/database_content_container.dart';
 import 'package:sqflite/sqflite.dart';
 
 
+
+/// Repository to manage local data in the user device.
+/// It handles the models (questions and themes) and the user local progression
 abstract class LocalDatabaseRepository {
 
   /// Get the current version of the local database
+  /// return null if the database is not yet created
   Future<int> currentDatabaseVersion();
 
   /// Update the static part of the database (themes, questions)
@@ -21,18 +25,25 @@ abstract class LocalDatabaseRepository {
 
 
 
+///
+///
+///
 class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
 
   static const DBNAME = "database.db";
 
+
+  /// 
   @override
   Future<int> currentDatabaseVersion() async {
     var _db = await openDatabase(DBNAME);
-    int v = await _db.getVersion();
+    var v = await _db.getVersion();
     await _db.close();
-    return v;
+    return v == 0 ? null : v;
   }
 
+
+  ///
   @override
   Future<void> updateStaticDatabase(int version, DatabaseContentContainer databaseContentContainer) async {
     // var db = await openDatabase(
@@ -115,5 +126,4 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
     // await db.close();
     return questions;
   }
-
 }

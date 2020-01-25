@@ -1,7 +1,5 @@
-import 'package:app/logic/database_verification_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:provider/provider.dart';
 
 
 class StartUpView extends StatelessWidget {
@@ -13,18 +11,27 @@ class StartUpView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(child: Text("loading..."))
+      body: error ? _Error() : _Loading()
     );
   }
 }
 
 
-
-class StartUpErrorWidget extends StatelessWidget {
+class _Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Text(
-      "error"
+    return Center(
+      child: Text("Loading ..."),
+    );
+  }
+}
+
+
+class _Error extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text("Error"),
     );
   }
 }
