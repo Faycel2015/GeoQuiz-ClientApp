@@ -37,7 +37,7 @@ void main() async {
         ChangeNotifierProvider<StartUpCheckerProvider>(create: (context) => StartUpCheckerProvider(
           localRepo: localRepo,
           remoteRepo: remoteRepo,
-        )),
+        )..performStartUpProcess()),
         ChangeNotifierProvider<ThemesProvider>(create: (context) => ThemesProvider(
           localRepo: localRepo,
         )),

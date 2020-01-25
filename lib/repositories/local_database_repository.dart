@@ -1,5 +1,5 @@
 import 'package:app/models/models.dart';
-import 'package:app/utils/database_content_container.dart';
+import 'package:app/utils/database_content_wrapper.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sqflite/sqflite.dart';
 

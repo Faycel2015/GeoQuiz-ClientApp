@@ -1,4 +1,5 @@
 import 'package:app/logic/database_verification_provider.dart';
+import 'package:app/logic/startup_checker.dart';
 import 'package:app/models/models.dart';
 import 'package:app/repositories/database_content_container.dart';
 import 'package:app/repositories/local_database_repository.dart';
@@ -11,7 +12,7 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   
   test("Provider with errors", () {
-    var provider = DatabaseVerificationProvider(
+    var provider = StartUpCheckerProvider(
       localRepo: TestLocalDatabaseRepository(),
       remoteRepo: TestRemoteDatabaseRepository(),
     );
