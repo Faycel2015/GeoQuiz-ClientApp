@@ -50,15 +50,15 @@ class DatabaseVerificationProvider extends ChangeNotifier {
     }
       
     if (remoteVersion != null && localVersion != null && remoteVersion != localVersion) {
-      try {
+      // try {
         DatabaseContentContainer remoteDatabaseContent = await _remoteRepo.getDatabaseContent();
-        for (var t in remoteDatabaseContent.themes)
+        // for (var t in remoteDatabaseContent.themes)
         await _localRepo.updateStaticDatabase(remoteVersion, remoteDatabaseContent);
         updateSuccessful = true;
         _logger.i("Local database successfully updated");
-      } catch(e) {
-        _logger.e("Unable to update the local database", e);
-      }
+      // } catch(e) {
+        // _logger.e("Unable to update the local database", e);
+      // }
     }
 
     this.unableToFetchRemoteData = remoteVersion == null;

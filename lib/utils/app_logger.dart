@@ -13,8 +13,10 @@ class AppLogger extends Logger {
 class AppPrinter extends LogPrinter {
   @override
   List<String> log(LogEvent event) {
-    return event.message.toString().split("\n").map((m) => PrettyPrinter.levelColors[event.level](m)).toList();
+    var res = List<String>();
+    res.addAll(event.message.toString().split("\n").map((m) => PrettyPrinter.levelColors[event.level](m)).toList());
+    if (event.error != null)
+      res.addAll(event.error.toString().split("\n").map((m) => PrettyPrinter.levelColors[event.level](m)).toList());
+    return res;
   }
-
-
 }

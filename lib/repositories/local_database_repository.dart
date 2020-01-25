@@ -1,6 +1,5 @@
 import 'package:app/models/models.dart';
 import 'package:app/utils/database_content_container.dart';
-import 'package:app/utils/database_identifiers.dart';
 import 'package:sqflite/sqflite.dart';
 
 
@@ -36,46 +35,46 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
 
   @override
   Future<void> updateStaticDatabase(int version, DatabaseContentContainer databaseContentContainer) async {
-    var db = await openDatabase(
-      DBNAME,
-      version: version,
-      onOpen: (db) async {
-        await db.execute("DROP TABLE IF EXISTS ${DatabaseIdentifiers.THEMES_TABLE};");
-        await db.execute("DROP TABLE IF EXISTS ${DatabaseIdentifiers.QUESTIONS_TABLE};");
-        await db.execute('''
-          CREATE TABLE ${DatabaseIdentifiers.THEMES_TABLE} (
-            ${DatabaseIdentifiers.THEME_ID} text primary key,
-            ${DatabaseIdentifiers.THEME_TITLE} text not null,
-            ${DatabaseIdentifiers.THEME_ICON} text not null,
-            ${DatabaseIdentifiers.THEME_COLOR} int not null,
-            ${DatabaseIdentifiers.THEME_ENTITLED} text not null
-          )
-        ''');
-        await db.execute('''
-          CREATE TABLE ${DatabaseIdentifiers.QUESTIONS_TABLE} (
-            ${DatabaseIdentifiers.QUESTION_ID} text primary key,
-            ${DatabaseIdentifiers.QUESTION_THEME_ID} text not null,
-            ${DatabaseIdentifiers.QUESTION_ENTITLED} text not null,
-            ${DatabaseIdentifiers.QUESTION_ENTITLED_TYPE} text not null,
-            ${DatabaseIdentifiers.QUESTION_ANSWERS} text not null,
-            ${DatabaseIdentifiers.QUESTION_ANSWERS_TYPE} text not null,
-            ${DatabaseIdentifiers.QUESTION_DIFFICULTY} int not null
-          )
-        ''');
-      }
-    );
+    // var db = await openDatabase(
+    //   DBNAME,
+    //   version: version,
+    //   onOpen: (db) async {
+    //     await db.execute("DROP TABLE IF EXISTS ${RemoteDatabaseIdentifiers.THEMES_KEY};");
+    //     await db.execute("DROP TABLE IF EXISTS ${RemoteDatabaseIdentifiers.QUESTIONS_KEY};");
+    //     await db.execute('''
+    //       CREATE TABLE ${RemoteDatabaseIdentifiers.THEMES_KEY} (
+    //         ${RemoteDatabaseIdentifiers.THEME_ID} text primary key,
+    //         ${RemoteDatabaseIdentifiers.THEME_TITLE} text not null,
+    //         ${RemoteDatabaseIdentifiers.THEME_ICON} text not null,
+    //         ${RemoteDatabaseIdentifiers.THEME_COLOR} int not null,
+    //         ${RemoteDatabaseIdentifiers.THEME_ENTITLED} text not null
+    //       )
+    //     ''');
+    //     await db.execute('''
+    //       CREATE TABLE ${RemoteDatabaseIdentifiers.QUESTIONS_KEY} (
+    //         ${RemoteDatabaseIdentifiers.QUESTION_ID} text primary key,
+    //         ${RemoteDatabaseIdentifiers.QUESTION_THEME_ID} text not null,
+    //         ${RemoteDatabaseIdentifiers.QUESTION_ENTITLED} text not null,
+    //         ${RemoteDatabaseIdentifiers.QUESTION_ENTITLED_TYPE} text not null,
+    //         ${RemoteDatabaseIdentifiers.QUESTION_ANSWERS} text not null,
+    //         ${RemoteDatabaseIdentifiers.QUESTION_ANSWERS_TYPE} text not null,
+    //         ${RemoteDatabaseIdentifiers.QUESTION_DIFFICULTY} int not null
+    //       )
+    //     ''');
+    //   }
+    // );
     
-    Batch batch = db.batch();
-    for (QuizTheme t in databaseContentContainer.themes??[]) {
-      batch.insert(DatabaseIdentifiers.THEMES_TABLE, t.toMap());
-    }
-    for (QuizQuestion q in databaseContentContainer.questions??[]) {
-      batch.insert(DatabaseIdentifiers.QUESTIONS_TABLE, q.toMap());
-    }
-    try {
-      print(await batch.commit(continueOnError: true));
-    } catch(e) {}
-    await db.close();
+    // Batch batch = db.batch();
+    // for (QuizTheme t in databaseContentContainer.themes??[]) {
+    //   batch.insert(RemoteDatabaseIdentifiers.THEMES_KEY, t.toMap());
+    // }
+    // for (QuizQuestion q in databaseContentContainer.questions??[]) {
+    //   batch.insert(RemoteDatabaseIdentifiers.QUESTIONS_KEY, q.toMap());
+    // }
+    // try {
+    //   print(await batch.commit(continueOnError: true));
+    // } catch(e) {}
+    // await db.close();
   }
 
 
@@ -83,10 +82,10 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
   Future<List<QuizTheme>> getThemes() async {
     var db = await openDatabase(DBNAME);
     List<QuizTheme> themes = List();
-    List<Map<String, Object>> themesData = await db.query(DatabaseIdentifiers.THEMES_TABLE);
-    for (var t in themesData) {
-      themes.add(QuizTheme.fromJSON(data: t));
-    }
+    // List<Map<String, Object>> themesData = await db.query(RemoteDatabaseIdentifiers.THEMES_KEY);
+    // for (var t in themesData) {
+    //   themes.add(QuizTheme.fromJSON(data: t));
+    // }
     await db.close();
     return themes;
   }
@@ -96,24 +95,24 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
   Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes}) async {
     if (themes == null || themes.isEmpty)
       return [];
-    var db = await openDatabase(DBNAME);
-    List<String> themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
-    List<Map<String,Object>> rawQuestions = await db.query(
-      DatabaseIdentifiers.QUESTIONS_TABLE, 
-      // limit: count,
-      // where: "${DatabaseIdentifiers.QUESTION_THEME_ID} IN (${themeIDs.join(',')})"
-    );
-    print(rawQuestions);
+    // var db = await openDatabase(DBNAME);
+    // List<String> themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
+    // List<Map<String,Object>> rawQuestions = await db.query(
+    //   RemoteDatabaseIdentifiers.QUESTIONS_KEY, 
+    //   // limit: count,
+    //   // where: "${DatabaseIdentifiers.QUESTION_THEME_ID} IN (${themeIDs.join(',')})"
+    // );
+    // print(rawQuestions);
     List<QuizQuestion> questions = List();
-    for (var q in rawQuestions) {
-      try {
-        var theme = themes.where((t) => t.id == q[DatabaseIdentifiers.QUESTION_THEME_ID]);
-        if (theme.isNotEmpty)
-          questions.add(QuizQuestion.fromJSON(theme: theme.first, data: q));
-          print("Success");
-      } catch (e) {print(e);}
-    }
-    await db.close();
+    // for (var q in rawQuestions) {
+    //   try {
+    //     var theme = themes.where((t) => t.id == q[RemoteDatabaseIdentifiers.QUESTION_THEME_ID]);
+    //     if (theme.isNotEmpty)
+    //       questions.add(QuizQuestion.fromJSON(theme: theme.first, data: q));
+    //       print("Success");
+    //   } catch (e) {print(e);}
+    // }
+    // await db.close();
     return questions;
   }
 

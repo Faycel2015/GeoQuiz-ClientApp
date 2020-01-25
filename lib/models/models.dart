@@ -1,7 +1,11 @@
 
-import 'package:app/utils/database_identifiers.dart';
 import 'package:flutter/widgets.dart';
 
+
+
+///
+///
+///
 abstract class Model {
   String id;
 
@@ -11,6 +15,10 @@ abstract class Model {
 }
 
 
+
+///
+///
+///
 class QuizTheme extends Model {
 
   String title;
@@ -18,26 +26,30 @@ class QuizTheme extends Model {
   String icon;
   int color;
 
-  QuizTheme.fromJSON({@required Map<String, Object> data}) : super(data[DatabaseIdentifiers.THEME_ID]) {
-    this.title = data[DatabaseIdentifiers.THEME_TITLE];
-    this.icon = data[DatabaseIdentifiers.THEME_ICON];
-    this.color = data[DatabaseIdentifiers.THEME_COLOR] as int;
-    this.entitled = data[DatabaseIdentifiers.THEME_ENTITLED];
+  QuizTheme.fromJSON({@required Map<String, Object> data}) : super("data[DatabaseIdentifiers.THEME_ID]") {
+    // this.title = data[DatabaseIdentifiers.THEME_TITLE];
+    // this.icon = data[DatabaseIdentifiers.THEME_ICON];
+    // this.color = data[DatabaseIdentifiers.THEME_COLOR] as int;
+    // this.entitled = data[DatabaseIdentifiers.THEME_ENTITLED];
   }
 
   @override
   Map<String, Object> toMap() {
     return {
-      DatabaseIdentifiers.THEME_ID: id,
-      DatabaseIdentifiers.THEME_TITLE: title,
-      DatabaseIdentifiers.THEME_ICON: icon,
-      DatabaseIdentifiers.THEME_COLOR: color,
-      DatabaseIdentifiers.THEME_ENTITLED: entitled,
+      // DatabaseIdentifiers.THEME_ID: id,
+      // DatabaseIdentifiers.THEME_TITLE: title,
+      // DatabaseIdentifiers.THEME_ICON: icon,
+      // DatabaseIdentifiers.THEME_COLOR: color,
+      // DatabaseIdentifiers.THEME_ENTITLED: entitled,
     };
   }
 }
 
 
+
+///
+///
+///
 class QuizQuestion extends Model {
 
   QuizTheme theme;
@@ -48,29 +60,33 @@ class QuizQuestion extends Model {
   int difficulty;
 
   QuizQuestion.fromJSON({@required this.theme, @required Map<String, Object> data}) : super(data["id"]) {
-    this.theme = theme;
-    this.entitled = data[DatabaseIdentifiers.QUESTION_ENTITLED];
-    this.entitledType = ResourceType.fromString(data[DatabaseIdentifiers.QUESTION_ENTITLED_TYPE]);;
-    this.answers = (data[DatabaseIdentifiers.QUESTION_ANSWERS] as String).split("&&");
-    this.answersType = ResourceType.fromString(data[DatabaseIdentifiers.QUESTION_ANSWERS_TYPE]);
-    this.difficulty = data[DatabaseIdentifiers.QUESTION_DIFFICULTY];
+    // this.theme = theme;
+    // this.entitled = data[DatabaseIdentifiers.QUESTION_ENTITLED];
+    // this.entitledType = ResourceType.fromString(data[DatabaseIdentifiers.QUESTION_ENTITLED_TYPE]);;
+    // this.answers = (data[DatabaseIdentifiers.QUESTION_ANSWERS] as String).split("&&");
+    // this.answersType = ResourceType.fromString(data[DatabaseIdentifiers.QUESTION_ANSWERS_TYPE]);
+    // this.difficulty = data[DatabaseIdentifiers.QUESTION_DIFFICULTY];
   }
 
   @override
   Map<String, Object> toMap() {
     return {
-      DatabaseIdentifiers.QUESTION_ID: id,
-      DatabaseIdentifiers.QUESTION_THEME_ID: theme.id,
-      DatabaseIdentifiers.QUESTION_ENTITLED: entitled,
-      DatabaseIdentifiers.QUESTION_ENTITLED_TYPE: entitledType.value,
-      DatabaseIdentifiers.QUESTION_ANSWERS: answers.join("&&"),
-      DatabaseIdentifiers.QUESTION_ANSWERS_TYPE: answersType.value,
-      DatabaseIdentifiers.QUESTION_DIFFICULTY: difficulty??99,
+      // DatabaseIdentifiers.QUESTION_ID: id,
+      // DatabaseIdentifiers.QUESTION_THEME_ID: theme.id,
+      // DatabaseIdentifiers.QUESTION_ENTITLED: entitled,
+      // DatabaseIdentifiers.QUESTION_ENTITLED_TYPE: entitledType.value,
+      // DatabaseIdentifiers.QUESTION_ANSWERS: answers.join("&&"),
+      // DatabaseIdentifiers.QUESTION_ANSWERS_TYPE: answersType.value,
+      // DatabaseIdentifiers.QUESTION_DIFFICULTY: difficulty??99,
     };
   }
 }
 
 
+
+///
+///
+///
 class ResourceType {
   static final ResourceType TEXT = ResourceType._("text");
   static final ResourceType IMAGE = ResourceType._("img");
