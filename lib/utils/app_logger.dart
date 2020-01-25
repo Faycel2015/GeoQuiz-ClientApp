@@ -1,16 +1,18 @@
 import 'package:logger/logger.dart';
 
 
+/// Uses instances to log events in the log output
 class AppLogger extends Logger {
   AppLogger() : super(
     filter: null, 
-    printer: AppPrinter(), 
+    printer: _AppPrinter(), 
     output: null,
   );
 }
 
 
-class AppPrinter extends LogPrinter {
+/// [LogPrinter] extension to format event
+class _AppPrinter extends LogPrinter {
   @override
   List<String> log(LogEvent event) {
     var res = List<String>();

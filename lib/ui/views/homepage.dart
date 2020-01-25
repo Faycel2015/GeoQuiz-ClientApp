@@ -166,7 +166,7 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
   }
 
   _handleInvalidForm() {
-    SnackBarHandler.showSnackbar(
+    showSnackbar(
       context: context,
       content: Text("Please select themes to play !"),
     );
@@ -174,7 +174,7 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
 
   _handlePreparationError(_) {
     _prepareGameStream?.cancel();
-    SnackBarHandler.showSnackbar(
+    showSnackbar(
       context: context,
       critical: true,
       content: Text("Unexpected error occured.")
