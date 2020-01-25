@@ -18,6 +18,7 @@ import 'package:provider/provider.dart';
 
 
 class HomepageView extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -183,6 +184,7 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
 
 
 class SelectableThemesForm extends FormField<Set<QuizTheme>> {
+  
   SelectableThemesForm({
     Key key,
     @required List<QuizTheme> themes,

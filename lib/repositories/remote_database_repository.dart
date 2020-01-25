@@ -120,7 +120,7 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
         final theme = themes.where((t) => t.id == questionThemeID).first;
         final question = _RemoteQuestionAdapter(data: questionData, theme: theme);
         questions.add(question);
-      } catch(e) {}
+      } catch(e) {print(e);}
     }
     return questions;
   }
@@ -151,6 +151,7 @@ class _RemoteThemeAdapter implements QuizTheme {
 /// Adapter used to adapt our remote data objects to [QuizQuestion]
 /// Used in [FirebaseRemoteDatabaseRepository].
 class _RemoteQuestionAdapter implements QuizQuestion {
+
   String id;
   QuizTheme theme;
   String entitled;
@@ -163,10 +164,19 @@ class _RemoteQuestionAdapter implements QuizQuestion {
     this.theme = theme;
     this.id = data[_Identifiers.QUESTION_ID];
     this.entitled = data[_Identifiers.QUESTION_ENTITLED];
-    this.entitledType = data[_Identifiers.QUESTION_ENTITLED_TYPE];
-    this.answers = data[_Identifiers.QUESTION_ANSWERS];
-    this.answersType = data[_Identifiers.QUESTION_ENTITLED_TYPE];
+    this.entitledType = _strToType(data[_Identifiers.QUESTION_ENTITLED_TYPE]);
+    this.answers = (data[_Identifiers.QUESTION_ANSWERS] as List).cast<String>();
+    this.answersType = _strToType(data[_Identifiers.QUESTION_ANSWERS_TYPE]);
     this.difficulty = data[_Identifiers.QUESTION_DIFFICULTY];
+  }
+
+  static ResourceType _strToType(String typeStr) {
+    switch (typeStr) {
+      case "txt" : return ResourceType.TEXT;
+      case "img" : return ResourceType.IMAGE;
+      case "loc" : return ResourceType.LOCATION;
+      default: throw("Not supported type ($typeStr)");
+    }
   }
 }
 

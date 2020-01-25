@@ -85,6 +85,8 @@ class StartUpCheckerProvider extends ChangeNotifier {
   Future<bool> _updateLocalDatabase({@required int version}) async {
     try {
       var remoteDatabaseContent = await _remoteRepo.getDatabaseContent();
+      _logger.i("${remoteDatabaseContent.themes.length} themes");
+      _logger.i("${remoteDatabaseContent.questions.length} questions");
       await _localRepo.updateStaticDatabase(version, remoteDatabaseContent);
       _logger.i("Local database successfully updated");
       return true;

@@ -84,14 +84,15 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
   Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes}) async {
     if (themes == null || themes.isEmpty)
       return [];
-    // var db = await openDatabase(DBNAME);
-    // List<String> themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
-    // List<Map<String,Object>> rawQuestions = await db.query(
-    //   RemoteDatabaseIdentifiers.QUESTIONS_KEY, 
-    //   // limit: count,
-    //   // where: "${DatabaseIdentifiers.QUESTION_THEME_ID} IN (${themeIDs.join(',')})"
-    // );
-    // print(rawQuestions);
+    
+    var db = await openDatabase(_Identifiers.DATABASE_NAME);
+    var themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
+    var rawQuestions = await db.query(
+      _Identifiers.QUESTIONS_TABLE, 
+      // limit: count,
+      // where: "${DatabaseIdentifiers.QUESTION_THEME_ID} IN (${themeIDs.join(',')})"
+    );
+    print(rawQuestions);
     List<QuizQuestion> questions = List();
     // for (var q in rawQuestions) {
     //   try {
@@ -204,7 +205,7 @@ class _LocalQuestionAdapter implements QuizQuestion {
     this.entitledType = _strToType(data[_Identifiers.QUESTION_ENTITLED_TYPE]);
     var answersStr = (data[_Identifiers.QUESTION_ANSWERS] as String);
     this.answers = answersStr.split(serializationCharacter);
-    this.answersType = data[_Identifiers.QUESTION_ANSWERS_TYPE];
+    this.answersType = _strToType(data[_Identifiers.QUESTION_ANSWERS_TYPE]);
     this.difficulty = data[_Identifiers.QUESTION_DIFFICULTY];
   }
 
@@ -212,8 +213,8 @@ class _LocalQuestionAdapter implements QuizQuestion {
     var answers = question.answers.join(serializationCharacter);
     return {
       _Identifiers.QUESTION_ID: question.id,
-      _Identifiers.QUESTION_THEME: question.theme,
-      _Identifiers.QUESTION_ENTITLED: question.entitledType,
+      _Identifiers.QUESTION_THEME: question.theme.id,
+      _Identifiers.QUESTION_ENTITLED: question.entitled,
       _Identifiers.QUESTION_ENTITLED_TYPE: _typeToStr(question.entitledType),
       _Identifiers.QUESTION_ANSWERS: answers,
       _Identifiers.QUESTION_ANSWERS_TYPE: _typeToStr(question.answersType),

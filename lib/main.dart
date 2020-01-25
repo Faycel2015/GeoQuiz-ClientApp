@@ -29,7 +29,7 @@ void main() async {
   var localRepo = SQLiteLocalDatabaseRepository();
   var remoteRepo = FirebaseRemoteDatabaseRepository();
 
-  // await deleteDatabase("database.db");
+  await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(
@@ -70,10 +70,14 @@ class GeoQuizApp extends StatelessWidget {
       home: ScrollConfiguration(
         behavior: BasicScrollWithoutGlow(), // we remove glowing animation for all scrollable widgets 
         child: Consumer<StartUpCheckerProvider>(
-          builder: (context, startUpChecker, _) => 
-            (!startUpChecker.readyToStart)
-            ? StartUpView(error: startUpChecker.error)
-            : HomepageView()
+          builder: (context, startUpChecker, _) {
+            if (!startUpChecker.readyToStart) {
+              return StartUpView(error: startUpChecker.error);
+            } else {
+              Provider.of<ThemesProvider>(context, listen: false).loadThemes();
+              return HomepageView();
+            }
+          }
         ),
       ),
     );
