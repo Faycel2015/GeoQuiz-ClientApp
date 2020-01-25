@@ -30,7 +30,7 @@ abstract class RemoteDatabaseRepository {
 /// The adapter pattern is used to adapt our remote data object to our models.
 /// See https://refactoring.guru/design-patterns/adapter to know more about the
 /// Adapter pattern and to have an example.
-/// See [RemoteQuizThemeAdapter] and [RemoteQuizQuestionAdapter]
+/// See [_RemoteThemeAdapter] and [_RemoteQuestionAdapter]
 /// These adapters implements [QuizTheme] and [QuizQuestion] and transform use 
 /// the json representation (a [Map] in reality) to build the instances.
 class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
@@ -94,14 +94,14 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
   }
 
 
-  /// Return a list of [RemoteQuizThemeAdapter] from a [Map] that contains the
+  /// Return a list of [_RemoteThemeAdapter] from a [Map] that contains the
   /// theme data
-  List<RemoteQuizThemeAdapter> _getThemes({List data}) {
-    final themes = List<RemoteQuizThemeAdapter>();
+  List<_RemoteThemeAdapter> _getThemes({List data}) {
+    final themes = List<_RemoteThemeAdapter>();
     final mapData = data.cast<Map<String, Object>>();
     for (var themeData in mapData) {
       try {
-        final theme = RemoteQuizThemeAdapter(data: themeData);
+        final theme = _RemoteThemeAdapter(data: themeData);
         themes.add(theme);
       } catch (_) {}
     }
@@ -109,16 +109,16 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
   }
 
 
-  /// Return a list of [RemoteQuizQuestionAdapter] from a [Map] that contains 
+  /// Return a list of [_RemoteQuestionAdapter] from a [Map] that contains 
   /// the question data
-  List<RemoteQuizQuestionAdapter> _getQuestions({List data, Iterable<RemoteQuizThemeAdapter> themes}) {
-    final questions = List<RemoteQuizQuestionAdapter>();
+  List<_RemoteQuestionAdapter> _getQuestions({List data, Iterable<_RemoteThemeAdapter> themes}) {
+    final questions = List<_RemoteQuestionAdapter>();
     final mapData = data.cast<Map<String, Object>>();
     for (var questionData in mapData) {
       try {
         final questionThemeID = questionData[_Identifiers.QUESTION_THEME_ID];
         final theme = themes.where((t) => t.id == questionThemeID).first;
-        final question = RemoteQuizQuestionAdapter(data: questionData, theme: theme);
+        final question = _RemoteQuestionAdapter(data: questionData, theme: theme);
         questions.add(question);
       } catch(e) {}
     }
@@ -130,14 +130,14 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
 
 /// Adapter used to adapt our remote data objects to [QuizTheme]
 /// Used in [FirebaseRemoteDatabaseRepository].
-class RemoteQuizThemeAdapter implements QuizTheme {
+class _RemoteThemeAdapter implements QuizTheme {
   String id;
   String title;
   String icon;
   int color;
   String entitled;
 
-  RemoteQuizThemeAdapter({Map<String, Object> data}) {
+  _RemoteThemeAdapter({Map<String, Object> data}) {
     this.id = data[_Identifiers.THEME_ID];
     this.title = data[_Identifiers.THEME_TITLE];
     this.icon = data[_Identifiers.THEME_ICON];
@@ -150,7 +150,7 @@ class RemoteQuizThemeAdapter implements QuizTheme {
 
 /// Adapter used to adapt our remote data objects to [QuizQuestion]
 /// Used in [FirebaseRemoteDatabaseRepository].
-class RemoteQuizQuestionAdapter implements QuizQuestion {
+class _RemoteQuestionAdapter implements QuizQuestion {
   String id;
   QuizTheme theme;
   String entitled;
@@ -159,7 +159,7 @@ class RemoteQuizQuestionAdapter implements QuizQuestion {
   ResourceType answersType;
   int difficulty;
 
-  RemoteQuizQuestionAdapter({Map<String, Object> data, RemoteQuizThemeAdapter theme}) {
+  _RemoteQuestionAdapter({Map<String, Object> data, _RemoteThemeAdapter theme}) {
     this.theme = theme;
     this.id = data[_Identifiers.QUESTION_ID];
     this.entitled = data[_Identifiers.QUESTION_ENTITLED];
