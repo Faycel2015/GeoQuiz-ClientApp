@@ -14,11 +14,11 @@ class DatabaseVerificationProvider extends ChangeNotifier {
 
   bool startUpVerificationDone;
   bool localDatabaseUpToDate;
-  bool unableToFetchRemoteData;
-  bool currentLocalDatabaseExists;
+  bool remoteDataFethed;
+  bool localDatabaseExists;
 
-  bool get error => !(currentLocalDatabaseExists??true);
-  bool get readyToStart => (startUpVerificationDone??false) && (currentLocalDatabaseExists??false);
+  bool get error => !(localDatabaseExists??true);
+  bool get readyToStart => (startUpVerificationDone??false) && (localDatabaseExists??false);
 
 
   DatabaseVerificationProvider({@required RemoteDatabaseRepository remoteRepo, @required LocalDatabaseRepository localRepo})
@@ -34,7 +34,6 @@ class DatabaseVerificationProvider extends ChangeNotifier {
   performStartUpProcess() async {
     int remoteVersion;
     int localVersion;
-    bool updateSuccessful = false;
 
     try {
       remoteVersion = await _remoteRepo.currentDatabaseVersion();
@@ -48,33 +47,36 @@ class DatabaseVerificationProvider extends ChangeNotifier {
     } catch(e) {
       _logger.e("Unable to get the database local version", e);
     }
-      
-    if (remoteVersion != null && localVersion != null && remoteVersion != localVersion) {
-      // try {
-        DatabaseContentContainer remoteDatabaseContent = await _remoteRepo.getDatabaseContent();
-        // for (var t in remoteDatabaseContent.themes)
+
+
+
+    if (remoteVersion != null && (localVersion == null || localVersion != remoteVersion)) {
+      try {
+        DatabaseContentWrapper remoteDatabaseContent = await _remoteRepo.getDatabaseContent();
         await _localRepo.updateStaticDatabase(remoteVersion, remoteDatabaseContent);
-        updateSuccessful = true;
+        localVersion = remoteVersion;
         _logger.i("Local database successfully updated");
-      // } catch(e) {
-        // _logger.e("Unable to update the local database", e);
-      // }
+      } catch(e) {
+        _logger.e("Unable to update the local database", e);
+      }
     }
 
-    this.unableToFetchRemoteData = remoteVersion == null;
-    this.currentLocalDatabaseExists = localVersion != null;
-    this.localDatabaseUpToDate = updateSuccessful;
+    this.remoteDataFethed = remoteVersion == null;
+    this.localDatabaseExists = localVersion != null;
+    this.localDatabaseUpToDate = localVersion == remoteVersion;
     this.startUpVerificationDone = true;
     notifyListeners();
 
     _logger.i("Database verification process done. Here the current provider state :\n${_getStateRepresentation()}");
   }
 
+
+  /// 
   String _getStateRepresentation() {
-    String res = "\tunableToFetchRemoteData: $unableToFetchRemoteData";
-    res += "\n\tcurrentLocalDatabaseExists: $currentLocalDatabaseExists";
+    String res = "\tstartUpVerificationDone: $startUpVerificationDone";
+    res += "\n\tunableToFetchRemoteData: $remoteDataFethed";
+    res += "\n\tcurrentLocalDatabaseExists: $localDatabaseExists";
     res += "\n\tlocalDatabaseUpToDate: $localDatabaseUpToDate";
-    res += "\n\tstartUpVerificationDone: $startUpVerificationDone";
     res += "\n\treadyToStart: $readyToStart";
     res += "\n\terror: $error";
     return res;

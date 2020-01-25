@@ -16,8 +16,8 @@ void main() {
       remoteRepo: TestRemoteDatabaseRepository(),
     );
     
-    expect(provider.unableToFetchRemoteData, true);
-    expect(provider.currentLocalDatabaseExists, false);
+    expect(provider.remoteDataFethed, true);
+    expect(provider.localDatabaseExists, false);
     expect(provider.startUpVerificationDone, true);
     expect(provider.localDatabaseUpToDate, false);
   });

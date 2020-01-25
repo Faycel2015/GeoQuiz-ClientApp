@@ -18,7 +18,7 @@ abstract class RemoteDatabaseRepository {
   /// Return the entire content of the database
   /// WARNING: this operation can be slow if the database contains a lot 
   ///          of data
-  Future<DatabaseContentContainer> getDatabaseContent();
+  Future<DatabaseContentWrapper> getDatabaseContent();
 }
 
 
@@ -48,10 +48,10 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
   }
 
 
-  /// Return a [DatabaseContentContainer] that contains all the themes and
+  /// Return a [DatabaseContentWrapper] that contains all the themes and
   /// questions in the database.
   @override
-  Future<DatabaseContentContainer> getDatabaseContent() async {
+  Future<DatabaseContentWrapper> getDatabaseContent() async {
     final dbContent = await _getContentFile(_Identifiers.DATABASE_FILENAME);
     final dbData = jsonDecode(dbContent);
 
@@ -61,7 +61,7 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
     final questionsData = dbData[_Identifiers.QUESTIONS_KEY];
     final questions = _getQuestions(data: questionsData, themes: themes);
 
-    return DatabaseContentContainer(themes: themes, questions: questions);
+    return DatabaseContentWrapper(themes: themes, questions: questions);
   }
 
 
@@ -130,8 +130,6 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
 
 /// Adapter used to adapt our remote data objects to [QuizTheme]
 /// Used in [FirebaseRemoteDatabaseRepository].
-/// Note that the [QuizTheme.toMap] is not implemented as it is useless for this
-/// adapter for now.
 class RemoteQuizThemeAdapter implements QuizTheme {
   String id;
   String title;
@@ -146,16 +144,12 @@ class RemoteQuizThemeAdapter implements QuizTheme {
     this.color = data[_Identifiers.THEME_COLOR];
     this.entitled = data[_Identifiers.THEME_ENTITLED];
   }
-
-  Map<String, Object> toMap() => throw UnimplementedError();
 }
 
 
 
 /// Adapter used to adapt our remote data objects to [QuizQuestion]
 /// Used in [FirebaseRemoteDatabaseRepository].
-/// Note that the [QuizQuestion.toMap] is not implemented as it is useless for this
-/// adapter for now.
 class RemoteQuizQuestionAdapter implements QuizQuestion {
   String id;
   QuizTheme theme;
@@ -174,8 +168,6 @@ class RemoteQuizQuestionAdapter implements QuizQuestion {
     this.answersType = data[_Identifiers.QUESTION_ENTITLED_TYPE];
     this.difficulty = data[_Identifiers.QUESTION_DIFFICULTY];
   }
-
-  Map<String, Object> toMap() => throw UnimplementedError();
 }
 
 

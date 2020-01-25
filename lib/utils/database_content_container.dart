@@ -1,8 +1,8 @@
 import 'package:app/models/models.dart';
 
-class DatabaseContentContainer {
+class DatabaseContentWrapper {
   List<QuizQuestion> questions;
   List<QuizTheme> themes;
   
-  DatabaseContentContainer({this.questions, this.themes});
+  DatabaseContentWrapper({this.questions, this.themes});
 }
