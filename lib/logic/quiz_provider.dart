@@ -20,7 +20,7 @@ class QuizProvider extends ChangeNotifier {
     _selectedThemes = selectedThemes;
 
     try {
-      _questions = await _localRepo.getQuestions(count: 10, themes: _selectedThemes);
+      _questions = await _localRepo.getQuestions(count: 10, themes: selectedThemes);
     } catch (e) {
       print(e);
     }

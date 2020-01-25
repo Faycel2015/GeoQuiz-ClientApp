@@ -79,26 +79,25 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
   }
 
 
-  /// TODO
+  /// Get a list of questions of maximum [count] elements and where the themes
+  /// of the questions are in [themes] collection.
   @override
   Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes}) async {
-    if (themes == null || themes.isEmpty)
-      return [];
+    final db = await openDatabase(_Identifiers.DATABASE_NAME);
+    final themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
     
-    var db = await openDatabase(_Identifiers.DATABASE_NAME);
-    var themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
-    var rawQuestions = await db.query(
+    final rawQuestions = await db.query(
       _Identifiers.QUESTIONS_TABLE, 
       limit: count,
       where: "${_Identifiers.QUESTION_THEME} IN (${themeIDs.join(',')})"
     );
-    List<QuizQuestion> questions = List();
+
+    final questions = List<QuizQuestion>();
     for (var q in rawQuestions) {
       try {
-        var theme = themes.where((t) => t.id == q[_Identifiers.QUESTION_THEME]).first;
-        questions.add(_LocalQuestionAdapter(data: q, theme: theme));
-        print("Success");
-      } catch (e) {print(e);}
+        var t = themes.where((t) => t.id == q[_Identifiers.QUESTION_THEME]).first;
+        questions.add(_LocalQuestionAdapter(data: q, theme: t));
+      } catch (e) { }
     }
     await db.close();
     return questions;
