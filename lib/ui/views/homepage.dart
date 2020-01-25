@@ -7,7 +7,7 @@ import 'package:app/ui/shared/assets.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/views/quiz.dart';
-import 'package:app/ui/widgets/global_user_progress.dart';
+import 'package:app/ui/widgets/app_menu.dart';
 import 'package:app/ui/widgets/gradient_background.dart';
 import 'package:app/utils/snackbar_handler.dart';
 import 'package:flutter/material.dart';
@@ -28,13 +28,12 @@ class HomepageView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               HomepageHeader(),
-              // GlobalUserProgressionWidget(),
               Expanded(
                 child: Consumer<ThemesProvider>(
                   builder: (context, themesProvider, _) =>
                     themesProvider.themes != null
                     ? QuizConfiguration(themes: themesProvider.themes)
-                    : Text("Loading...")
+                    : Center(child: Text("Loading..."))
                 ),
               ),
             ],
@@ -44,6 +43,8 @@ class HomepageView extends StatelessWidget {
     );
   }
 }
+
+
 
 class HomepageHeader extends StatelessWidget {
   @override
@@ -67,16 +68,24 @@ class HomepageHeader extends StatelessWidget {
             )
           ),
           
-          SvgPicture.asset(
-            Assets.menu,
-            height: 34,
-            color: textStyle.color,
+          InkWell(
+            onTap: () => _openMenu(context),
+            child: SvgPicture.asset(
+              Assets.menu,
+              height: 34,
+              color: textStyle.color,
+            ),
           )
         ],
       ),
     );
   }
+
+  _openMenu(context) {
+    showModalBottomSheet(context: context, builder: (context) => AppMenu());
+  }
 }
+
 
 
 class QuizConfiguration extends StatefulWidget {
@@ -172,6 +181,7 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
 }
 
 
+
 class SelectableThemesForm extends FormField<Set<QuizTheme>> {
   SelectableThemesForm({
     Key key,
@@ -209,6 +219,7 @@ class SelectableThemesForm extends FormField<Set<QuizTheme>> {
 }
 
 
+
 class ThemeCard extends StatelessWidget {
 
   final QuizTheme theme;
@@ -236,6 +247,7 @@ class ThemeCard extends StatelessWidget {
     );
   }
 }
+
 
 
 class DifficultyChooser extends StatelessWidget {
