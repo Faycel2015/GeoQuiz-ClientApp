@@ -1,5 +1,5 @@
-import 'package:app/logic/database_verification_provider.dart';
 import 'package:app/logic/quiz_provider.dart';
+import 'package:app/logic/startup_checker.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
@@ -14,10 +14,11 @@ import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
 
+
 /// Entry point for the application, it will basically run the app.
 /// 
-/// The app is wraped with a [MultiProvider] widget to provide [Provider]
-/// to the tree. The main application widget is [GeoQuizApp]
+/// The app is wrapped in a [MultiProvider] widget to provide [Provider]s
+/// to the tree. The main application widget is [GeoQuizApp].
 ///
 /// We also create our repositories implementation before to launch the app,
 /// and we give these repositories to the providers who need it. This prevents 
@@ -28,12 +29,12 @@ void main() async {
   var localRepo = SQLiteLocalDatabaseRepository();
   var remoteRepo = FirebaseRemoteDatabaseRepository();
 
-  await deleteDatabase("database.db");
+  // await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<DatabaseVerificationProvider>(create: (context) => DatabaseVerificationProvider(
+        ChangeNotifierProvider<StartUpCheckerProvider>(create: (context) => StartUpCheckerProvider(
           localRepo: localRepo,
           remoteRepo: remoteRepo,
         )),
@@ -50,12 +51,13 @@ void main() async {
 } 
 
 
+
 /// Main widget for the application. It is just an [StatelessWidget]
 /// that builds a [MaterialApp] to define the app title, the theme and
 /// the home widget.
 /// 
-/// The home widget depends of the [DatabaseVerificationProvider] state.
-/// Depending on the [DatabaseVerificationProvider.readyToStart] properties
+/// The home widget depends of the [StartUpCheckerProvider] state.
+/// Depending on the [StartUpCheckerProvider.readyToStart] properties
 /// we build the [StartUpView] or the [HomepageView].
 class GeoQuizApp extends StatelessWidget {
   @override
@@ -67,9 +69,10 @@ class GeoQuizApp extends StatelessWidget {
   
       home: ScrollConfiguration(
         behavior: BasicScrollWithoutGlow(), // we remove glowing animation for all scrollable widgets 
-        child: Consumer<DatabaseVerificationProvider>(
-          builder: (context, provider, _) => (!provider.readyToStart)
-            ? StartUpView(error: provider.error)
+        child: Consumer<StartUpCheckerProvider>(
+          builder: (context, startUpChecker, _) => 
+            (!startUpChecker.readyToStart)
+            ? StartUpView(error: startUpChecker.error)
             : HomepageView()
         ),
       ),

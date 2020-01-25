@@ -5,7 +5,7 @@ import 'package:app/utils/database_content_container.dart';
 import 'package:flutter/widgets.dart';
 
 
-class DatabaseVerificationProvider extends ChangeNotifier {
+class StartUpCheckerProvider extends ChangeNotifier {
 
   var _logger = AppLogger();
 
@@ -21,7 +21,7 @@ class DatabaseVerificationProvider extends ChangeNotifier {
   bool get readyToStart => (startUpVerificationDone??false) && (localDatabaseExists??false);
 
 
-  DatabaseVerificationProvider({@required RemoteDatabaseRepository remoteRepo, @required LocalDatabaseRepository localRepo})
+  StartUpCheckerProvider({@required RemoteDatabaseRepository remoteRepo, @required LocalDatabaseRepository localRepo})
   : assert(remoteRepo != null),
     assert(localRepo != null)
   {
