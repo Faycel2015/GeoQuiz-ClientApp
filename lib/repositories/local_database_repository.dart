@@ -89,20 +89,18 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
     var themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
     var rawQuestions = await db.query(
       _Identifiers.QUESTIONS_TABLE, 
-      // limit: count,
-      // where: "${DatabaseIdentifiers.QUESTION_THEME_ID} IN (${themeIDs.join(',')})"
+      limit: count,
+      where: "${_Identifiers.QUESTION_THEME} IN (${themeIDs.join(',')})"
     );
-    print(rawQuestions);
     List<QuizQuestion> questions = List();
-    // for (var q in rawQuestions) {
-    //   try {
-    //     var theme = themes.where((t) => t.id == q[RemoteDatabaseIdentifiers.QUESTION_THEME_ID]);
-    //     if (theme.isNotEmpty)
-    //       questions.add(QuizQuestion.fromJSON(theme: theme.first, data: q));
-    //       print("Success");
-    //   } catch (e) {print(e);}
-    // }
-    // await db.close();
+    for (var q in rawQuestions) {
+      try {
+        var theme = themes.where((t) => t.id == q[_Identifiers.QUESTION_THEME]).first;
+        questions.add(_LocalQuestionAdapter(data: q, theme: theme));
+        print("Success");
+      } catch (e) {print(e);}
+    }
+    await db.close();
     return questions;
   }
 
@@ -200,7 +198,7 @@ class _LocalQuestionAdapter implements QuizQuestion {
 
   _LocalQuestionAdapter({@required QuizTheme theme, @required Map<String, Object> data}) {
     this.id = data[_Identifiers.QUESTION_ID];
-    this.theme = data[_Identifiers.QUESTION_THEME];
+    this.theme = theme;
     this.entitled = data[_Identifiers.QUESTION_ENTITLED];
     this.entitledType = _strToType(data[_Identifiers.QUESTION_ENTITLED_TYPE]);
     var answersStr = (data[_Identifiers.QUESTION_ANSWERS] as String);

@@ -16,7 +16,14 @@ class ThemesProvider extends ChangeNotifier {
 
 
   loadThemes() async {
-    themes = await _localRepo.getThemes();
-    notifyListeners();
+    if (themes == null) {
+      themes = await _localRepo.getThemes();
+      notifyListeners();
+    }
+  }
+
+  reset() {
+    this.themes = null;
+    this.error = false;
   }
 }

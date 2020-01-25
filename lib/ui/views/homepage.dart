@@ -150,6 +150,7 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
 
   onSubmit() async {
     if (formKey.currentState.validate()) {
+      _selectedThemes.forEach((r) => print("${r.hashCode} ${r.title}"));
       formKey.currentState.save();
       _prepareGameStream = Provider.of<QuizProvider>(context, listen: false)
         .prepareGame(_selectedThemes)

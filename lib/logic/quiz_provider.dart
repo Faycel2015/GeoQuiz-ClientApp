@@ -15,17 +15,19 @@ class QuizProvider extends ChangeNotifier {
 
 
   Future<void> prepareGame(Set<QuizTheme> selectedThemes) async {
+    _questions = null;
+    _questionsIterator = null;
+    _selectedThemes = selectedThemes;
+
     try {
-      _selectedThemes = selectedThemes;
       _questions = await _localRepo.getQuestions(count: 10, themes: _selectedThemes);
-      if (_questions == null || _questions.isEmpty)
-        throw Exception();
-      _questionsIterator = _questions.iterator;
     } catch (e) {
       print(e);
-      return Future.error(null);
     }
 
+    if (_questions == null || _questions.isEmpty)
+      return Future.error(null);
+    _questionsIterator = _questions.iterator;
   }
 
   QuizQuestion nextQuestion() {
