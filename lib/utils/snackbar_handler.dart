@@ -17,6 +17,11 @@ class SnackBarHandler {
         backgroundColor: backgroundColor,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: Dimens.borderRadius),
+        action: SnackBarAction(
+          label: "Ok", 
+          textColor: textColor,
+          onPressed: Scaffold.of(context).removeCurrentSnackBar,
+        ),
       )
     );
   }
