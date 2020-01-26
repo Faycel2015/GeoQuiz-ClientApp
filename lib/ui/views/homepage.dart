@@ -7,6 +7,7 @@ import 'package:app/ui/shared/assets.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/views/quiz.dart';
+import 'package:app/ui/views/results.dart';
 import 'package:app/ui/widgets/app_menu.dart';
 import 'package:app/ui/widgets/gradient_background.dart';
 import 'package:app/utils/snackbar_handler.dart';
@@ -104,12 +105,12 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
   final formKey = GlobalKey<FormState>();
   var _selectedThemes = Set<QuizTheme>();
 
-  StreamSubscription _prepareGameStream;
+  // StreamSubscription _prepareGameStream;
 
   @override
   void dispose() {
     super.dispose();
-    _prepareGameStream?.cancel();
+    // _prepareGameStream?.cancel();
   }
 
   @override
@@ -152,16 +153,20 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
     if (formKey.currentState.validate()) {
       _selectedThemes.forEach((r) => print("${r.hashCode} ${r.title}"));
       formKey.currentState.save();
-      _prepareGameStream = Provider.of<QuizProvider>(context, listen: false)
+      await Provider.of<QuizProvider>(context, listen: false)
         .prepareGame(_selectedThemes)
-        .catchError(_handlePreparationError)
-        .asStream().listen((_) {
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context) => QuizView()
-          ));
-        });
+        .catchError(_handlePreparationError);
+      launchQuiz();
     } else {
       _handleInvalidForm();
+    }
+  }
+
+  launchQuiz() {
+    if (mounted) {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => QuizView()
+      ));
     }
   }
 
@@ -173,7 +178,6 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
   }
 
   _handlePreparationError(_) {
-    _prepareGameStream?.cancel();
     showSnackbar(
       context: context,
       critical: true,

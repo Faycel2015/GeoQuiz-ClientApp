@@ -29,7 +29,7 @@ void main() async {
   var localRepo = SQLiteLocalDatabaseRepository();
   var remoteRepo = FirebaseRemoteDatabaseRepository();
 
-  await deleteDatabase("database.db");
+  // await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(
@@ -45,7 +45,7 @@ void main() async {
           localRepo: localRepo,
         )),
       ],
-      child: GeoQuizApp()
+      child: GeoQuizApp(),
     )
   );
 } 
