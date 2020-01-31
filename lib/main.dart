@@ -17,12 +17,15 @@ import 'package:sqflite/sqflite.dart';
 
 /// Entry point for the application, it will basically run the app.
 /// 
-/// The app is wrapped in a [MultiProvider] widget to provide [Provider]s
-/// to the tree. The main application widget is [GeoQuizApp].
+/// The app is wrapped in a [MultiProvider] widget to provide [Provider]s to the
+/// tree. The main application widget is [GeoQuizApp].
+/// 
+/// [Provider] can then be used with [Consumer] widget or simply by retreive
+/// the instance : `Provider.of<[provider class]>(context)`.
 ///
-/// We also create our repositories implementation before to launch the app,
-/// and we give these repositories to the providers who need it. This prevents 
-/// having singletons with global states shared throughout the application.
+/// We also create our repository objects before to launch the app, and we give 
+/// hese repositories to the providers who need it. This prevents having 
+/// singletons with global states shared throughout the application.
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -52,9 +55,10 @@ void main() async {
 
 
 
-/// Main widget for the application. It is just an [StatelessWidget]
-/// that builds a [MaterialApp] to define the app title, the theme and
-/// the home widget.
+/// Main widget for the application. 
+/// 
+/// It build a [MaterialApp] to define the app title, the theme and the home 
+/// widget.
 /// 
 /// The home widget depends of the [StartUpCheckerProvider] state.
 /// Depending on the [StartUpCheckerProvider.readyToStart] properties
@@ -68,18 +72,24 @@ class GeoQuizApp extends StatelessWidget {
       theme: geoQuizTheme,
   
       home: ScrollConfiguration(
-        behavior: BasicScrollWithoutGlow(), // we remove glowing animation for all scrollable widgets 
+        behavior: BasicScrollWithoutGlow(), // to remove glowing animation for all scrollable widgets 
         child: Consumer<StartUpCheckerProvider>(
           builder: (context, startUpChecker, _) {
             if (!startUpChecker.readyToStart) {
               return StartUpView(error: startUpChecker.error);
             } else {
-              Provider.of<ThemesProvider>(context, listen: false).loadThemes();
+              loadTheme(context);
               return HomepageView();
             }
           }
         ),
       ),
+    );
+  }
+
+  loadTheme(context) {
+    Future.microtask(
+      () => Provider.of<ThemesProvider>(context, listen: false).loadThemes()
     );
   }
 }

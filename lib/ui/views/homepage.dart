@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/models/models.dart';
@@ -7,7 +5,6 @@ import 'package:app/ui/shared/assets.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/views/quiz.dart';
-import 'package:app/ui/views/results.dart';
 import 'package:app/ui/widgets/app_menu.dart';
 import 'package:app/ui/widgets/gradient_background.dart';
 import 'package:app/utils/snackbar_handler.dart';
