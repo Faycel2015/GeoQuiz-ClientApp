@@ -7,7 +7,8 @@ class Dimens {
   static const screenMarginX = 25.0;
   static const screenMarginY = 25.0;
   static const screenMargin = EdgeInsets.symmetric(horizontal: screenMarginX, vertical: screenMarginY);
-
+  static const smallSpacing = 17.0;
+  static const normalSpacing = 25.0;
   static const surfacePadding = 15.0;
 
   static const radius = 10.0;

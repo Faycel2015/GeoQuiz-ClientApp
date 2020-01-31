@@ -8,7 +8,13 @@ class ThemesProvider extends ChangeNotifier {
   final LocalDatabaseRepository _localRepo;
 
   List<QuizTheme> themes;
-  bool error = false;
+
+  var _state = ThemeProviderState.NOT_INIT;
+  ThemeProviderState get state => _state;
+  set state(state) {
+    _state = state;
+    notifyListeners();
+  }
 
   ThemesProvider({
     @required LocalDatabaseRepository localRepo
@@ -16,14 +22,19 @@ class ThemesProvider extends ChangeNotifier {
 
 
   loadThemes() async {
-    if (themes == null) {
+    state = ThemeProviderState.NOT_INIT;
+    try {
       themes = await _localRepo.getThemes();
-      notifyListeners();
+    } catch(_) {
+      state = ThemeProviderState.ERROR;
     }
+    state = ThemeProviderState.INIT;
   }
+}
 
-  reset() {
-    this.themes = null;
-    this.error = false;
-  }
+
+enum ThemeProviderState {
+  NOT_INIT,
+  INIT,
+  ERROR,
 }

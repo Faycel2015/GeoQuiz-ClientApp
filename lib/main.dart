@@ -87,6 +87,8 @@ class GeoQuizApp extends StatelessWidget {
     );
   }
 
+  /// We scheduled a microtask to wait previous Provider asynchronous tasks
+  /// finished
   loadTheme(context) {
     Future.microtask(
       () => Provider.of<ThemesProvider>(context, listen: false).loadThemes()
