@@ -1,20 +1,52 @@
 import 'dart:async';
 
 import 'package:app/logic/quiz_provider.dart';
-import 'package:app/models/models.dart';
+import 'package:app/ui/shared/dimens.dart';
+import 'package:app/ui/shared/values.dart';
 import 'package:app/ui/views/question.dart';
 import 'package:app/ui/views/results.dart';
+import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 
+final timerColorTweenSequence = TweenSequence<Color>([
+  TweenSequenceItem(
+    weight: 1.0,
+    tween: ColorTween(
+      begin: Colors.green,
+      end: Colors.yellow,
+    ),
+  ),
+  TweenSequenceItem(
+    weight: 1.0,
+    tween: ColorTween(
+      begin: Colors.yellow,
+      end: Colors.orange,
+    ),
+  ),
+  TweenSequenceItem(
+    weight: 1.0,
+    tween: ColorTween(
+      begin: Colors.orange,
+      end: Colors.red,
+    ),
+  ),],
+);
+
+
 
 class QuizView extends StatefulWidget {
+  
+  final int questionDuration = Values.questionDuration;
+  final int resultDuration = Values.resultDuration;
+
   @override
   _QuizViewState createState() => _QuizViewState();
 }
+
 
 class _QuizViewState extends State<QuizView> {
   
@@ -26,17 +58,20 @@ class _QuizViewState extends State<QuizView> {
       final currentQuestion = quizProvider.currentQuestion;
       final backColor = currentQuestion?.theme?.color;
       return GeoQuizLayout(
-        color: backColor != null ? Color(backColor) : null,
+        // color: backColor != null ? Color(backColor) : null,
+        bodyPadding: Dimens.screenMargin,
         body: currentQuestion == null 
         ? ResultsView()
         : Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: <Widget>[
             TimerWidget(
-              max: showResult ? 2000 : 6000,
+              max: showResult ? widget.resultDuration : widget.questionDuration,
               onFinished: showResult ? nextRound : finishRound,
               key: GlobalKey(),
               tick: 100,
             ),
+            FlexSpacer(),
             QuestionView(
               question: currentQuestion,
               showResult: showResult,
@@ -68,6 +103,7 @@ class TimerWidget extends StatefulWidget {
   final int max;
   final int tick;
   final Function onFinished;
+  
 
   TimerWidget({
     Key key,
@@ -82,42 +118,45 @@ class TimerWidget extends StatefulWidget {
 
 
 
-class _TimerWidgetState extends State<TimerWidget> {
+class _TimerWidgetState extends State<TimerWidget> with SingleTickerProviderStateMixin {
 
-  Timer timer;
+  AnimationController animationController;
   int elapsedTime = 0;
 
-  @override
-  void dispose() {
-    timer.cancel();
-    super.dispose();
-  }
-
+  
   @override
   void initState() {
     super.initState();
-    startTimer();
+    animationController = AnimationController(
+      vsync: this, 
+      duration: Duration(milliseconds: widget.max)
+    )..forward().then((_) {
+      widget.onFinished();
+    });
   }
+
+  @override
+  void dispose() {
+    animationController.dispose();
+    super.dispose();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
     return LayoutBuilder(
-      builder: (context, constraints) => Container(
-        width: constraints.maxWidth * (elapsedTime / widget.max),
-        height: 5,
-        color: Colors.white,
+      builder: (context, constraints) => AnimatedBuilder(
+        animation: animationController,
+        builder: (context, _) => Container(
+          width: constraints.maxWidth - (constraints.maxWidth * animationController.value),
+          height: 10,
+          decoration: BoxDecoration(
+            color: timerColorTweenSequence.evaluate(AlwaysStoppedAnimation(animationController.value)),
+            borderRadius: Dimens.roundedBorderRadius
+          ),
+        ),
       ),
     );
-  }
-
-  startTimer() {
-    timer = Timer.periodic(Duration(milliseconds: widget.tick), (Timer timer) {
-      if (elapsedTime >= widget.max) {
-        timer.cancel();
-        elapsedTime = 0;
-        widget.onFinished();
-      }
-      setState(() => elapsedTime += widget.tick);
-    });
   }
 }

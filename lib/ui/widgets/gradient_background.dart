@@ -23,6 +23,8 @@ class GradientBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: padding,
+      width: double.infinity,
+      height: double.infinity,
       decoration: BoxDecoration(
         gradient: LinearGradient(
           begin: Alignment.topLeft,

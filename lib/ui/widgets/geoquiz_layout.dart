@@ -6,14 +6,16 @@ class GeoQuizLayout extends StatelessWidget {
 
   final Widget body;
   final Color color;
+  final EdgeInsets bodyPadding;
 
-  GeoQuizLayout({@required this.body, this.color});
+  GeoQuizLayout({@required this.body, this.color, this.bodyPadding});
 
   @override
   Widget build(BuildContext context) {
     final backColor = color??Theme.of(context).primaryColor;
     return Scaffold(
       body: GradientBackground(
+        padding: bodyPadding,
         color: backColor,
         child: SafeArea(
           child: body

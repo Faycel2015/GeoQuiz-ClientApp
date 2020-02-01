@@ -31,28 +31,25 @@ class _QuestionViewState extends State<QuestionView> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: Dimens.screenMargin,
-      child: Column(
-        children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: ThemeEntitled(theme: widget.question.theme,)
-              ),
-              QuestionNumber(current: 1, max: 2,),
-            ],
-          ),
-          FlexSpacer(),
-          QuestionEntitled(entitled: widget.question.entitled,),
-          FlexSpacer(big: true,),
-          AnswerList(
-            answers: widget.question.answers,
-            onSelected: widget.showResult ? null : onSelectedAnswer,
-            selectedAnswer: selectedAnswer,
-          ),
-        ],
-      ),
+    return  Column(
+      children: <Widget>[
+        Row(
+          children: <Widget>[
+            Expanded(
+              child: ThemeEntitled(theme: widget.question.theme,)
+            ),
+            QuestionNumber(current: 1, max: 2,),
+          ],
+        ),
+        FlexSpacer(),
+        QuestionEntitled(entitled: widget.question.entitled,),
+        FlexSpacer(big: true,),
+        AnswerList(
+          answers: widget.question.answers,
+          onSelected: widget.showResult ? null : onSelectedAnswer,
+          selectedAnswer: selectedAnswer,
+        ),
+      ],
     );
   }
 
