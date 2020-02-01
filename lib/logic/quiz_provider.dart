@@ -42,11 +42,25 @@ class QuizProvider extends ChangeNotifier {
       state = QuizProviderState.ERROR;
       return Future.error(null);
     }
+
+    _prepareQuestion();
       
     _questionsIterator = _questions.iterator;
     _questionsIterator.moveNext();
 
     state = QuizProviderState.PREPARED;
+  }
+
+  _prepareQuestion() {
+    for (var q in _questions) {
+      q.answers.shuffle();
+      int i = 0;
+      while (q.answers.length > 4 && i < q.answers.length) {
+        if (!q.answers[i].isCorrect)
+          q.answers.removeAt(i);
+        i++;
+      }
+    }
   }
 
 
@@ -55,6 +69,8 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 }
+
+
 
 
 enum QuizProviderState {

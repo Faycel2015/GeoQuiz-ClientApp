@@ -155,7 +155,7 @@ class _RemoteQuestionAdapter implements QuizQuestion {
   String id;
   QuizTheme theme;
   Resource entitled;
-  List<Resource> answers;
+  List<QuizAnswer> answers;
   int difficulty;
 
   _RemoteQuestionAdapter({Map<String, Object> data, _RemoteThemeAdapter theme}) {
@@ -169,8 +169,9 @@ class _RemoteQuestionAdapter implements QuizQuestion {
     final _answers = (data[_Identifiers.QUESTION_ANSWERS] as List).cast<String>();
     final _answersType = _strToType(data[_Identifiers.QUESTION_ANSWERS_TYPE]);
     this.answers = _answers.map(
-      (a) => Resource(resource: a, type: _answersType)
+      (a) => QuizAnswer(answer: Resource(resource: a, type: _answersType))
     ).toList();
+    this.answers.first.isCorrect = true;
 
     this.difficulty = data[_Identifiers.QUESTION_DIFFICULTY];
   }

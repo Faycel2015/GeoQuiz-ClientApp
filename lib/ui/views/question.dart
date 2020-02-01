@@ -1,17 +1,32 @@
 import 'package:app/models/models.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
-import 'package:app/ui/widgets/gradient_background.dart';
 import 'package:app/ui/widgets/surface_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class QuestionView extends StatelessWidget {
+
+
+class QuestionView extends StatefulWidget {
 
   final QuizQuestion question;
   final bool showResult;
+  final Function(QuizAnswer) onAnswerSelected;
 
-  QuestionView({@required this.question, this.showResult = false});
+
+  QuestionView({
+    @required this.question, 
+    this.onAnswerSelected, 
+    this.showResult = false,
+  });
+
+  @override
+  _QuestionViewState createState() => _QuestionViewState();
+}
+
+class _QuestionViewState extends State<QuestionView> {
+
+  QuizAnswer selectedAnswer;
 
   @override
   Widget build(BuildContext context) {
@@ -22,18 +37,27 @@ class QuestionView extends StatelessWidget {
           Row(
             children: <Widget>[
               Expanded(
-                child: ThemeEntitled(theme: question.theme,)
+                child: ThemeEntitled(theme: widget.question.theme,)
               ),
               QuestionNumber(current: 1, max: 2,),
             ],
           ),
           FlexSpacer(),
-          QuestionEntitled(entitled: question.entitled,),
+          QuestionEntitled(entitled: widget.question.entitled,),
           FlexSpacer(big: true,),
-          AnswerList(answers: question.answers,),
+          AnswerList(
+            answers: widget.question.answers,
+            onSelected: widget.showResult ? null : onSelectedAnswer,
+            selectedAnswer: selectedAnswer,
+          ),
         ],
       ),
     );
+  }
+
+  onSelectedAnswer(answer) {
+    setState(() => selectedAnswer = answer);
+    widget.onAnswerSelected(answer);
   }
 }
 
@@ -70,9 +94,11 @@ class QuestionEntitled extends StatelessWidget {
 
 class AnswerList extends StatelessWidget {
 
-  final List<Resource> answers;
+  final List<QuizAnswer> answers;
+  final Function(QuizAnswer) onSelected;
+  final QuizAnswer selectedAnswer;
 
-  AnswerList({@required this.answers});
+  AnswerList({@required this.answers, this.onSelected, this.selectedAnswer});
 
 
   @override
@@ -82,7 +108,11 @@ class AnswerList extends StatelessWidget {
       children: answers.map(
         (a) => Padding(
           padding: const EdgeInsets.only(bottom: Dimens.smallSpacing),
-          child: Answer(answer: a),
+          child: Answer(
+            answer: a,
+            onSelected: onSelected == null ? null : () => onSelected(a),
+            isSelected: selectedAnswer != null && a == selectedAnswer && !a.isCorrect 
+          ),
         )
       ).toList(),
     );
@@ -91,17 +121,27 @@ class AnswerList extends StatelessWidget {
 
 class Answer extends StatelessWidget {
 
-  final Resource answer;
+  final QuizAnswer answer;
+  final Function onSelected;
+  final bool isSelected;
+  bool get showResult => onSelected == null;
 
-  Answer({@required this.answer});
+  Answer({@required this.answer, @required this.onSelected, this.isSelected = false});
 
   @override
   Widget build(BuildContext context) {
+    var color = Theme.of(context).colorScheme.surface;
+    if (showResult && answer.isCorrect)
+      color = Colors.green;
+    if (showResult && isSelected && !answer.isCorrect)
+      color = Colors.red;
+
     return SurfaceCard(
-      color: Theme.of(context).colorScheme.surface,
+      onPressed: onSelected,
+      color: color,
       child: DefaultTextStyle(
         style: Theme.of(context).textTheme.subhead.apply(color: Colors.black),
-        child: Text(answer.resource)
+        child: Text(answer.answer.resource)
       ),
     );
   }

@@ -25,7 +25,7 @@ class QuizQuestion {
   String id;
   QuizTheme theme;
   Resource entitled;
-  List<Resource> answers;
+  List<QuizAnswer> answers;
   int difficulty;
 }
 
@@ -36,6 +36,14 @@ class Resource {
   ResourceType type;
 
   Resource({@required this.resource, @required this.type});
+}
+
+///
+class QuizAnswer {
+  Resource answer;
+  bool isCorrect;
+
+  QuizAnswer({@required this.answer, this.isCorrect = false});
 }
 
 

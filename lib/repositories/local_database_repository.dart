@@ -191,7 +191,7 @@ class _LocalQuestionAdapter implements QuizQuestion {
   QuizTheme theme;
   Resource entitled;
   ResourceType entitledType;
-  List<Resource> answers;
+  List<QuizAnswer> answers;
   int difficulty;
 
   _LocalQuestionAdapter({@required QuizTheme theme, @required Map<String, Object> data}) {
@@ -206,8 +206,9 @@ class _LocalQuestionAdapter implements QuizQuestion {
     final _answers = _answersStr.split(serializationCharacter);
     final _answersType = _strToType(data[_Identifiers.QUESTION_ANSWERS_TYPE]);
     this.answers = _answers.map(
-      (a) => Resource(resource: a, type: _answersType)
+      (a) => QuizAnswer(answer: Resource(resource: a, type: _answersType))
       ).toList();
+    this.answers.first.isCorrect = true;
 
     this.difficulty = data[_Identifiers.QUESTION_DIFFICULTY];
   }
@@ -215,8 +216,8 @@ class _LocalQuestionAdapter implements QuizQuestion {
   static Map<String, dynamic> toMap(QuizQuestion question) {
     final _answers = List<String>();
     for (var a in question.answers)
-      _answers.add(a.resource);
-    final _answersType = _typeToStr(question.answers.first.type);
+      _answers.add(a.answer.resource);
+    final _answersType = _typeToStr(question.answers.first.answer.type);
     return {
       _Identifiers.QUESTION_ID: question.id,
       _Identifiers.QUESTION_THEME: question.theme.id,

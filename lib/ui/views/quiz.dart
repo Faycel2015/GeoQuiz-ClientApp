@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:app/logic/quiz_provider.dart';
+import 'package:app/models/models.dart';
 import 'package:app/ui/views/question.dart';
 import 'package:app/ui/views/results.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
@@ -39,6 +40,9 @@ class _QuizViewState extends State<QuizView> {
             QuestionView(
               question: currentQuestion,
               showResult: showResult,
+              onAnswerSelected: (answer) {
+                finishRound();
+              },
             ),
           ],
         ),
