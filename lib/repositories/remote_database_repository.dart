@@ -154,19 +154,24 @@ class _RemoteQuestionAdapter implements QuizQuestion {
 
   String id;
   QuizTheme theme;
-  String entitled;
-  ResourceType entitledType;
-  List<String> answers;
-  ResourceType answersType;
+  Resource entitled;
+  List<Resource> answers;
   int difficulty;
 
   _RemoteQuestionAdapter({Map<String, Object> data, _RemoteThemeAdapter theme}) {
     this.theme = theme;
     this.id = data[_Identifiers.QUESTION_ID];
-    this.entitled = data[_Identifiers.QUESTION_ENTITLED];
-    this.entitledType = _strToType(data[_Identifiers.QUESTION_ENTITLED_TYPE]);
-    this.answers = (data[_Identifiers.QUESTION_ANSWERS] as List).cast<String>();
-    this.answersType = _strToType(data[_Identifiers.QUESTION_ANSWERS_TYPE]);
+
+    final _entitled = data[_Identifiers.QUESTION_ENTITLED];
+    final _entitledType = _strToType(data[_Identifiers.QUESTION_ENTITLED_TYPE]);
+    this.entitled = Resource(resource: _entitled, type: _entitledType);
+
+    final _answers = (data[_Identifiers.QUESTION_ANSWERS] as List).cast<String>();
+    final _answersType = _strToType(data[_Identifiers.QUESTION_ANSWERS_TYPE]);
+    this.answers = _answers.map(
+      (a) => Resource(resource: a, type: _answersType)
+    ).toList();
+
     this.difficulty = data[_Identifiers.QUESTION_DIFFICULTY];
   }
 

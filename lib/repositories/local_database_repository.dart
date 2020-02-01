@@ -189,32 +189,41 @@ class _LocalQuestionAdapter implements QuizQuestion {
 
   String id;
   QuizTheme theme;
-  String entitled;
+  Resource entitled;
   ResourceType entitledType;
-  List<String> answers;
-  ResourceType answersType;
+  List<Resource> answers;
   int difficulty;
 
   _LocalQuestionAdapter({@required QuizTheme theme, @required Map<String, Object> data}) {
     this.id = data[_Identifiers.QUESTION_ID];
     this.theme = theme;
-    this.entitled = data[_Identifiers.QUESTION_ENTITLED];
-    this.entitledType = _strToType(data[_Identifiers.QUESTION_ENTITLED_TYPE]);
-    var answersStr = (data[_Identifiers.QUESTION_ANSWERS] as String);
-    this.answers = answersStr.split(serializationCharacter);
-    this.answersType = _strToType(data[_Identifiers.QUESTION_ANSWERS_TYPE]);
+
+    final _entitled = data[_Identifiers.QUESTION_ENTITLED];
+    final _entitledType = _strToType(data[_Identifiers.QUESTION_ENTITLED_TYPE]);
+    this.entitled = Resource(resource: _entitled, type: _entitledType);
+
+    final _answersStr = (data[_Identifiers.QUESTION_ANSWERS] as String);
+    final _answers = _answersStr.split(serializationCharacter);
+    final _answersType = _strToType(data[_Identifiers.QUESTION_ANSWERS_TYPE]);
+    this.answers = _answers.map(
+      (a) => Resource(resource: a, type: _answersType)
+      ).toList();
+
     this.difficulty = data[_Identifiers.QUESTION_DIFFICULTY];
   }
 
   static Map<String, dynamic> toMap(QuizQuestion question) {
-    var answers = question.answers.join(serializationCharacter);
+    final _answers = List<String>();
+    for (var a in question.answers)
+      _answers.add(a.resource);
+    final _answersType = _typeToStr(question.answers.first.type);
     return {
       _Identifiers.QUESTION_ID: question.id,
       _Identifiers.QUESTION_THEME: question.theme.id,
       _Identifiers.QUESTION_ENTITLED: question.entitled,
-      _Identifiers.QUESTION_ENTITLED_TYPE: _typeToStr(question.entitledType),
-      _Identifiers.QUESTION_ANSWERS: answers,
-      _Identifiers.QUESTION_ANSWERS_TYPE: _typeToStr(question.answersType),
+      _Identifiers.QUESTION_ENTITLED_TYPE: _answers,
+      _Identifiers.QUESTION_ANSWERS: _answers,
+      _Identifiers.QUESTION_ANSWERS_TYPE: _answersType,
       _Identifiers.QUESTION_DIFFICULTY: question.difficulty,
     };
   }

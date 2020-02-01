@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 /// Note: there is no toMap or fromMap method, it's just data class without
 /// any logic inside !!! 
 /// We prefer using the adapter pattern to adapt our database object to these 
@@ -22,15 +24,22 @@ class QuizTheme {
 class QuizQuestion {
   String id;
   QuizTheme theme;
-  String entitled;
-  ResourceType entitledType;
-  List<String> answers;
-  ResourceType answersType;
+  Resource entitled;
+  List<Resource> answers;
   int difficulty;
 }
 
+/// A resource is made of the actual resource content ([resource]) and its 
+/// [type]
+class Resource {
+  String resource;
+  ResourceType type;
 
-/// Suppoted ressource type
+  Resource({@required this.resource, @required this.type});
+}
+
+
+/// Supported ressource type
 enum ResourceType {
   TEXT,
   IMAGE,
