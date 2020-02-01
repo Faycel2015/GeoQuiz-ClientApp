@@ -6,6 +6,7 @@ import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/views/quiz.dart';
 import 'package:app/ui/widgets/app_menu.dart';
+import 'package:app/ui/widgets/button.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
 import 'package:app/ui/widgets/surface_card.dart';
 import 'package:app/utils/snackbar_handler.dart';
@@ -218,9 +219,9 @@ class LaunchQuizButton extends StatelessWidget {
     return Consumer<QuizProvider>(
       builder: (context, quizProvider, _) {
         final inProgress = quizProvider.state == QuizProviderState.IN_PROGRESS;
-        return FloatingActionButton.extended(
-          label: Text(inProgress ? Strings.loadingThemes : Strings.launchQuiz),
-          icon: Icon(Icons.chevron_right),
+        return Button(
+          label: inProgress ? Strings.loadingThemes : Strings.launchQuiz,
+          icon: Icons.chevron_right,
           onPressed: inProgress ? null : onPressed,
         );
       }
