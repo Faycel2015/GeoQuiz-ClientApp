@@ -11,8 +11,18 @@ import 'package:flutter/widgets.dart';
 /// 
 /// It wraps the label inside a [Flexible] widget to all multiple line
 /// text label.
+/// 
+/// ```dart
+/// Button(
+///   onPressed: () {
+///     /*...*/
+///   },
+///   label: "My label",
+///   icon: /*...*/
+/// )
+/// ```
 class Button extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String label;
   final Function onPressed;
   final bool light;
@@ -30,7 +40,7 @@ class Button extends StatelessWidget {
     final backColor = light ? colorScheme.primaryVariant : colorScheme.secondary;
     final frontColor = light ? colorScheme.onPrimary : colorScheme.onSecondary;
     return FlatButton.icon(
-      icon: Icon(icon), 
+      icon: icon, 
       label: Flexible(child: Text(label)),
       color: backColor,
       textColor: frontColor,

@@ -22,7 +22,7 @@ class Dimens {
   static const surfacePadding = 17.0;
 
   static const radius = 10.0;
-  static final borderRadius = BorderRadius.circular(10.0);
+  static final borderRadius = BorderRadius.circular(radius);
   static final roundedBorderRadius = BorderRadius.circular(999.0);
 
   static final shadow = BoxShadow(

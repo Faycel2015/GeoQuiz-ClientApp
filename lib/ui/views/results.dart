@@ -1,5 +1,4 @@
 import 'package:app/logic/quiz_provider.dart';
-import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/views/homepage.dart';
 import 'package:app/ui/views/quiz.dart';
 import 'package:app/ui/widgets/button.dart';
@@ -7,6 +6,7 @@ import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+
 
 class ResultsView extends StatelessWidget {
   @override
@@ -40,13 +40,13 @@ class ResultsButtonList extends StatelessWidget {
     return Column(
       children: <Widget>[
         Button(
-          icon: Icons.replay, 
+          icon: Icon(Icons.replay), 
           label: "Replay (same configuration)",
           onPressed: () => onReplay(context), 
         ),
         FlexSpacer(),
         Button(
-          icon: Icons.home,
+          icon: Icon(Icons.home),
           label: "Home",
           light: true,
           onPressed: () => onHome(context),

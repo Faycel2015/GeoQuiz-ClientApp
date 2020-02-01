@@ -221,7 +221,7 @@ class LaunchQuizButton extends StatelessWidget {
         final inProgress = quizProvider.state == QuizProviderState.IN_PROGRESS;
         return Button(
           label: inProgress ? Strings.loadingThemes : Strings.launchQuiz,
-          icon: Icons.chevron_right,
+          icon: Icon(Icons.chevron_right),
           onPressed: inProgress ? null : onPressed,
         );
       }
@@ -278,17 +278,14 @@ class SelectableThemesForm extends FormField<Set<QuizTheme>> {
             crossAxisCount: 2,
             padding: padding,
             children: themes.map((t) => 
-              InkResponse(
-                enableFeedback: false, // disable the click sound
-                onTap: () {
+              ThemeCard(
+                theme: t, 
+                selected: state.value.contains(t),
+                onSelect: () {
                   if (!state.value.remove(t))
                     state.value.add(t); 
                   state.didChange(state.value);
-                },
-                child: ThemeCard(
-                  theme: t, 
-                  selected: state.value.contains(t),
-                )
+                }
               )
             ).toList(),
           ),
@@ -317,10 +314,12 @@ class ThemeCard extends StatelessWidget {
 
   final QuizTheme theme;
   final bool selected;
+  final Function onSelect;
 
   ThemeCard({
     Key key,
     @required this.theme, 
+    this.onSelect,
     this.selected = false
   }) : super(key: key);
 
@@ -331,24 +330,25 @@ class ThemeCard extends StatelessWidget {
     final backColor = selected ? Color(theme.color) : colorScheme.surface;
     final iconColor = selected ? Colors.white : Color(theme.color);
     return SurfaceCard(
-        color: backColor,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              theme.title, 
-              overflow: TextOverflow.fade,
-              softWrap: false, // to not wrapped line and so apply the TextOverflow.fade
-              style: Theme.of(context).textTheme.subhead.apply(color: textColor)
-            ),
-            Expanded(child: Container()),
-            SvgPicture.string(
-              theme.icon, 
-              height: 50, 
-              color: iconColor
-            )
-          ],
-        ),
+      color: backColor,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Text(
+            theme.title, 
+            overflow: TextOverflow.fade,
+            softWrap: false, // to not wrapped line and so apply the TextOverflow.fade
+            style: Theme.of(context).textTheme.subhead.apply(color: textColor)
+          ),
+          Expanded(child: Container()),
+          SvgPicture.string(
+            theme.icon, 
+            height: 50, 
+            color: iconColor
+          )
+        ],
+      ),
+      onPressed: onSelect,
     );
   }
 }

@@ -21,4 +21,12 @@ class Strings  {
   static const String quizConfigurationInvalid = "Please select themes to play !";
   static const String quizPreparationError = "Unexpected error occured.";
 
+
+
+
+  // Menu
+  static const String menuDonation = "Buy me a coffee";
+  static const String menuResetData = "Reset my data";
+  static const String menuBugReport = "Report a bug";
+
 }
