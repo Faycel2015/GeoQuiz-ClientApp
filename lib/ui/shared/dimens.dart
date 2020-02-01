@@ -1,6 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
+/// Useful constant values share across the app UI 
+/// 
+/// e.g. padding, font size, font weight, margin, etc.
+/// More complex objects are even created as [EdgeInsets], [BoxShadow] and other
+/// "styling" flutter properties as it is always the same object configuration
+/// used.
+/// 
+/// Everything is constant, so the constructor is private as it makes no sense 
+/// to create an instance of this class.
 class Dimens {
   Dimens._();
 
