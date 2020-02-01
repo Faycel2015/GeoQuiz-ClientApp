@@ -32,9 +32,9 @@ class QuestionView extends StatelessWidget {
                   ],
                 ),
                 FlexSpacer(),
-                QuestionEntitled(question: question,),
+                QuestionEntitled(entitled: question.entitled,),
                 FlexSpacer(big: true,),
-                AnswerList(question: question,),
+                AnswerList(answers: question.answers,),
               ],
             ),
           ),
@@ -62,13 +62,13 @@ class ThemeEntitled extends StatelessWidget {
 
 class QuestionEntitled extends StatelessWidget {
     
-  final QuizQuestion question;
+  final Resource entitled;
 
-  QuestionEntitled({@required this.question});
+  QuestionEntitled({@required this.entitled});
 
   @override
   Widget build(BuildContext context) {
-    return Text(question.entitled, style: TextStyle(fontSize: 30),);
+    return Text(entitled.resource, style: TextStyle(fontSize: 30),);
   }
 }
 
@@ -76,16 +76,16 @@ class QuestionEntitled extends StatelessWidget {
 
 class AnswerList extends StatelessWidget {
 
-  final QuizQuestion question;
+  final List<Resource> answers;
 
-  AnswerList({@required this.question});
+  AnswerList({@required this.answers});
 
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       shrinkWrap: true,
-      children: question.answers.map(
+      children: answers.map(
         (a) => Padding(
           padding: const EdgeInsets.only(bottom: Dimens.smallSpacing),
           child: Answer(answer: a),
@@ -97,7 +97,7 @@ class AnswerList extends StatelessWidget {
 
 class Answer extends StatelessWidget {
 
-  final String answer;
+  final Resource answer;
 
   Answer({@required this.answer});
 
@@ -107,7 +107,7 @@ class Answer extends StatelessWidget {
       color: Theme.of(context).colorScheme.surface,
       child: DefaultTextStyle(
         style: Theme.of(context).textTheme.subhead.apply(color: Colors.black),
-        child: Text(answer)
+        child: Text(answer.resource)
       ),
     );
   }
