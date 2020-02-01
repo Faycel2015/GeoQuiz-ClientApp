@@ -7,6 +7,7 @@ import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/views/quiz.dart';
 import 'package:app/ui/widgets/app_menu.dart';
 import 'package:app/ui/widgets/gradient_background.dart';
+import 'package:app/ui/widgets/surface_card.dart';
 import 'package:app/utils/snackbar_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -159,7 +160,7 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
             validator: (themes) => themes.isEmpty ? "" : null,
             onSaved: (themes) => _selectedThemes = themes,
             padding: Dimens.screenMargin,
-            spacing: Dimens.smallSpacing,
+            spacing: Dimens.normalSpacing,
             label: Text(Strings.selectThemes),
           )
         ),
@@ -338,13 +339,8 @@ class ThemeCard extends StatelessWidget {
     final textColor = selected ? Colors.white : colorScheme.onSurface;
     final backColor = selected ? Color(theme.color) : colorScheme.surface;
     final iconColor = selected ? Colors.white : Color(theme.color);
-    return Container(
-        padding: EdgeInsets.all(Dimens.surfacePadding),
-        decoration: BoxDecoration(
-          color: backColor,
-          borderRadius: Dimens.borderRadius,
-          boxShadow: [Dimens.shadow]
-        ),
+    return SurfaceCard(
+        color: backColor,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[

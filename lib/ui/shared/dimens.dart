@@ -7,17 +7,18 @@ class Dimens {
   static const screenMarginX = 25.0;
   static const screenMarginY = 25.0;
   static const screenMargin = EdgeInsets.symmetric(horizontal: screenMarginX, vertical: screenMarginY);
-  static const smallSpacing = 17.0;
-  static const normalSpacing = 25.0;
-  static const surfacePadding = 15.0;
+  static const smallSpacing = 10.0;
+  static const normalSpacing = 20.0;
+  static const bigSpacing = 30.0;
+  static const surfacePadding = 17.0;
 
   static const radius = 10.0;
   static final borderRadius = BorderRadius.circular(10.0);
 
   static final shadow = BoxShadow(
-    color: Colors.black.withOpacity(0.5), // color of the shadow
-    blurRadius: 10, // gaussian attenuation
-    spreadRadius: 3 // shadow size
+    color: Colors.black.withOpacity(0.3), // color of the shadow
+    blurRadius: 7, // gaussian attenuation
+    spreadRadius: 2 // shadow size
   );
 
   static final textShadow = BoxShadow(

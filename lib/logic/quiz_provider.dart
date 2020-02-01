@@ -26,12 +26,6 @@ class QuizProvider extends ChangeNotifier {
   QuizProvider({LocalDatabaseRepository localRepo}) : _localRepo = localRepo;
   
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-
   Future<void> prepareGame(Set<QuizTheme> selectedThemes) async {
     if (state == QuizProviderState.IN_PROGRESS)
       return ;
@@ -54,7 +48,6 @@ class QuizProvider extends ChangeNotifier {
 
     state = QuizProviderState.PREPARED;
   }
-
 
 
   nextRound() {

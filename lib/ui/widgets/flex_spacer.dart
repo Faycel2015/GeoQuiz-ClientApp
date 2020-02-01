@@ -1,16 +1,22 @@
 import 'package:app/ui/shared/dimens.dart';
 import 'package:flutter/widgets.dart';
 
-/// Used to add space margin betwwen elements
+/// Widget used to add spacing (padding) between widgets
 /// 
-/// Typically used in [Row], [Column] or [ListView].
-/// The spacing amout is [Dimens.normalSpacing].
-class FelxSpacer extends StatelessWidget {
+/// Used typically in [Row] or [Column].
+/// It will create a square widget of [Values.normalSpacing]
+/// If you want a bigger space, set the flag [big] to true
+class FlexSpacer extends StatelessWidget {
+  final bool big;
+
+  FlexSpacer({this.big = false});
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: Dimens.normalSpacing,
-      width: Dimens.normalSpacing,
+    final space = big ? Dimens.bigSpacing : Dimens.normalSpacing;
+    return SizedBox(
+      width: space,
+      height: space,
     );
   }
 }
