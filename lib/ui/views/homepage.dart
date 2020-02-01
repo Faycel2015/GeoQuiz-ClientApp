@@ -7,7 +7,6 @@ import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/views/quiz.dart';
 import 'package:app/ui/widgets/app_menu.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
-import 'package:app/ui/widgets/gradient_background.dart';
 import 'package:app/ui/widgets/surface_card.dart';
 import 'package:app/utils/snackbar_handler.dart';
 import 'package:flutter/material.dart';
@@ -337,6 +336,9 @@ class ThemeCard extends StatelessWidget {
           children: <Widget>[
             Text(
               theme.title, 
+              maxLines: 1,
+              overflow: TextOverflow.fade,
+              softWrap: false,
               style: Theme.of(context).textTheme.subhead.apply(color: textColor)
             ),
             Expanded(child: Container()),
