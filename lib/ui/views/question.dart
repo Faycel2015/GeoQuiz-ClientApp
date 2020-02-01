@@ -15,34 +15,28 @@ class QuestionView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GradientBackground(
-        color: Color(question.theme.color),
-        child: SafeArea(
-          child: Container(
-            padding: Dimens.screenMargin,
-            child: Column(
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: ThemeEntitled(theme: question.theme,)
-                    ),
-                    QuestionNumber(current: 1, max: 2,),
-                  ],
-                ),
-                FlexSpacer(),
-                QuestionEntitled(entitled: question.entitled,),
-                FlexSpacer(big: true,),
-                AnswerList(answers: question.answers,),
-              ],
-            ),
+    return Container(
+      padding: Dimens.screenMargin,
+      child: Column(
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: ThemeEntitled(theme: question.theme,)
+              ),
+              QuestionNumber(current: 1, max: 2,),
+            ],
           ),
-        ),
+          FlexSpacer(),
+          QuestionEntitled(entitled: question.entitled,),
+          FlexSpacer(big: true,),
+          AnswerList(answers: question.answers,),
+        ],
       ),
     );
   }
 }
+
 
 
 

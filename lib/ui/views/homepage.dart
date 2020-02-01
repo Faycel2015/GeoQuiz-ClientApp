@@ -6,6 +6,7 @@ import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/views/quiz.dart';
 import 'package:app/ui/widgets/app_menu.dart';
+import 'package:app/ui/widgets/geoquiz_layout.dart';
 import 'package:app/ui/widgets/gradient_background.dart';
 import 'package:app/ui/widgets/surface_card.dart';
 import 'package:app/utils/snackbar_handler.dart';
@@ -28,28 +29,23 @@ class HomepageView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GradientBackground(
-        color: Theme.of(context).primaryColor,
-        child: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Padding(
-                padding: Dimens.screenMargin,
-                child:  HomepageHeader(),
-              ),
-              Expanded(
-                child: Consumer<ThemesProvider>(
-                  builder: (context, themesProvider, _) =>
-                    themesProvider.state == ThemeProviderState.NOT_INIT
-                      ? _LoadingData()
-                      : QuizConfiguration(themes: themesProvider.themes)
-                ),
-              ),
-            ],
+    return GeoQuizLayout( 
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: Dimens.screenMargin,
+            child:  HomepageHeader(),
           ),
-        ),
+          Expanded(
+            child: Consumer<ThemesProvider>(
+              builder: (context, themesProvider, _) =>
+                themesProvider.state == ThemeProviderState.NOT_INIT
+                  ? _LoadingData()
+                  : QuizConfiguration(themes: themesProvider.themes)
+            ),
+          ),
+        ],
       ),
     );
   }
