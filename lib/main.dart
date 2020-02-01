@@ -108,6 +108,7 @@ class GeoQuizApp extends StatelessWidget {
 /// See https://dart.dev/guides/language/extension-methods
 extension GeoQuizColorScheme on ColorScheme {
   Color get success => const Color(0xFF28a745);
+  Color get onSuccess => Colors.white;
 }
 
 

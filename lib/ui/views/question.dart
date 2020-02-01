@@ -128,17 +128,22 @@ class Answer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var color = Theme.of(context).colorScheme.surface;
-    if (showResult && answer.isCorrect)
-      color = Theme.of(context).colorScheme.success;
-    if (showResult && isSelected && !answer.isCorrect)
-      color = Colors.red;
-
+    var backColor = Theme.of(context).colorScheme.surface;
+    var textColor = Theme.of(context).colorScheme.onSurface;
+    if (showResult && answer.isCorrect) {
+      backColor = Theme.of(context).colorScheme.success;
+      textColor = Theme.of(context).colorScheme.onSuccess;
+    }
+    if (showResult && isSelected && !answer.isCorrect) {
+      backColor = Theme.of(context).colorScheme.error;
+      textColor = Theme.of(context).colorScheme.onError;
+    }
+    
     return SurfaceCard(
       onPressed: onSelected,
-      color: color,
+      color: backColor,
       child: DefaultTextStyle(
-        style: Theme.of(context).textTheme.subhead.apply(color: Colors.black),
+        style: Theme.of(context).textTheme.subhead.apply(color: textColor),
         child: Text(answer.answer.resource)
       ),
     );

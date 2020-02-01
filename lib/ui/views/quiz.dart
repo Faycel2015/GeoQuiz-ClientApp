@@ -69,7 +69,7 @@ class _QuizViewState extends State<QuizView> {
               max: showResult ? widget.resultDuration : widget.questionDuration,
               onFinished: showResult ? nextRound : finishRound,
               key: GlobalKey(),
-              tick: 100,
+              animatedColor: !showResult,
             ),
             FlexSpacer(),
             QuestionView(
@@ -101,15 +101,16 @@ class _QuizViewState extends State<QuizView> {
 
 class TimerWidget extends StatefulWidget {
   final int max;
-  final int tick;
   final Function onFinished;
+  final bool animatedColor;
   
 
   TimerWidget({
     Key key,
     @required this.max, 
     @required this.onFinished,
-    this.tick = 500
+    this.animatedColor = true
+    
   }) : super(key: key);
 
   @override
@@ -152,7 +153,9 @@ class _TimerWidgetState extends State<TimerWidget> with SingleTickerProviderStat
           width: constraints.maxWidth - (constraints.maxWidth * animationController.value),
           height: 10,
           decoration: BoxDecoration(
-            color: timerColorTweenSequence.evaluate(AlwaysStoppedAnimation(animationController.value)),
+            color: widget.animatedColor
+              ? timerColorTweenSequence.evaluate(AlwaysStoppedAnimation(animationController.value))
+              : Theme.of(context).colorScheme.surface,
             borderRadius: Dimens.roundedBorderRadius
           ),
         ),
