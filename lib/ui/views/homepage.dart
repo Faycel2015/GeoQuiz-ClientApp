@@ -336,9 +336,8 @@ class ThemeCard extends StatelessWidget {
           children: <Widget>[
             Text(
               theme.title, 
-              maxLines: 1,
               overflow: TextOverflow.fade,
-              softWrap: false,
+              softWrap: false, // to not wrapped line and so apply the TextOverflow.fade
               style: Theme.of(context).textTheme.subhead.apply(color: textColor)
             ),
             Expanded(child: Container()),
