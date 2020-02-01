@@ -4,9 +4,10 @@ import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:app/ui/widgets/surface_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:app/main.dart';
 
-
-
+/// No need to randomize
+/// No need to limit question lenght
 class QuestionView extends StatefulWidget {
 
   final QuizQuestion question;
@@ -132,7 +133,7 @@ class Answer extends StatelessWidget {
   Widget build(BuildContext context) {
     var color = Theme.of(context).colorScheme.surface;
     if (showResult && answer.isCorrect)
-      color = Colors.green;
+      color = Theme.of(context).colorScheme.success;
     if (showResult && isSelected && !answer.isCorrect)
       color = Colors.red;
 

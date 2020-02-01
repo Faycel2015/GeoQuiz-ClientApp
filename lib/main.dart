@@ -29,8 +29,8 @@ import 'package:sqflite/sqflite.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  var localRepo = SQLiteLocalDatabaseRepository();
-  var remoteRepo = FirebaseRemoteDatabaseRepository();
+  final localRepo = SQLiteLocalDatabaseRepository();
+  final remoteRepo = FirebaseRemoteDatabaseRepository();
 
   // await deleteDatabase("database.db");
 
@@ -96,10 +96,35 @@ class GeoQuizApp extends StatelessWidget {
   }
 }
 
+/// Extension of [ColorScheme] methods with [success] color
+/// 
+/// Use extension method to this it's the simplest solution (imo).
+/// It is not the perfect solution as there are mainly 2 limitations :
+/// - it is not possible to have a different colored scheme for another 
+///   ThemeData (e.g. light vs dark theme)
+/// - It is not possible to create variations of the ColorScheme by using .
+///   [ThemeData.copyWith()] function.
+///
+/// See https://dart.dev/guides/language/extension-methods
+extension GeoQuizColorScheme on ColorScheme {
+  Color get success => const Color(0xFF28a745);
+}
 
 
 /// See "documentation" repo to know more about the app theming
-/// https://github.com/GeoQuiz-v2/documents
+/// 
+/// Flutter is actually migrating color theming from ThemeData properties to
+/// [ColorScheme]. Some widgets still use ThemeData color properties so there
+/// are some redondant color definition ... Ultimately, there should no longer 
+/// be color properties (e.g. [ThemeData.primaryColor] is replaced by
+/// [ThemeData.colorScheme.primary])
+/// 
+/// Note: ThemeData are extended with extension method (see [GeoQuizColorScheme])
+///       to add success color as it is no currently parts of the material
+///       theming colors.
+/// 
+/// See https://github.com/GeoQuiz-v2/documents
+/// See https://github.com/flutter/flutter/issues/36624#issuecomment-513863862
 final geoQuizTheme = ThemeData(
   primaryColor: Color(0xFF4E19C8),
   primaryColorLight: Color(0xFF916DE4),
