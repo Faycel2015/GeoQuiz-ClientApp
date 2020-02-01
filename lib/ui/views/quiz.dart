@@ -1,4 +1,5 @@
 import 'package:app/logic/quiz_provider.dart';
+import 'package:app/models/models.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/values.dart';
 import 'package:app/ui/views/question.dart';
@@ -121,7 +122,7 @@ class _QuizViewState extends State<QuizView> {
               QuestionView(
                 question: currentQuestion,
                 showResult: showQuestionResults,
-                onAnswerSelected: (answer) => finishRound()
+                onAnswerSelected: (answer) => finishRound(answer: answer)
               ),
             ],
           ),
@@ -130,9 +131,11 @@ class _QuizViewState extends State<QuizView> {
   }
 
   /// Finish the current round and so to display result
-  /// Set state is called to rebuild the tree (it will start a new timer and
-  /// show correct and wrong answers)
-  finishRound() {
+  /// Calls [QuizProvider.updateScore()] and sets state is called to rebuild the
+  /// tree (it will start a new timer and show correct and wrong answers)
+  finishRound({QuizAnswer answer}) {
+    bool isCorrect = answer?.isCorrect??false;
+    Provider.of<QuizProvider>(context, listen: false).updateScore(isCorrect);
     setState(() => showQuestionResults = true);
   }
 

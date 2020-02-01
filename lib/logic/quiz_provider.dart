@@ -19,6 +19,7 @@ class QuizProvider extends ChangeNotifier {
   Set<QuizTheme> _themes;
   List<QuizQuestion> _questions;
   Iterator _questionsIterator;
+  int goodAnswers = 0;
   
   QuizQuestion get currentQuestion => _questionsIterator?.current;
   
@@ -51,6 +52,20 @@ class QuizProvider extends ChangeNotifier {
     state = QuizProviderState.PREPARED;
   }
 
+  void updateScore(bool correct) {
+    goodAnswers += (correct ? 1 : 0);
+  }
+
+  void nextRound() {
+    _questionsIterator.moveNext();
+    notifyListeners();
+  }
+
+  Future<void> reinit() async {
+    await prepareGame(this._themes);
+  }
+
+
   _prepareQuestion() {
     for (var q in _questions) {
       q.answers.shuffle();
@@ -64,10 +79,9 @@ class QuizProvider extends ChangeNotifier {
   }
 
 
-  nextRound() {
-    _questionsIterator.moveNext();
-    notifyListeners();
-  }
+
+
+
 }
 
 

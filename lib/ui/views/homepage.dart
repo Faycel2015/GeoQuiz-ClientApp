@@ -135,11 +135,6 @@ class QuizConfiguration extends StatefulWidget {
   _QuizConfigurationState createState() => _QuizConfigurationState();
 }
 
-
-
-/// State of [QuizConfiguration]
-/// 
-/// Holds the selected themes.
 class _QuizConfigurationState extends State<QuizConfiguration> {
 
   final _formKey = GlobalKey<FormState>();
