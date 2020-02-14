@@ -18,10 +18,12 @@ class QuizProvider extends ChangeNotifier {
 
   Set<QuizTheme> _themes;
   List<QuizQuestion> _questions;
-  Iterator _questionsIterator;
+  Iterator<QuizQuestion> _questionsIterator;
   int goodAnswers = 0;
   
   QuizQuestion get currentQuestion => _questionsIterator?.current;
+  int get totalNumber => _questions.length;
+  int get currentNumber => _questions.indexOf(_questionsIterator.current) + 1; 
   
 
   QuizProvider({LocalDatabaseRepository localRepo}) : _localRepo = localRepo;

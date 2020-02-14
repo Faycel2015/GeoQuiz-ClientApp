@@ -1,6 +1,6 @@
 import 'package:app/logic/quiz_provider.dart';
-import 'package:app/ui/views/homepage.dart';
-import 'package:app/ui/views/quiz.dart';
+import 'package:app/ui/pages/homepage.dart';
+import 'package:app/ui/pages/quiz.dart';
 import 'package:app/ui/widgets/button.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
 
-class ResultsView extends StatelessWidget {
+class ResultsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -57,11 +57,11 @@ class ResultsButtonList extends StatelessWidget {
 
   onReplay(context) async {
     await Provider.of<QuizProvider>(context, listen: false).reinit();
-    _goTo(context, QuizView());
+    _goTo(context, QuizPage());
   }
 
   onHome(context) {
-    _goTo(context, HomepageView());
+    _goTo(context, HomePage());
   }
 
   _goTo(BuildContext context, Widget page) {

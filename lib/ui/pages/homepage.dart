@@ -1,10 +1,10 @@
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/models/models.dart';
+import 'package:app/ui/pages/quiz.dart';
 import 'package:app/ui/shared/assets.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
-import 'package:app/ui/views/quiz.dart';
 import 'package:app/ui/widgets/app_menu.dart';
 import 'package:app/ui/widgets/button.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
@@ -25,7 +25,7 @@ import 'package:provider/provider.dart';
 /// 
 /// Note: is the [ThemesProvider] is not yet initialized, the [_LoadingData] 
 /// widget will be displayed.
-class HomepageView extends StatelessWidget {
+class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
@@ -181,7 +181,7 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
   _launchQuiz() {
     if (mounted) {
       Navigator.push(context, MaterialPageRoute(
-        builder: (context) => QuizView()
+        builder: (context) => QuizPage()
       ));
     }
   }

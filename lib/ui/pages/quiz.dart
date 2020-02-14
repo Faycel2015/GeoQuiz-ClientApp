@@ -1,9 +1,9 @@
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/models/models.dart';
+import 'package:app/ui/pages/question.dart';
+import 'package:app/ui/pages/results.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/values.dart';
-import 'package:app/ui/views/question.dart';
-import 'package:app/ui/views/results.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +55,7 @@ final resultDuration = Duration(milliseconds: Values.resultDuration);
 /// etc.)
 /// If there is an available question the [QuestionView] with a [TimerWidget]
 /// are displayed.
-/// Else, the [ResultsView] is display.
+/// Else, the [ResultsPage] is display.
 /// Note: There is no "intermediate" loading screen as if the game is not
 ///       finished, the [QuizProvider] provide immediatly the current question 
 ///       (so it is not an asychronous task).
@@ -87,12 +87,12 @@ final resultDuration = Duration(milliseconds: Values.resultDuration);
 /// with the new result duration time. WHen this timer finished, the 
 /// [showQuestionResults] flag is reset to false and the [QuizProvider.nextRound] 
 /// method is called to go to the next question.
-class QuizView extends StatefulWidget {
+class QuizPage extends StatefulWidget {
   @override
-  _QuizViewState createState() => _QuizViewState();
+  _QuizPageState createState() => _QuizPageState();
 }
 
-class _QuizViewState extends State<QuizView> {
+class _QuizPageState extends State<QuizPage> {
 
   /// false is it's the question time, false if it's the question result time
   bool showQuestionResults = false;
@@ -104,7 +104,7 @@ class _QuizViewState extends State<QuizView> {
       return GeoQuizLayout(
         bodyPadding: Dimens.screenMargin,
         body: currentQuestion == null 
-          ? ResultsView()
+          ? ResultsPage()
           : Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
@@ -122,7 +122,9 @@ class _QuizViewState extends State<QuizView> {
               QuestionView(
                 question: currentQuestion,
                 showResult: showQuestionResults,
-                onAnswerSelected: (answer) => finishRound(answer: answer)
+                onAnswerSelected: (answer) => finishRound(answer: answer),
+                currentNumber: quizProvider.currentNumber,
+                totalNumber: quizProvider.totalNumber,
               ),
             ],
           ),

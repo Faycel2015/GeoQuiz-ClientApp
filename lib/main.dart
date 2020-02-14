@@ -3,10 +3,10 @@ import 'package:app/logic/startup_checker.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
+import 'package:app/ui/pages/homepage.dart';
+import 'package:app/ui/pages/start_up.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
-import 'package:app/ui/views/homepage.dart';
-import 'package:app/ui/views/start_up.dart';
 import 'package:app/ui/widgets/basic_scroll_without_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -32,7 +32,7 @@ void main() async {
   final localRepo = SQLiteLocalDatabaseRepository();
   final remoteRepo = FirebaseRemoteDatabaseRepository();
 
-  await deleteDatabase("database.db");
+  // await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(
@@ -62,7 +62,7 @@ void main() async {
 /// 
 /// The home widget depends of the [StartUpCheckerProvider] state.
 /// Depending on the [StartUpCheckerProvider.readyToStart] properties
-/// we build the [StartUpView] or the [HomepageView].
+/// we build the [StartUpView] or the [HomePage].
 class GeoQuizApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -79,7 +79,7 @@ class GeoQuizApp extends StatelessWidget {
               return StartUpView(error: startUpChecker.error);
             } else {
               loadTheme(context);
-              return HomepageView();
+              return HomePage();
             }
           }
         ),

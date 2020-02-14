@@ -94,7 +94,8 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
     final rawQuestions = await db.query(
       _Identifiers.QUESTIONS_TABLE, 
       limit: count,
-      where: "${_Identifiers.QUESTION_THEME} IN (${themeIDs.join(',')})"
+      where: "${_Identifiers.QUESTION_THEME} IN (${themeIDs.join(',')})",
+      orderBy: "RANDOM()"
     );
 
     final questions = List<QuizQuestion>();

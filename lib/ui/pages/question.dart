@@ -13,10 +13,14 @@ class QuestionView extends StatefulWidget {
   final QuizQuestion question;
   final bool showResult;
   final Function(QuizAnswer) onAnswerSelected;
+  final int totalNumber;
+  final int currentNumber;
 
 
   QuestionView({
     @required this.question, 
+    @required this.currentNumber,
+    @required this.totalNumber,
     this.onAnswerSelected, 
     this.showResult = false,
   });
@@ -38,7 +42,10 @@ class _QuestionViewState extends State<QuestionView> {
             Expanded(
               child: ThemeEntitled(theme: widget.question.theme,)
             ),
-            QuestionNumber(current: 1, max: 2,),
+            QuestionNumber(
+              current: widget.currentNumber, 
+              max: widget.totalNumber,
+            ),
           ],
         ),
         FlexSpacer(),
@@ -84,7 +91,22 @@ class QuestionEntitled extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    switch (entitled.type) {
+      case ResourceType.IMAGE:
+        return buildImage(context);
+        break;
+      case ResourceType.TEXT:
+      default:
+        return buildText(context);
+    }
+  }
+
+  Widget buildText(BuildContext context) {
     return Text(entitled.resource, style: TextStyle(fontSize: 30),);
+  }
+
+  Widget buildImage(BuildContext context) {
+    return Placeholder(fallbackHeight: 200, fallbackWidth: 100,);
   }
 }
 
