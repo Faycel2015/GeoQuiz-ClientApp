@@ -105,7 +105,10 @@ class QuestionEntitled extends StatelessWidget {
   }
 
   Widget buildText(BuildContext context) {
-    return Text(entitled.resource, style: TextStyle(fontSize: 30),);
+    return Text(
+      entitled.resource, 
+      style: TextStyle(fontSize: 30),
+    );
   }
 
   Widget buildImage(BuildContext context) {
@@ -115,7 +118,7 @@ class QuestionEntitled extends StatelessWidget {
         if (snap.hasData) {
           return Image.file(File(entitled.resource));
         } else {
-          return Text("Loading");
+          return CircularProgressIndicator();
         }
       }
     );

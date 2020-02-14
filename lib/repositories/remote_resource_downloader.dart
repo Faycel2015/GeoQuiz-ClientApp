@@ -3,15 +3,17 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:path_provider/path_provider.dart';
 
 
 
 abstract class IRemoteResourceHandler {
 
-  Future downloadResources();
+  Future<Map<String, String>> downloadResources();
   Future<String> get storageDirectory;
 }
+
 
 
 
@@ -22,7 +24,8 @@ class FirebaseResourceDownloader  implements IRemoteResourceHandler {
 
 
   @override
-  Future downloadResources() async {
+  Future<Map<String, String>> downloadResources() async {
+    final filesOnTheUserDevice = Map<String, String>();
     final tmpDir = await _tmpDirectory;
     final resourceFiles = await _storage.child("resources").listAll();
     final resourcesFileIterable = resourceFiles["items"].values;
@@ -33,13 +36,18 @@ class FirebaseResourceDownloader  implements IRemoteResourceHandler {
       final ref = _storage.child(path);
       final url = await ref.getDownloadURL();
       await dio.download(url, localPath);
-      _unzip(localPath);
+      try {
+        filesOnTheUserDevice.addAll(await _unzip(localPath));
+      } catch (_) { } 
     }
+    return filesOnTheUserDevice;
 
     // return await _storage.ref().child("resources/$filename").getDownloadURL();
   }
 
-  _unzip(String path) async {
+  Future<Map<String, String>> _unzip(String path) async {
+    final files = Map<String, String>();
+
     final bytes = File(path).readAsBytesSync();
     final archive = ZipDecoder().decodeBytes(bytes);
     final storageDestination = await storageDirectory;
@@ -48,11 +56,16 @@ class FirebaseResourceDownloader  implements IRemoteResourceHandler {
       final filename = file.name;
       if (file.isFile) {
         final data = file.content as List<int>;
-        File("$storageDestination/$filename")
-          ..createSync(recursive: true)
-          ..writeAsBytesSync(data);
+        try {
+          var path = "$storageDestination/$filename";
+          File(path)
+            ..createSync(recursive: true)
+            ..writeAsBytesSync(data);
+          files[filename] = path;
+        } catch (_) { }
       }
-    }  
+    }
+    return files;
   }
 
   Future<String> get storageDirectory async {
