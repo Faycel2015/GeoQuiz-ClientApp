@@ -1,8 +1,10 @@
 import 'dart:async';
 
 import 'package:app/models/models.dart';
+import 'package:app/repositories/remote_resource_downloader.dart';
 import 'package:app/utils/database_content_wrapper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
@@ -36,8 +38,13 @@ abstract class RemoteDatabaseRepository {
 class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
 
   static const timeoutDuration = Duration(seconds: 5);
-  final _firebaseStorage = FirebaseStorage().ref();
 
+  final _firebaseStorage = FirebaseStorage().ref();
+  final IRemoteResourceHandler _resourceDownloader;
+
+  FirebaseRemoteDatabaseRepository({
+    @required IRemoteResourceHandler resourceDownloader
+  }) : this._resourceDownloader = resourceDownloader;
 
   /// Retrieve the content of the version file, and returns the version number 
   @override
@@ -59,7 +66,12 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
     final themes = _getThemes(data: themesData);
 
     final questionsData = dbData[_Identifiers.QUESTIONS_KEY];
-    final questions = _getQuestions(data: questionsData, themes: themes);
+    final baseStorageDirectory = await _resourceDownloader.storageDirectory;
+    final questions = _getQuestions(
+      data: questionsData, 
+      themes: themes,
+      baseStorageDirectory: baseStorageDirectory
+    );
 
     return DatabaseContentWrapper(themes: themes, questions: questions);
   }
@@ -111,14 +123,14 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
 
   /// Return a list of [_RemoteQuestionAdapter] from a [Map] that contains 
   /// the question data
-  List<_RemoteQuestionAdapter> _getQuestions({List data, Iterable<_RemoteThemeAdapter> themes}) {
+  List<_RemoteQuestionAdapter> _getQuestions({List data, Iterable<_RemoteThemeAdapter> themes, String baseStorageDirectory}) {
     final questions = List<_RemoteQuestionAdapter>();
     final mapData = data.cast<Map<String, Object>>();
     for (var questionData in mapData) {
       try {
         final questionThemeID = questionData[_Identifiers.QUESTION_THEME_ID];
         final theme = themes.where((t) => t.id == questionThemeID).first;
-        final question = _RemoteQuestionAdapter(data: questionData, theme: theme);
+        final question = _RemoteQuestionAdapter(data: questionData, theme: theme, baseStorageDirectory: baseStorageDirectory);
         questions.add(question);
       } catch(e) {print(e);}
     }
@@ -158,12 +170,18 @@ class _RemoteQuestionAdapter implements QuizQuestion {
   List<QuizAnswer> answers;
   int difficulty;
 
-  _RemoteQuestionAdapter({Map<String, Object> data, _RemoteThemeAdapter theme}) {
+  _RemoteQuestionAdapter({
+    Map<String, Object> data, 
+    _RemoteThemeAdapter theme,
+    String baseStorageDirectory,
+  }) {
     this.theme = theme;
     this.id = data[_Identifiers.QUESTION_ID];
 
-    final _entitled = data[_Identifiers.QUESTION_ENTITLED];
     final _entitledType = _strToType(data[_Identifiers.QUESTION_ENTITLED_TYPE]);
+    var _entitled = data[_Identifiers.QUESTION_ENTITLED];
+    if (_entitledType == ResourceType.IMAGE)
+      _entitled = "$baseStorageDirectory/$_entitled";
     this.entitled = Resource(resource: _entitled, type: _entitledType);
 
     final _answers = (data[_Identifiers.QUESTION_ANSWERS] as List).cast<String>();

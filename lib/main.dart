@@ -3,6 +3,7 @@ import 'package:app/logic/startup_checker.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
+import 'package:app/repositories/remote_resource_downloader.dart';
 import 'package:app/ui/pages/homepage.dart';
 import 'package:app/ui/pages/start_up.dart';
 import 'package:app/ui/shared/dimens.dart';
@@ -30,9 +31,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final localRepo = SQLiteLocalDatabaseRepository();
-  final remoteRepo = FirebaseRemoteDatabaseRepository();
+  final resourceDownloader = FirebaseResourceDownloader();
+  // await resourceDownloader.downloadResources();
+  final remoteRepo = FirebaseRemoteDatabaseRepository(resourceDownloader: resourceDownloader);
 
-  // await deleteDatabase("database.db");
+  await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(

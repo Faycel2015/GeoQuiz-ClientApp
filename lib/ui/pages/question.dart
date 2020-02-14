@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:app/models/models.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
@@ -5,6 +7,7 @@ import 'package:app/ui/widgets/surface_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:app/main.dart';
+import 'package:path_provider/path_provider.dart';
 
 /// No need to randomize
 /// No need to limit question lenght
@@ -106,7 +109,21 @@ class QuestionEntitled extends StatelessWidget {
   }
 
   Widget buildImage(BuildContext context) {
-    return Placeholder(fallbackHeight: 200, fallbackWidth: 100,);
+    return FutureBuilder(
+      future: _localPath,
+      builder: (context, snap) {
+        if (snap.hasData) {
+          return Image.file(File(entitled.resource));
+        } else {
+          return Text("Loading");
+        }
+      }
+    );
+  }
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    return directory.path;
   }
 }
 
