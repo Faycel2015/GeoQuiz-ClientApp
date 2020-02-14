@@ -39,27 +39,28 @@ class _QuestionViewState extends State<QuestionView> {
   @override
   Widget build(BuildContext context) {
     return  Column(
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: ThemeEntitled(theme: widget.question.theme,)
-            ),
-            QuestionNumber(
-              current: widget.currentNumber, 
-              max: widget.totalNumber,
-            ),
-          ],
-        ),
-        FlexSpacer(),
-        QuestionEntitled(entitled: widget.question.entitled,),
-        FlexSpacer(big: true,),
-        AnswerList(
-          answers: widget.question.answers,
-          onSelected: widget.showResult ? null : onSelectedAnswer,
-          selectedAnswer: selectedAnswer,
-        ),
-      ],
+        children: <Widget>[
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: ThemeEntitled(theme: widget.question.theme,)
+              ),
+              QuestionNumber(
+                current: widget.currentNumber, 
+                max: widget.totalNumber,
+              ),
+            ],
+          ),
+          FlexSpacer(),
+          QuestionEntitled(entitled: widget.question.entitled,),
+          FlexSpacer(big: true,),
+          AnswerList(
+            answers: widget.question.answers,
+            onSelected: widget.showResult ? null : onSelectedAnswer,
+            selectedAnswer: selectedAnswer,
+          ),
+        ],
+      
     );
   }
 
@@ -143,15 +144,17 @@ class AnswerList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      shrinkWrap: true,
+    return Column(
       children: answers.map(
-        (a) => Padding(
-          padding: const EdgeInsets.only(bottom: Dimens.smallSpacing),
-          child: Answer(
-            answer: a,
-            onSelected: onSelected == null ? null : () => onSelected(a),
-            isSelected: selectedAnswer != null && a == selectedAnswer && !a.isCorrect 
+        (a) => Container(
+          width: double.infinity,
+          child: Padding(
+            padding: const EdgeInsets.only(bottom: Dimens.smallSpacing),
+            child: Answer(
+              answer: a,
+              onSelected: onSelected == null ? null : () => onSelected(a),
+              isSelected: selectedAnswer != null && a == selectedAnswer && !a.isCorrect 
+            ),
           ),
         )
       ).toList(),

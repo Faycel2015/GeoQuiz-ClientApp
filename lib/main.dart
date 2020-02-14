@@ -8,7 +8,6 @@ import 'package:app/ui/pages/homepage.dart';
 import 'package:app/ui/pages/start_up.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
-import 'package:app/ui/widgets/basic_scroll_without_glow.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -73,19 +72,17 @@ class GeoQuizApp extends StatelessWidget {
 
       theme: geoQuizTheme,
   
-      home: ScrollConfiguration(
-        behavior: BasicScrollWithoutGlow(), // to remove glowing animation for all scrollable widgets 
-        child: Consumer<StartUpCheckerProvider>(
-          builder: (context, startUpChecker, _) {
-            if (!startUpChecker.readyToStart) {
-              return StartUpView(error: startUpChecker.error);
-            } else {
-              loadTheme(context);
-              return HomePage();
-            }
+      home: Consumer<StartUpCheckerProvider>(
+        builder: (context, startUpChecker, _) {
+          if (!startUpChecker.readyToStart) {
+            return StartUpView(error: startUpChecker.error);
+          } else {
+            loadTheme(context);
+            return HomePage();
           }
-        ),
+        }
       ),
+      
     );
   }
 

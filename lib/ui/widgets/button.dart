@@ -1,3 +1,4 @@
+import 'package:app/utils/color_operations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
@@ -43,6 +44,7 @@ class Button extends StatelessWidget {
       icon: icon, 
       label: Flexible(child: Text(label)),
       color: backColor,
+      disabledColor: ColorOperations.darken(backColor, 0.15),
       textColor: frontColor,
       padding: EdgeInsets.symmetric(horizontal: 15, vertical: 10),
       shape: StadiumBorder(),

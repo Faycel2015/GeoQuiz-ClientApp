@@ -31,3 +31,23 @@ class BasicScrollWithoutGlow extends ScrollBehavior {
     return child;
   }
 }
+
+
+
+class ScrollViewNoEffect extends StatelessWidget {
+
+  final Widget child;
+
+  ScrollViewNoEffect({@required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return ScrollConfiguration(
+      behavior: BasicScrollWithoutGlow(),
+      child: SingleChildScrollView(
+        child: child,
+      ),
+    );
+  }
+
+}

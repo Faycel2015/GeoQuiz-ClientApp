@@ -8,6 +8,7 @@ import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/values.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
+import 'package:app/ui/widgets/scroll_view_no_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -123,12 +124,16 @@ class _QuizPageState extends State<QuizPage> {
                   ),
                 ),
                 FlexSpacer(),
-                QuestionView(
-                  question: currentQuestion,
-                  showResult: showQuestionResults,
-                  onAnswerSelected: (answer) => finishRound(answer: answer),
-                  currentNumber: quizProvider.currentNumber,
-                  totalNumber: quizProvider.totalNumber,
+                Expanded(
+                  child: ScrollViewNoEffect(
+                    child: QuestionView(
+                      question: currentQuestion,
+                      showResult: showQuestionResults,
+                      onAnswerSelected: (answer) => finishRound(answer: answer),
+                      currentNumber: quizProvider.currentNumber,
+                      totalNumber: quizProvider.totalNumber,
+                    ),
+                  ),
                 ),
               ],
             ),
