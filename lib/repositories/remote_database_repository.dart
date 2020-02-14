@@ -57,8 +57,11 @@ class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
 
   /// Return a [DatabaseContentWrapper] that contains all the themes and
   /// questions in the database.
+  /// 
+  /// Also, download the database resources
   @override
   Future<DatabaseContentWrapper> getDatabaseContent() async {
+    await _resourceDownloader.downloadResources();
     final dbContent = await _getContentFile(_Identifiers.DATABASE_FILENAME);
     final dbData = jsonDecode(dbContent);
 

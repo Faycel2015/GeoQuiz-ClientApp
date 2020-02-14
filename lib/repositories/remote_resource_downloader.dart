@@ -23,17 +23,6 @@ class FirebaseResourceDownloader  implements IRemoteResourceHandler {
 
   @override
   Future downloadResources() async {
-    var paths = await _storage.child("resources").listAll();
-    var dir = await new Directory(await storageDirectory).create();
-    var files = paths["items"] as Map;
-    for (Map file in files.values) {
-      var path = file["path"];
-      var name = file["name"];
-      var ref = _storage.child(path);
-      var url = await ref.getDownloadURL();
-      dio.download(url, "${dir.path}/$name");
-    }
-
     final tmpDir = await _tmpDirectory;
     final resourceFiles = await _storage.child("resources").listAll();
     final resourcesFileIterable = resourceFiles["items"].values;
@@ -46,6 +35,8 @@ class FirebaseResourceDownloader  implements IRemoteResourceHandler {
       await dio.download(url, localPath);
       _unzip(localPath);
     }
+
+    // return await _storage.ref().child("resources/$filename").getDownloadURL();
   }
 
   _unzip(String path) async {
