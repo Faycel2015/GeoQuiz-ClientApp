@@ -32,7 +32,7 @@ void main() async {
 
   final localRepo = SQLiteLocalDatabaseRepository();
   final resourceDownloader = FirebaseResourceDownloader();
-  // await resourceDownloader.downloadResources();
+  await resourceDownloader.downloadResources();
   final remoteRepo = FirebaseRemoteDatabaseRepository(resourceDownloader: resourceDownloader);
 
   // await deleteDatabase("database.db");
