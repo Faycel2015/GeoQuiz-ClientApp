@@ -8,6 +8,7 @@ import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/widgets/app_menu.dart';
 import 'package:app/ui/widgets/button.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
+import 'package:app/ui/widgets/scroll_view_no_effect.dart';
 import 'package:app/ui/widgets/surface_card.dart';
 import 'package:app/utils/snackbar_handler.dart';
 import 'package:flutter/material.dart';
@@ -25,28 +26,48 @@ import 'package:provider/provider.dart';
 /// 
 /// Note: is the [ThemesProvider] is not yet initialized, the [_LoadingData] 
 /// widget will be displayed.
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+
+  @override
+  _HomePageState createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+
+  var quizForm = GlobalKey<_QuizConfigurationState>();
 
   @override
   Widget build(BuildContext context) {
     return GeoQuizLayout( 
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
         children: <Widget>[
-          Padding(
-            padding: Dimens.screenMargin,
-            child:  HomepageHeader(),
-          ),
-          Expanded(
-            child: Consumer<ThemesProvider>(
-              builder: (context, themesProvider, _) =>
-                themesProvider.state == ThemeProviderState.NOT_INIT
-                  ? _LoadingData()
-                  : QuizConfiguration(themes: themesProvider.themes)
+          ScrollViewNoEffect(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Padding(
+                  padding: Dimens.screenMargin,
+                  child:  HomepageHeader(),
+                ),
+                Consumer<ThemesProvider>(
+                  builder: (context, themesProvider, _) =>
+                    themesProvider.state == ThemeProviderState.NOT_INIT
+                      ? _LoadingData()
+                      : QuizConfiguration(
+                          key: quizForm,
+                          themes: themesProvider.themes
+                        )
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+          Positioned(
+            bottom: Dimens.screenMarginY,
+            right: Dimens.screenMarginX,
+            child: LaunchQuizButton(quizForm: quizForm)
+          )
+        ]
+      )
     );
   }
 }
@@ -72,6 +93,7 @@ class _LoadingData extends StatelessWidget {
 /// size). 
 /// The icon trigger the menu on the user click.
 class HomepageHeader extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.headline1;
@@ -142,47 +164,28 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
+    return 
         Form(
           key: _formKey,
-          child: SelectableThemesForm(
+          child:  SelectableThemesForm(
             themes: widget.themes,
             validator: (themes) => themes.isEmpty ? "" : null,
             onSaved: (themes) => _selectedThemes = themes,
             padding: Dimens.screenMargin,
             spacing: Dimens.normalSpacing,
             label: Text(Strings.selectThemes),
-          )
-        ),
-        Positioned(
-          bottom: Dimens.screenMarginY,
-          right: Dimens.screenMarginX,
-          child: LaunchQuizButton(onPressed: _onSubmit)
-        )
-      ],
+            size: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
+          ),
     );
   }
 
-  _onSubmit() async {
+  Set<QuizTheme> submitForm() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      try {
-        await Provider.of<QuizProvider>(context, listen: false).prepareGame(_selectedThemes);
-        _launchQuiz();
-      } catch (_) {
-        _handlePreparationError(_);
-      }
+      return _selectedThemes;
     } else {
       _handleInvalidForm();
-    }
-  }
-
-  _launchQuiz() {
-    if (mounted) {
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) => QuizPage()
-      ));
+      return null;
     }
   }
 
@@ -190,14 +193,6 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
     showSnackbar(
       context: context,
       content: Text(Strings.quizConfigurationInvalid),
-    );
-  }
-
-  _handlePreparationError(_) {
-    showSnackbar(
-      context: context,
-      critical: true,
-      content: Text(Strings.quizPreparationError)
     );
   }
 }
@@ -211,22 +206,60 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
 /// - if the state is [QuizProviderState.IN_PROGRESS] the button will be
 ///   diasble and a loading message will be dispalyed
 /// - else the button will be enable.
-class LaunchQuizButton extends StatelessWidget {
-  final Function onPressed;
+class LaunchQuizButton extends StatefulWidget {
 
-  LaunchQuizButton({@required this.onPressed});
+  final GlobalKey<_QuizConfigurationState> quizForm;
+
+  LaunchQuizButton({@required this.quizForm});
+
+  @override
+  _LaunchQuizButtonState createState() => _LaunchQuizButtonState();
+}
+
+class _LaunchQuizButtonState extends State<LaunchQuizButton> {
+
+  bool inProgress = false;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<QuizProvider>(
       builder: (context, quizProvider, _) {
-        final inProgress = quizProvider.state == QuizProviderState.IN_PROGRESS;
         return Button(
           label: inProgress ? Strings.loadingThemes : Strings.launchQuiz,
           icon: Icon(Icons.chevron_right),
-          onPressed: inProgress ? null : onPressed,
+          onPressed: inProgress ? null : _onSubmit,
         );
       }
+    );
+  }
+
+  _onSubmit() async {
+    var selectedThemes = widget.quizForm.currentState.submitForm();
+    if (selectedThemes != null) {
+      setState(() => inProgress = true);
+      try {
+        await Provider.of<QuizProvider>(context, listen: false).prepareGame(selectedThemes);
+        _launchQuiz();
+      } catch (_) {
+        _handlePreparationError(_);
+      }
+      setState(() => inProgress = false);
+    }
+  }
+
+  _launchQuiz() {
+    if (mounted) {
+      Navigator.push(context, MaterialPageRoute(
+        builder: (context) => QuizPage()
+      ));
+    }
+  }
+
+  _handlePreparationError(_) {
+    showSnackbar(
+      context: context,
+      critical: true,
+      content: Text(Strings.quizPreparationError)
     );
   }
 }
@@ -258,6 +291,7 @@ class SelectableThemesForm extends FormField<Set<QuizTheme>> {
     EdgeInsets padding,
     double spacing = 0,
     Widget label,
+    int size = 2
   }) : super(
     key: key,
     onSaved: onSaved,
@@ -277,8 +311,9 @@ class SelectableThemesForm extends FormField<Set<QuizTheme>> {
             shrinkWrap: true,
             crossAxisSpacing: spacing,
             mainAxisSpacing: spacing,
-            crossAxisCount: 2,
+            crossAxisCount: size,
             padding: padding,
+            primary: false,
             children: themes.map((t) => 
               ThemeCard(
                 theme: t, 
