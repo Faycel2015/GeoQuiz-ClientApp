@@ -26,6 +26,7 @@ dependencies:
   dio: ^3.0.8
   archive: ^2.0.11
   url_launcher: ^5.4.1
+  in_app_purchase: ^0.3.1
 
 dev_dependencies:
   flutter_test:

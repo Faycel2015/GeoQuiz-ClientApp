@@ -22,11 +22,11 @@ class AppMenu extends StatelessWidget {
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
       children: <Widget>[
-        ListTile(
-          leading: Icon(Icons.local_drink), 
-          title: Text(Strings.menuDonation), 
-          onTap: () => handleDonation(context)
-        ),
+        // ListTile(
+        //   leading: Icon(Icons.local_drink), 
+        //   title: Text(Strings.menuDonation), 
+        //   onTap: () => handleDonation(context)
+        // ),
         ListTile(
           leading: Icon(Icons.bug_report), 
           title: Text(Strings.menuBugReport), 
@@ -54,8 +54,9 @@ class AppMenu extends StatelessWidget {
 class DonationMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+    return ListView(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
       children: <Widget>[
         Text(
           "Good to see you here!",
