@@ -45,11 +45,7 @@ class FirebaseResourceDownloader  implements IRemoteResourceHandler {
       final url = await ref.getDownloadURL();
       await dio.download(url, localPath);
       _unzip(localPath);
-
-      
     }
-
-    // return await _storage.ref().child("resources/$filename").getDownloadURL();
   }
 
   _unzip(String path) async {
