@@ -33,7 +33,7 @@ void main() async {
   final resourceDownloader = FirebaseResourceDownloader();
   final remoteRepo = FirebaseRemoteDatabaseRepository(resourceDownloader: resourceDownloader);
 
-  await deleteDatabase("database.db");
+  // await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(

@@ -1,11 +1,11 @@
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/models/models.dart';
+import 'package:app/ui/pages/menu.dart';
 import 'package:app/ui/pages/quiz.dart';
 import 'package:app/ui/shared/assets.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
-import 'package:app/ui/widgets/app_menu.dart';
 import 'package:app/ui/widgets/button.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
 import 'package:app/ui/widgets/scroll_view_no_effect.dart';
