@@ -167,10 +167,12 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
   _onSubmit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      await Provider.of<QuizProvider>(context, listen: false)
-        .prepareGame(_selectedThemes)
-        .catchError(_handlePreparationError);
-      _launchQuiz();
+      try {
+        await Provider.of<QuizProvider>(context, listen: false).prepareGame(_selectedThemes);
+        _launchQuiz();
+      } catch (_) {
+        _handlePreparationError(_);
+      }
     } else {
       _handleInvalidForm();
     }

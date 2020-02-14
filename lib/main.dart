@@ -32,7 +32,7 @@ void main() async {
   final localRepo = SQLiteLocalDatabaseRepository();
   final remoteRepo = FirebaseRemoteDatabaseRepository();
 
-  // await deleteDatabase("database.db");
+  await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(

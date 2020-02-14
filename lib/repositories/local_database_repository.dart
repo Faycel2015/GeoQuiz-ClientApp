@@ -59,8 +59,13 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
     for (var q in wrapper.questions??[]) {
       batch.insert(_Identifiers.QUESTIONS_TABLE, _LocalQuestionAdapter.toMap(q));
     }
-    
-    await batch.commit(continueOnError: true);
+    try {
+      var result = await batch.commit(continueOnError: true);
+      print(result.where((r) => r is DatabaseException).length.toString() + " errors");
+    } catch (e) { // if nothing is commit, we reset the version to 0
+      await db.setVersion(0);
+      return Future.error(e);
+    }
     await db.close();
   }
 
@@ -214,18 +219,16 @@ class _LocalQuestionAdapter implements QuizQuestion {
   }
 
   static Map<String, dynamic> toMap(QuizQuestion question) {
-    final _answers = List<String>();
-    for (var a in question.answers)
-      _answers.add(a.answer.resource);
-    final _answersType = _typeToStr(question.answers.first.answer.type);
+    var answers = question.answers.map((a) => a.answer.resource).join(serializationCharacter);
+    var answersType = _typeToStr(question.answers.first.answer.type);
     return {
       _Identifiers.QUESTION_ID: question.id,
       _Identifiers.QUESTION_THEME: question.theme.id,
-      _Identifiers.QUESTION_ENTITLED: question.entitled,
-      _Identifiers.QUESTION_ENTITLED_TYPE: _answers,
-      _Identifiers.QUESTION_ANSWERS: _answers,
-      _Identifiers.QUESTION_ANSWERS_TYPE: _answersType,
-      _Identifiers.QUESTION_DIFFICULTY: question.difficulty,
+      _Identifiers.QUESTION_ENTITLED: question.entitled.resource,
+      _Identifiers.QUESTION_ENTITLED_TYPE: _typeToStr(question.entitled.type),
+      _Identifiers.QUESTION_ANSWERS: answers,
+      _Identifiers.QUESTION_ANSWERS_TYPE: answersType,
+      _Identifiers.QUESTION_DIFFICULTY: 1,
     };
   }
 

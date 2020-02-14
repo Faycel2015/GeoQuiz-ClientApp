@@ -42,6 +42,8 @@ class StartUpCheckerProvider extends ChangeNotifier {
     if (remoteVersion != null && (localVersion == null || localVersion != remoteVersion)) {
       if (await _updateLocalDatabase(version: remoteVersion))
         localVersion = remoteVersion;
+      else
+        localVersion = null;
     }
 
     this.remoteDataFethed = remoteVersion == null;
