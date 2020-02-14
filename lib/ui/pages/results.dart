@@ -14,7 +14,7 @@ class ResultsPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text("Results", style: Theme.of(context).textTheme.title,),
+        Text("Results", style: Theme.of(context).textTheme.headline1,),
         FlexSpacer(),
         Center(child: QuizScore()),
         Expanded(child: Container()),

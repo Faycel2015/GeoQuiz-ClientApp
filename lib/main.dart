@@ -35,7 +35,7 @@ void main() async {
   // await resourceDownloader.downloadResources();
   final remoteRepo = FirebaseRemoteDatabaseRepository(resourceDownloader: resourceDownloader);
 
-  await deleteDatabase("database.db");
+  // await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(
@@ -160,8 +160,14 @@ final geoQuizTheme = ThemeData(
   brightness: Brightness.dark,
   
   textTheme: GoogleFonts.righteousTextTheme(TextTheme(
-    title: TextStyle(fontSize: 37, height: 1.0, shadows: [Dimens.textShadow]),
-    body1: TextStyle(fontSize: 16, shadows: [Dimens.textShadow]),
+    headline1: TextStyle(fontSize: 37, height: 1.0, shadows: [Dimens.textShadow]),
+    headline2:  TextStyle(fontSize: 19),
+
+    bodyText1: TextStyle(fontSize: 16, shadows: [Dimens.textShadow]),
+
+    subtitle1: TextStyle(fontSize: 16),
+    subtitle2: TextStyle(fontSize: 16),
+
     button: TextStyle(fontSize: 15)
-  ).apply(bodyColor: Colors.white))
+  ).apply(bodyColor: Colors.white, displayColor: Colors.white))
 );

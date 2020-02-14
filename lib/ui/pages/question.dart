@@ -182,7 +182,7 @@ class Answer extends StatelessWidget {
       onPressed: onSelected,
       color: backColor,
       child: DefaultTextStyle(
-        style: Theme.of(context).textTheme.subhead.apply(color: textColor),
+        style: Theme.of(context).textTheme.subtitle1.apply(color: textColor),
         child: Text(answer.answer.resource)
       ),
     );

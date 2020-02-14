@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/models/models.dart';
 import 'package:app/ui/pages/question.dart';
@@ -105,28 +107,31 @@ class _QuizPageState extends State<QuizPage> {
         bodyPadding: Dimens.screenMargin,
         body: currentQuestion == null 
           ? ResultsPage()
-          : Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Align(
-                alignment: Alignment.centerRight,
-                child: TimerWidget(
-                  key: GlobalKey(), // to restart the animation when the tree is rebuilt
-                  duration: showQuestionResults ? resultDuration : questionDuration,
-                  onFinished: showQuestionResults ? nextRound : finishRound,
-                  animatedColor: !showQuestionResults,
-                  colorSequence: timerColorTweenSequence,
+          : WillPopScope(
+            onWillPop: preventMissReturned,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TimerWidget(
+                    key: GlobalKey(), // to restart the animation when the tree is rebuilt
+                    duration: showQuestionResults ? resultDuration : questionDuration,
+                    onFinished: showQuestionResults ? nextRound : finishRound,
+                    animatedColor: !showQuestionResults,
+                    colorSequence: timerColorTweenSequence,
+                  ),
                 ),
-              ),
-              FlexSpacer(),
-              QuestionView(
-                question: currentQuestion,
-                showResult: showQuestionResults,
-                onAnswerSelected: (answer) => finishRound(answer: answer),
-                currentNumber: quizProvider.currentNumber,
-                totalNumber: quizProvider.totalNumber,
-              ),
-            ],
+                FlexSpacer(),
+                QuestionView(
+                  question: currentQuestion,
+                  showResult: showQuestionResults,
+                  onAnswerSelected: (answer) => finishRound(answer: answer),
+                  currentNumber: quizProvider.currentNumber,
+                  totalNumber: quizProvider.totalNumber,
+                ),
+              ],
+            ),
           ),
       );
     });
@@ -149,6 +154,40 @@ class _QuizPageState extends State<QuizPage> {
   nextRound() {
     showQuestionResults = false;
     Provider.of<QuizProvider>(context, listen: false).nextRound();
+  }
+
+
+  ///
+  ///
+  ///
+  Future<bool> preventMissReturned() {
+    print("ok");
+    var completer = Completer<bool>();
+    showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(
+          "Are you sure",
+        ),
+        actions: <Widget>[
+          FlatButton(
+            child: Text("NO"), 
+            onPressed: () {
+              Navigator.pop(context);
+              completer.complete(false);
+            }
+          ),
+          FlatButton(
+            child: Text("YES"),
+            onPressed: () {
+              Navigator.pop(context);
+              completer.complete(true);
+            }
+          )
+        ],
+      )
+    );
+    return completer.future;
   }
 }
 

@@ -74,7 +74,7 @@ class _LoadingData extends StatelessWidget {
 class HomepageHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme.title;
+    final textStyle = Theme.of(context).textTheme.headline1;
     final subtitleSize = textStyle.fontSize * 0.5;
     return  Row(
       children: <Widget>[
@@ -340,7 +340,7 @@ class ThemeCard extends StatelessWidget {
             theme.title, 
             overflow: TextOverflow.fade,
             softWrap: false, // to not wrapped line and so apply the TextOverflow.fade
-            style: Theme.of(context).textTheme.subhead.apply(color: textColor)
+            style: Theme.of(context).textTheme.subtitle2.apply(color: textColor)
           ),
           Expanded(child: Container()),
           SvgPicture.string(
