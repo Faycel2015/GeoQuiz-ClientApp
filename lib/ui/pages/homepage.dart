@@ -164,18 +164,17 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
 
   @override
   Widget build(BuildContext context) {
-    return 
-        Form(
-          key: _formKey,
-          child:  SelectableThemesForm(
-            themes: widget.themes,
-            validator: (themes) => themes.isEmpty ? "" : null,
-            onSaved: (themes) => _selectedThemes = themes,
-            padding: Dimens.screenMargin,
-            spacing: Dimens.normalSpacing,
-            label: Text(Strings.selectThemes),
-            size: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
-          ),
+    return Form(
+      key: _formKey,
+      child:  SelectableThemesForm(
+        themes: widget.themes,
+        validator: (themes) => themes.isEmpty ? "" : null,
+        onSaved: (themes) => _selectedThemes = themes,
+        padding: Dimens.screenMargin,
+        spacing: Dimens.normalSpacing,
+        label: Text(Strings.selectThemes),
+        size: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
+      ),
     );
   }
 
