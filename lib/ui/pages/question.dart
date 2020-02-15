@@ -1,12 +1,15 @@
 import 'dart:io';
 
 import 'package:app/models/models.dart';
+import 'package:app/ui/shared/assets.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:app/ui/widgets/surface_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:app/main.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
 
 /// No need to randomize
@@ -38,27 +41,40 @@ class _QuestionViewState extends State<QuestionView> {
 
   @override
   Widget build(BuildContext context) {
+    bool isMap = widget.question.answers.first.answer.type == ResourceType.location;
+    isMap = true;
     return  Column(
         children: <Widget>[
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: ThemeEntitled(theme: widget.question.theme,)
-              ),
-              QuestionNumber(
-                current: widget.currentNumber, 
-                max: widget.totalNumber,
-              ),
-            ],
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  child: ThemeEntitled(theme: widget.question.theme,)
+                ),
+                QuestionNumber(
+                  current: widget.currentNumber, 
+                  max: widget.totalNumber,
+                ),
+              ],
+            ),
           ),
           FlexSpacer(),
           QuestionEntitled(entitled: widget.question.entitled,),
           FlexSpacer(big: true,),
-          AnswerList(
-            answers: widget.question.answers,
-            onSelected: widget.showResult ? null : onSelectedAnswer,
-            selectedAnswer: selectedAnswer,
-          ),
+          if (isMap)
+            AnswersMap(
+              key: GlobalKey(),
+              answers: widget.question.answers,
+              onSelected: widget.showResult ? null : onSelectedAnswer,
+              selectedAnswer: selectedAnswer,
+            ),
+          if (!isMap)
+            AnswersList(
+              answers: widget.question.answers,
+              onSelected: widget.showResult ? null : onSelectedAnswer,
+              selectedAnswer: selectedAnswer,
+            ),
         ],
       
     );
@@ -96,10 +112,10 @@ class QuestionEntitled extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     switch (entitled.type) {
-      case ResourceType.IMAGE:
+      case ResourceType.image:
         return buildImage(context);
         break;
-      case ResourceType.TEXT:
+      case ResourceType.text:
       default:
         return buildText(context);
     }
@@ -117,7 +133,7 @@ class QuestionEntitled extends StatelessWidget {
       future: _localPath,
       builder: (context, snap) {
         if (snap.hasData) {
-          return Image.file(File(entitled.resource));
+          return Image.file(File(entitled.resource), );
         } else {
           return CircularProgressIndicator();
         }
@@ -133,34 +149,104 @@ class QuestionEntitled extends StatelessWidget {
 
 
 
-class AnswerList extends StatelessWidget {
 
+class AnswersList extends StatelessWidget {
   final List<QuizAnswer> answers;
   final Function(QuizAnswer) onSelected;
   final QuizAnswer selectedAnswer;
 
-  AnswerList({@required this.answers, this.onSelected, this.selectedAnswer});
+  AnswersList({@required this.answers, this.onSelected, this.selectedAnswer});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
+      child: Column(
+        children: answers.map(
+          (a) => Container(
+            width: double.infinity,
+            child: Padding(
+              padding: const EdgeInsets.only(bottom: Dimens.smallSpacing),
+              child: Answer(
+                answer: a,
+                onSelected: onSelected == null ? null : () => onSelected(a),
+                isSelected: selectedAnswer != null && a == selectedAnswer && !a.isCorrect 
+              ),
+            ),
+          )
+        ).toList(),
+      ),
+    );
+  }
+}
+
+
+
+class AnswersMap extends StatefulWidget {
+  final List<QuizAnswer> answers;
+  final Function(QuizAnswer) onSelected;
+  final QuizAnswer selectedAnswer;
+
+  AnswersMap({
+    Key key,
+    @required this.answers,
+    this.onSelected,
+    this.selectedAnswer
+  }) : super(key: key);
+
+  @override
+  _AnswersMapState createState() => _AnswersMapState();
+}
+
+class _AnswersMapState extends State<AnswersMap> with SingleTickerProviderStateMixin {
+
+  ScrollController controller = ScrollController();
+
+  int offset = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      controller.animateTo(
+        controller.position.maxScrollExtent, 
+        duration: Duration(seconds: 3), 
+        curve: Curves.easeOut,
+      )
+    );
+  }
 
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: answers.map(
-        (a) => Container(
-          width: double.infinity,
-          child: Padding(
-            padding: const EdgeInsets.only(bottom: Dimens.smallSpacing),
-            child: Answer(
-              answer: a,
-              onSelected: onSelected == null ? null : () => onSelected(a),
-              isSelected: selectedAnswer != null && a == selectedAnswer && !a.isCorrect 
-            ),
+    return SingleChildScrollView(
+      controller: controller,
+      scrollDirection: Axis.horizontal,
+      child: Stack(
+        children:[
+          SvgPicture.asset(
+            Assets.worldmap,
+            width: 500,
+            color: Colors.white.withOpacity(0.3),
+            
           ),
-        )
-      ).toList(),
+          Positioned(
+            left: 200,
+            child: Icon(
+              Icons.location_on, 
+              size: 45,
+              color: Colors.white
+            ),
+          )
+        ] 
+      ),
     );
   }
+
 }
+
+
+
 
 class Answer extends StatelessWidget {
 

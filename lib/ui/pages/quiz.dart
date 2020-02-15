@@ -4,12 +4,14 @@ import 'package:app/logic/quiz_provider.dart';
 import 'package:app/models/models.dart';
 import 'package:app/ui/pages/question.dart';
 import 'package:app/ui/pages/results.dart';
+import 'package:app/ui/shared/assets.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/values.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
 import 'package:app/ui/widgets/scroll_view_no_effect.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
@@ -99,28 +101,35 @@ class _QuizPageState extends State<QuizPage> {
 
   /// false is it's the question time, false if it's the question result time
   bool showQuestionResults = false;
+  bool assetsLoading = true;
 
   @override
   Widget build(BuildContext context) {
     return Consumer<QuizProvider>(builder: (context, quizProvider, _) {
       final currentQuestion = quizProvider.currentQuestion;
       return GeoQuizLayout(
-        bodyPadding: Dimens.screenMargin,
         body: currentQuestion == null 
           ? ResultsPage()
-          : WillPopScope(
+          : 
+          assetsLoading 
+          ? Text("Assets loading")
+          :
+          WillPopScope(
             onWillPop: preventMissReturned,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Align(
                   alignment: Alignment.centerRight,
-                  child: TimerWidget(
-                    key: GlobalKey(), // to restart the animation when the tree is rebuilt
-                    duration: showQuestionResults ? resultDuration : questionDuration,
-                    onFinished: showQuestionResults ? nextRound : finishRound,
-                    animatedColor: !showQuestionResults,
-                    colorSequence: timerColorTweenSequence,
+                  child: Padding(
+                    padding: Dimens.screenMargin,
+                    child: TimerWidget(
+                      key: GlobalKey(), // to restart the animation when the tree is rebuilt
+                      duration: showQuestionResults ? resultDuration : questionDuration,
+                      onFinished: showQuestionResults ? nextRound : finishRound,
+                      animatedColor: !showQuestionResults,
+                      colorSequence: timerColorTweenSequence,
+                    ),
                   ),
                 ),
                 FlexSpacer(),

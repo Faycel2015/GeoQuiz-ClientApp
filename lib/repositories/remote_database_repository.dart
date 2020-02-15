@@ -183,7 +183,7 @@ class _RemoteQuestionAdapter implements QuizQuestion {
 
     final _entitledType = _strToType(data[_Identifiers.QUESTION_ENTITLED_TYPE]);
     var _entitled = data[_Identifiers.QUESTION_ENTITLED];
-    if (_entitledType == ResourceType.IMAGE)
+    if (_entitledType == ResourceType.image)
       _entitled = resources[_entitled];
     if (_entitled == null)
       throw Exception("Resource not available on the user device");
@@ -201,9 +201,9 @@ class _RemoteQuestionAdapter implements QuizQuestion {
 
   static ResourceType _strToType(String typeStr) {
     switch (typeStr) {
-      case "txt" : return ResourceType.TEXT;
-      case "img" : return ResourceType.IMAGE;
-      case "loc" : return ResourceType.LOCATION;
+      case "txt" : return ResourceType.text;
+      case "img" : return ResourceType.image;
+      case "loc" : return ResourceType.location;
       default: throw("Not supported type ($typeStr)");
     }
   }

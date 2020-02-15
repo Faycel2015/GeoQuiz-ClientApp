@@ -235,18 +235,18 @@ class _LocalQuestionAdapter implements QuizQuestion {
 
   static ResourceType _strToType(String typeStr) {
     switch (typeStr) {
-      case typeTxt : return ResourceType.TEXT;
-      case typeImg : return ResourceType.IMAGE;
-      case typeLoc : return ResourceType.LOCATION;
+      case typeTxt : return ResourceType.text;
+      case typeImg : return ResourceType.image;
+      case typeLoc : return ResourceType.location;
       default: throw("Not supported type");
     }
   }
 
   static String _typeToStr(ResourceType type) {
     switch (type) {
-      case ResourceType.TEXT: return typeTxt;
-      case ResourceType.IMAGE: return typeImg;
-      case ResourceType.LOCATION: return typeLoc;
+      case ResourceType.text: return typeTxt;
+      case ResourceType.image: return typeImg;
+      case ResourceType.location: return typeLoc;
       default: throw("Not supported type");
     }
   }

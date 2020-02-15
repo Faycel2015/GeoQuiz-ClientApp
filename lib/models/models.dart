@@ -49,7 +49,7 @@ class QuizAnswer {
 
 /// Supported ressource type
 enum ResourceType {
-  TEXT,
-  IMAGE,
-  LOCATION,
+  text,
+  image,
+  location,
 }
