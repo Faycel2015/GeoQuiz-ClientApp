@@ -102,6 +102,7 @@ class _QuizPageState extends State<QuizPage> {
 
   /// false is it's the question time, false if it's the question result time
   bool showQuestionResults = false;
+  var timerKey = GlobalKey<_TimerWidgetState>();
 
   @override
   Widget build(BuildContext context) {
@@ -120,7 +121,7 @@ class _QuizPageState extends State<QuizPage> {
                   child: Padding(
                     padding: Dimens.screenMargin,
                     child: TimerWidget(
-                      key: GlobalKey(), // to restart the animation when the tree is rebuilt
+                      key: timerKey, // to restart the animation when the tree is rebuilt
                       duration: showQuestionResults ? resultDuration : questionDuration,
                       onFinished: showQuestionResults ? nextRound : finishRound,
                       animatedColor: !showQuestionResults,
@@ -137,6 +138,7 @@ class _QuizPageState extends State<QuizPage> {
                       onAnswerSelected: (answer) => finishRound(answer: answer),
                       currentNumber: quizProvider.currentNumber,
                       totalNumber: quizProvider.totalNumber,
+                      onReady: () => timerKey.currentState.start(),
                     ),
                   ),
                 ),
@@ -151,6 +153,7 @@ class _QuizPageState extends State<QuizPage> {
   /// Calls [QuizProvider.updateScore()] and sets state is called to rebuild the
   /// tree (it will start a new timer and show correct and wrong answers)
   finishRound({QuizAnswer answer}) {
+    timerKey.currentState.reset();
     bool isCorrect = answer?.isCorrect??false;
     Provider.of<QuizProvider>(context, listen: false).updateScore(isCorrect);
     setState(() => showQuestionResults = true);
@@ -162,6 +165,7 @@ class _QuizPageState extends State<QuizPage> {
   /// generate a rebuilt as the [QuizProvider.nextRound()] method notify 
   /// the provider listeners.
   nextRound() {
+    timerKey.currentState.reset();
     showQuestionResults = false;
     Provider.of<QuizProvider>(context, listen: false).nextRound();
   }
@@ -256,10 +260,6 @@ class _TimerWidgetState extends State<TimerWidget> with SingleTickerProviderStat
       vsync: this, 
       duration: widget.duration
     );
-    animController.forward() // start the animation
-      .then((_) { // when the animation ends
-        widget.onFinished();
-      });
   }
 
   @override
@@ -287,6 +287,17 @@ class _TimerWidgetState extends State<TimerWidget> with SingleTickerProviderStat
         }
       ),
     );
+  }
+
+  start() {
+    animController.forward() // start the animation
+      .then((_) { // when the animation ends
+        widget.onFinished();
+      });
+  }
+
+  reset() {
+    animController.reset();
   }
 
   /// Returns the color according to the progress of the animation if the 

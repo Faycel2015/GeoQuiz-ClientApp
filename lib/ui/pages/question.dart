@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:app/main.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
 
 
@@ -24,6 +23,7 @@ class QuestionView extends StatefulWidget {
   final Function(QuizAnswer) onAnswerSelected;
   final int totalNumber;
   final int currentNumber;
+  final Function onReady;
 
 
   QuestionView({
@@ -31,6 +31,7 @@ class QuestionView extends StatefulWidget {
     @required this.currentNumber,
     @required this.totalNumber,
     this.onAnswerSelected, 
+    this.onReady,
     this.showResult = false,
   });
 
@@ -41,11 +42,14 @@ class QuestionView extends StatefulWidget {
 class _QuestionViewState extends State<QuestionView> {
 
   QuizAnswer selectedAnswer;
+  bool get ready => _questionEntitledLoaded && _answersLoaded;
+
+  bool _questionEntitledLoaded = false;
+  bool _answersLoaded = false;
+
 
   @override
   Widget build(BuildContext context) {
-    bool isMap = widget.question.answers.first.answer.type == ResourceType.location;
-    isMap = true;
     return  Column(
         children: <Widget>[
           Padding(
@@ -63,23 +67,25 @@ class _QuestionViewState extends State<QuestionView> {
             ),
           ),
           FlexSpacer(),
-          QuestionEntitled(entitled: widget.question.entitled,),
+          QuestionEntitled(
+            entitled: widget.question.entitled,
+            onCompletelyRendered: () {
+              this._questionEntitledLoaded = true;
+              if (ready) widget.onReady();
+            }
+          ),
           FlexSpacer(big: true,),
-          if (isMap)
-            AnswersMap(
-              key: GlobalKey(),
-              answers: widget.question.answers,
-              onSelected: widget.showResult ? null : onSelectedAnswer,
-              selectedAnswer: selectedAnswer,
-            ),
-          if (!isMap)
-            AnswersList(
-              answers: widget.question.answers,
-              onSelected: widget.showResult ? null : onSelectedAnswer,
-              selectedAnswer: selectedAnswer,
-            ),
+          Answers(
+            key: GlobalKey(),
+            answers: widget.question.answers,
+            onSelected: widget.showResult ? null : onSelectedAnswer,
+            selectedAnswer: selectedAnswer,
+            onCompletelyRendered: () {
+              this._answersLoaded = true;
+              if (ready) widget.onReady();
+            }
+          )
         ],
-      
     );
   }
 
@@ -109,11 +115,14 @@ class ThemeEntitled extends StatelessWidget {
 class QuestionEntitled extends StatelessWidget {
     
   final Resource entitled;
+  final Function onCompletelyRendered;
 
-  QuestionEntitled({@required this.entitled});
+
+  QuestionEntitled({@required this.entitled, @required this.onCompletelyRendered});
 
   @override
   Widget build(BuildContext context) {
+    onCompletelyRendered();
     switch (entitled.type) {
       case ResourceType.image:
         return buildImage(context);
@@ -151,6 +160,43 @@ class QuestionEntitled extends StatelessWidget {
 }
 
 
+class Answers extends StatelessWidget {
+  final List<QuizAnswer> answers;
+  final Function(QuizAnswer) onSelected;
+  final QuizAnswer selectedAnswer;
+  final Function onCompletelyRendered;
+
+  Answers({
+    Key key, 
+    @required this.answers, 
+    this.onSelected, 
+    this.selectedAnswer,
+    @required this.onCompletelyRendered
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    bool isMap = answers.first.answer.type == ResourceType.location;
+    isMap = true;
+    if (isMap) {
+      return AnswersMap(
+        key: GlobalKey(),
+        answers: answers,
+        onSelected: onSelected,
+        selectedAnswer: selectedAnswer,
+        onLoaded: () => onCompletelyRendered()
+      );
+    } else {
+      onCompletelyRendered();
+      return AnswersList(
+        answers: answers,
+        onSelected: onSelected,
+        selectedAnswer: selectedAnswer,
+      );
+    }
+  }
+}
+
 
 
 class AnswersList extends StatelessWidget {
@@ -158,7 +204,12 @@ class AnswersList extends StatelessWidget {
   final Function(QuizAnswer) onSelected;
   final QuizAnswer selectedAnswer;
 
-  AnswersList({@required this.answers, this.onSelected, this.selectedAnswer});
+  AnswersList({
+    Key key, 
+    @required this.answers, 
+    this.onSelected, 
+    this.selectedAnswer
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -170,7 +221,7 @@ class AnswersList extends StatelessWidget {
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.only(bottom: Dimens.smallSpacing),
-              child: Answer(
+              child: AnswerItem(
                 answer: a,
                 onSelected: onSelected == null ? null : () => onSelected(a),
                 isSelected: selectedAnswer != null && a == selectedAnswer && !a.isCorrect 
@@ -190,12 +241,14 @@ class AnswersMap extends StatefulWidget {
   final List<QuizAnswer> answers;
   final Function(QuizAnswer) onSelected;
   final QuizAnswer selectedAnswer;
+  final Function onLoaded;
 
   AnswersMap({
     Key key,
     @required this.answers,
     this.onSelected,
-    this.selectedAnswer
+    this.selectedAnswer,
+    @required this.onLoaded
   }) : super(key: key);
 
   @override
@@ -242,7 +295,6 @@ class _AnswersMapState extends State<AnswersMap> with SingleTickerProviderStateM
             ),
           ),
         ] 
-        // SvgPicture()
       ),
     );
   }
@@ -258,6 +310,7 @@ class _AnswersMapState extends State<AnswersMap> with SingleTickerProviderStateM
     this.worlmapSize = Size(400*ratio,400);
 
     setState(() {});
+    widget.onLoaded();
     WidgetsBinding.instance.addPostFrameCallback((_) =>
       controller.animateTo(
         controller.position.maxScrollExtent, 
@@ -285,19 +338,18 @@ class WordlMapPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => false;
-  
 }
 
 
 
-class Answer extends StatelessWidget {
+class AnswerItem extends StatelessWidget {
 
   final QuizAnswer answer;
   final Function onSelected;
   final bool isSelected;
   bool get showResult => onSelected == null;
 
-  Answer({@required this.answer, @required this.onSelected, this.isSelected = false});
+  AnswerItem({@required this.answer, @required this.onSelected, this.isSelected = false});
 
   @override
   Widget build(BuildContext context) {
