@@ -1,16 +1,19 @@
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:app/models/models.dart';
 import 'package:app/ui/shared/assets.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:app/ui/widgets/surface_card.dart';
+import 'package:app/utils/assets_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:app/main.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:path_provider/path_provider.dart';
+
 
 /// No need to randomize
 /// No need to limit question lenght
@@ -183,6 +186,7 @@ class AnswersList extends StatelessWidget {
 
 
 class AnswersMap extends StatefulWidget {
+
   final List<QuizAnswer> answers;
   final Function(QuizAnswer) onSelected;
   final QuizAnswer selectedAnswer;
@@ -199,14 +203,61 @@ class AnswersMap extends StatefulWidget {
 }
 
 class _AnswersMapState extends State<AnswersMap> with SingleTickerProviderStateMixin {
-
+ 
   ScrollController controller = ScrollController();
-
   int offset = 0;
+  PictureInfo worldmapDrawable;
+  Size worlmapSize = Size(1,1);
+
 
   @override
   void initState() {
     super.initState();
+    loadMap();
+
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+    final viewportSize = worldmapDrawable?.viewport?.size??Size(1,1);
+    final Rect viewport = Offset.zero & viewportSize;
+    return SingleChildScrollView(
+      controller: controller,
+      scrollDirection: Axis.horizontal,
+      child: Stack(
+        children:[
+          SizedBox(
+            height: worlmapSize.height,
+            width: worlmapSize.width,
+            child: FittedBox(
+              fit: BoxFit.fitHeight,
+              alignment: Alignment.topCenter,
+              child: SizedBox.fromSize(
+                size: viewport.size,
+                child: CustomPaint(
+                  painter: WordlMapPainter(worldmapDrawable?.picture, worlmapSize),
+                ),
+              ),
+            ),
+          ),
+        ] 
+        // SvgPicture()
+      ),
+    );
+  }
+
+
+  loadMap() async {
+    this.worldmapDrawable = await AssetsLoader().loadSvg(
+      DefaultAssetBundle.of(context), 
+      Assets.worldmap,
+      Colors.white.withOpacity(0.3),
+    );
+    final ratio = worldmapDrawable.size.aspectRatio;
+    this.worlmapSize = Size(400*ratio,400);
+
+    setState(() {});
     WidgetsBinding.instance.addPostFrameCallback((_) =>
       controller.animateTo(
         controller.position.maxScrollExtent, 
@@ -216,35 +267,26 @@ class _AnswersMapState extends State<AnswersMap> with SingleTickerProviderStateM
     );
   }
 
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: controller,
-      scrollDirection: Axis.horizontal,
-      child: Stack(
-        children:[
-          SvgPicture.asset(
-            Assets.worldmap,
-            width: 500,
-            color: Colors.white.withOpacity(0.3),
-            
-          ),
-          Positioned(
-            left: 200,
-            child: Icon(
-              Icons.location_on, 
-              size: 45,
-              color: Colors.white
-            ),
-          )
-        ] 
-      ),
-    );
-  }
-
 }
 
+
+class WordlMapPainter extends CustomPainter {
+  final Picture svgRoot;
+  final Size size;
+
+  WordlMapPainter(this.svgRoot, this.size);
+
+  @override
+  void paint(Canvas canvas, Size size) {    
+    if (svgRoot != null) {
+      canvas.drawPicture(svgRoot);
+    }
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) => false;
+  
+}
 
 
 

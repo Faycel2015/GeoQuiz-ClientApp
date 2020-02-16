@@ -10,6 +10,7 @@ import 'package:app/ui/shared/values.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
 import 'package:app/ui/widgets/scroll_view_no_effect.dart';
+import 'package:app/utils/assets_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
@@ -101,7 +102,6 @@ class _QuizPageState extends State<QuizPage> {
 
   /// false is it's the question time, false if it's the question result time
   bool showQuestionResults = false;
-  bool assetsLoading = true;
 
   @override
   Widget build(BuildContext context) {
@@ -110,11 +110,7 @@ class _QuizPageState extends State<QuizPage> {
       return GeoQuizLayout(
         body: currentQuestion == null 
           ? ResultsPage()
-          : 
-          assetsLoading 
-          ? Text("Assets loading")
-          :
-          WillPopScope(
+          : WillPopScope(
             onWillPop: preventMissReturned,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
