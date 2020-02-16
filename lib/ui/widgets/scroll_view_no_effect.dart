@@ -37,8 +37,9 @@ class BasicScrollWithoutGlow extends ScrollBehavior {
 class ScrollViewNoEffect extends StatelessWidget {
 
   final Widget child;
+  final ScrollController controller;
 
-  ScrollViewNoEffect({@required this.child});
+  ScrollViewNoEffect({@required this.child, this.controller});
 
   @override
   Widget build(BuildContext context) {
@@ -46,6 +47,7 @@ class ScrollViewNoEffect extends StatelessWidget {
       behavior: BasicScrollWithoutGlow(),
       child: SingleChildScrollView(
         child: child,
+        controller: controller,
       ),
     );
   }

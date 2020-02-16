@@ -103,6 +103,7 @@ class _QuizPageState extends State<QuizPage> {
   /// false is it's the question time, false if it's the question result time
   bool showQuestionResults = false;
   var timerKey = GlobalKey<_TimerWidgetState>();
+  var controller = ScrollController();
 
   @override
   Widget build(BuildContext context) {
@@ -113,25 +114,12 @@ class _QuizPageState extends State<QuizPage> {
           ? ResultsPage()
           : WillPopScope(
             onWillPop: preventMissReturned,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            child: Stack(
               children: <Widget>[
-                Align(
-                  alignment: Alignment.centerRight,
+                ScrollViewNoEffect(
+                  controller: controller,
                   child: Padding(
-                    padding: Dimens.screenMargin,
-                    child: TimerWidget(
-                      key: timerKey, // to restart the animation when the tree is rebuilt
-                      duration: showQuestionResults ? resultDuration : questionDuration,
-                      onFinished: showQuestionResults ? nextRound : finishRound,
-                      animatedColor: !showQuestionResults,
-                      colorSequence: timerColorTweenSequence,
-                    ),
-                  ),
-                ),
-                FlexSpacer(),
-                Expanded(
-                  child: ScrollViewNoEffect(
+                    padding: EdgeInsets.only(top: 50),
                     child: QuestionView(
                       question: currentQuestion,
                       showResult: showQuestionResults,
@@ -142,9 +130,22 @@ class _QuizPageState extends State<QuizPage> {
                     ),
                   ),
                 ),
+                Align(
+                  alignment: Alignment.topRight,
+                  child: Padding(
+                    padding: Dimens.screenMargin,
+                    child: TimerWidget(
+                      key: timerKey, // to restart the animation when the tree is rebuilt
+                      duration: showQuestionResults ? resultDuration : questionDuration,
+                      onFinished: showQuestionResults ? nextRound : finishRound,
+                      animatedColor: !showQuestionResults,
+                      colorSequence: timerColorTweenSequence,
+                    ),
+                  ),
+                ), 
               ],
-            ),
-          ),
+            )
+        ),
       );
     });
   }
@@ -153,7 +154,7 @@ class _QuizPageState extends State<QuizPage> {
   /// Calls [QuizProvider.updateScore()] and sets state is called to rebuild the
   /// tree (it will start a new timer and show correct and wrong answers)
   finishRound({QuizAnswer answer}) {
-    timerKey.currentState.reset();
+    reset();
     bool isCorrect = answer?.isCorrect??false;
     Provider.of<QuizProvider>(context, listen: false).updateScore(isCorrect);
     setState(() => showQuestionResults = true);
@@ -165,9 +166,14 @@ class _QuizPageState extends State<QuizPage> {
   /// generate a rebuilt as the [QuizProvider.nextRound()] method notify 
   /// the provider listeners.
   nextRound() {
-    timerKey.currentState.reset();
+    reset();
     showQuestionResults = false;
     Provider.of<QuizProvider>(context, listen: false).nextRound();
+  }
+
+  reset() {
+    timerKey.currentState.reset();
+    controller.animateTo(0, curve: Curves.easeOutQuad, duration: Duration(milliseconds: 500));
   }
 
 
