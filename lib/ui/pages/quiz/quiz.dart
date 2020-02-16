@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/models/models.dart';
-import 'package:app/ui/pages/question.dart';
-import 'package:app/ui/pages/results.dart';
+import 'package:app/ui/pages/quiz/question.dart';
+import 'package:app/ui/pages/result/results.dart';
 import 'package:app/ui/shared/assets.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/values.dart';

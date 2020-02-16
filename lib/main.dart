@@ -4,7 +4,7 @@ import 'package:app/logic/themes_provider.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
 import 'package:app/repositories/remote_resource_downloader.dart';
-import 'package:app/ui/pages/homepage.dart';
+import 'package:app/ui/pages/home/homepage.dart';
 import 'package:app/ui/pages/start_up.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';

@@ -294,6 +294,10 @@ class _AnswersMapState extends State<AnswersMap> with SingleTickerProviderStateM
               ),
             ),
           ),
+          Positioned(
+            left: 241,
+            child: Icon(Icons.location_on, color: Colors.white, size: 45,),
+          )
         ] 
       ),
     );
