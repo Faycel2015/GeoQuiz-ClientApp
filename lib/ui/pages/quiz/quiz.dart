@@ -118,6 +118,7 @@ class _QuizPageState extends State<QuizPage> {
                   child: Padding(
                     padding: EdgeInsets.only(top: 50),
                     child: QuestionView(
+                      key: GlobalKey(),
                       question: currentQuestion,
                       showResult: showQuestionResults,
                       onAnswerSelected: (answer) => finishRound(answer: answer),

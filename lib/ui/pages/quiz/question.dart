@@ -24,13 +24,14 @@ class QuestionView extends StatefulWidget {
 
 
   QuestionView({
+    Key key,
     @required this.question, 
     @required this.currentNumber,
     @required this.totalNumber,
     this.onAnswerSelected, 
     this.onReady,
     this.showResult = false,
-  });
+  }) : super(key: key);
 
   @override
   _QuestionViewState createState() => _QuestionViewState();
@@ -73,7 +74,6 @@ class _QuestionViewState extends State<QuestionView> {
           ),
           FlexSpacer(big: true,),
           Answers(
-            key: GlobalKey(),
             answers: widget.question.answers,
             onSelected: widget.showResult ? null : onSelectedAnswer,
             selectedAnswer: selectedAnswer,

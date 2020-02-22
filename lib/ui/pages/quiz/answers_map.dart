@@ -1,6 +1,7 @@
 
 import 'dart:ui';
 
+import 'package:app/main.dart';
 import 'package:app/models/models.dart';
 import 'package:app/ui/shared/assets.dart';
 import 'package:app/utils/assets_loader.dart';
@@ -30,46 +31,61 @@ class AnswersMap extends StatefulWidget {
 class _AnswersMapState extends State<AnswersMap> with SingleTickerProviderStateMixin {
  
   ScrollController controller = ScrollController();
-  int offset = 0;
   PictureInfo worldmapDrawable;
-  Size worlmapSize = Size(1,1);
+  bool mapLoaded = false;
+  bool ready = false;
+
+  bool get isResult => widget.onSelected == null;
 
 
   @override
   void initState() {
     super.initState();
     loadMap();
+  }
 
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
   }
 
 
   @override
   Widget build(BuildContext context) {
-    final viewportSize = worldmapDrawable?.viewport?.size??Size(1,1);
-    final Rect viewport = Offset.zero & viewportSize;
-    return SingleChildScrollView(
-      controller: controller,
-      scrollDirection: Axis.horizontal,
-      child: Stack(
-        children:[
-          SizedBox(
-            height: worlmapSize.height,
-            width: worlmapSize.width,
-            child: FittedBox(
-              fit: BoxFit.fitHeight,
-              alignment: Alignment.topCenter,
-              child: SizedBox.fromSize(
-                size: viewport.size,
-                child: CustomPaint(
-                  painter: WordlMapPainter(worldmapDrawable?.picture, worlmapSize),
+    if (worldmapDrawable == null) {
+      return CircularProgressIndicator();
+    } else {
+      return LayoutBuilder(
+        builder: (_, constraints) { 
+          double maxWidth = constraints.maxWidth;
+          double ratio = worldmapDrawable.size.aspectRatio;
+          double height = isResult ?  maxWidth / ratio  : 400;
+          double width  = isResult ? maxWidth           : 400 * ratio;
+          return SingleChildScrollView(
+            physics: !ready ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
+            controller: controller,
+            scrollDirection: Axis.horizontal,
+            child: Stack(
+              children:[
+                Map(
+                  mapDrawable: worldmapDrawable,
+                  width: width,
+                  height: height,
                 ),
-              ),
+                ...widget.answers.map((a) => AnswerMapItem(
+                  answer: a,
+                  onSelected: isResult ? null : () => widget.onSelected(a),
+                  mapWidth: width,
+                  mapHeight: height,
+                  isSelected: widget.selectedAnswer != null && a == widget.selectedAnswer && !a.isCorrect,
+                )),
+              ] 
             ),
-          ),
-          MapItem(),
-        ] 
-      ),
-    );
+          );
+        }
+      );
+    }
   }
 
 
@@ -79,28 +95,65 @@ class _AnswersMapState extends State<AnswersMap> with SingleTickerProviderStateM
       Assets.worldmap,
       Colors.white.withOpacity(0.3),
     );
-    final ratio = worldmapDrawable.size.aspectRatio;
-    this.worlmapSize = Size(400*ratio,400);
 
-    setState(() {});
-    widget.onLoaded();
-    WidgetsBinding.instance.addPostFrameCallback((_) =>
+    setState(() => mapLoaded = true);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       controller.animateTo(
         controller.position.maxScrollExtent, 
-        duration: Duration(seconds: 3), 
+        duration: Duration(milliseconds: 1500), 
         curve: Curves.easeOut,
-      )
-    );
+      );
+      checkIfReady();
+      controller.addListener(() => checkIfReady());
+    });
   }
 
+  checkIfReady() {
+    if (controller.offset >= controller.position.maxScrollExtent) {
+      setState(() => ready = true);
+      widget.onLoaded();
+    }
+  }
+}
+
+
+class Map extends StatelessWidget {
+
+  final double width;
+  final double height;
+  final PictureInfo mapDrawable;
+
+  Map({
+    @required this.mapDrawable, 
+    @required this.width, 
+    @required this.height
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: height,
+      width: width,
+      child: FittedBox(
+        fit: BoxFit.fitHeight,
+        alignment: Alignment.topCenter,
+        child: SizedBox.fromSize(
+          size: mapDrawable.viewport.size,
+          child: CustomPaint(
+            painter: WordlMapPainter(mapDrawable?.picture),
+          ),
+        ),
+      ),
+    );
+  }
 }
 
 
 class WordlMapPainter extends CustomPainter {
   final Picture svgRoot;
-  final Size size;
 
-  WordlMapPainter(this.svgRoot, this.size);
+  WordlMapPainter(this.svgRoot);
 
   @override
   void paint(Canvas canvas, Size size) {    
@@ -115,12 +168,64 @@ class WordlMapPainter extends CustomPainter {
 
 
 
-class MapItem extends StatelessWidget {
+class AnswerMapItem extends StatelessWidget {
+
+  final QuizAnswer answer;
+  final void Function() onSelected;
+  final bool isSelected;
+  final double mapWidth;
+  final double mapHeight;
+
+  bool get showResult => onSelected == null;
+
+  AnswerMapItem({
+    @required this.answer,
+    @required this.onSelected, 
+    @required this.mapWidth,
+    @required this.mapHeight,
+    this.isSelected = false
+  });
+
+
   @override
   Widget build(BuildContext context) {
+    var backColor = Theme.of(context).colorScheme.surface;
+    if (showResult && answer.isCorrect) {
+      backColor = Theme.of(context).colorScheme.success;
+    }
+    if (showResult && isSelected && !answer.isCorrect) {
+      backColor = Theme.of(context).colorScheme.error;
+    }
+
+    var position = parseMapPosition();
     return Positioned(
-      left: 241,
-      child: Icon(Icons.location_on, color: Colors.white, size: 45,),
+      left: position.x,
+      top: position.y,
+      child: InkWell(
+        onTap: onSelected,
+        child: Icon(
+          Icons.location_on, 
+          color: backColor, 
+          size: 45, 
+        ),
+      ),
     );
   }
+
+  _MapPosition parseMapPosition() {
+    var xy = answer.answer.resource.split(";");
+    var x = double.parse(xy[0]);
+    var y = double.parse(xy[1]);
+    return _MapPosition(
+      mapWidth * x,
+      mapHeight * y,
+    );
+  }
+}
+
+class _MapPosition {
+  double x;
+  double y;
+
+  _MapPosition(this.x, this.y);
 }
