@@ -123,7 +123,9 @@ class _QuizPageState extends State<QuizPage> {
                       onAnswerSelected: (answer) => finishRound(answer: answer),
                       currentNumber: quizProvider.currentNumber,
                       totalNumber: quizProvider.totalNumber,
-                      onReady: () => timerKey.currentState.start(),
+                      onReady: () => Future.microtask(
+                        () => timerKey.currentState.start(showQuestionResults ? resultDuration : questionDuration)
+                      ),
                     ),
                   ),
                 ),
@@ -133,7 +135,6 @@ class _QuizPageState extends State<QuizPage> {
                     padding: Dimens.screenMargin,
                     child: TimerWidget(
                       key: timerKey, // to restart the animation when the tree is rebuilt
-                      duration: showQuestionResults ? resultDuration : questionDuration,
                       onFinished: showQuestionResults ? nextRound : finishRound,
                       animatedColor: !showQuestionResults,
                       colorSequence: timerColorTweenSequence,
@@ -182,7 +183,6 @@ class _QuizPageState extends State<QuizPage> {
   ///
   ///
   Future<bool> preventMissReturned() {
-    print("ok");
     var completer = Completer<bool>();
     showDialog(
       context: context,
@@ -238,14 +238,12 @@ class _QuizPageState extends State<QuizPage> {
 /// method.
 class TimerWidget extends StatefulWidget {
 
-  final Duration duration;
   final Function onFinished;
   final bool animatedColor;
   final TweenSequence<Color> colorSequence;
 
   TimerWidget({
     Key key,
-    @required this.duration, 
     @required this.onFinished,
     this.colorSequence,
     this.animatedColor = false,
@@ -260,18 +258,16 @@ class _TimerWidgetState extends State<TimerWidget> with SingleTickerProviderStat
 
   AnimationController animController;
 
+
   @override
   void initState() {
     super.initState();
-    animController = AnimationController(
-      vsync: this, 
-      duration: widget.duration
-    );
+    animController = AnimationController(vsync: this);
   }
 
   @override
   void dispose() {
-    animController.dispose(); // cancel the animation to prevent memory leaks
+    animController?.dispose(); // cancel the animation to prevent memory leaks
     super.dispose();
   }
 
@@ -296,7 +292,9 @@ class _TimerWidgetState extends State<TimerWidget> with SingleTickerProviderStat
     );
   }
 
-  start() {
+  start(Duration duration) {
+    animController.duration = duration;
+
     animController.forward() // start the animation
       .then((_) { // when the animation ends
         widget.onFinished();
@@ -304,7 +302,7 @@ class _TimerWidgetState extends State<TimerWidget> with SingleTickerProviderStat
   }
 
   reset() {
-    animController.reset();
+    animController?.reset();
   }
 
   /// Returns the color according to the progress of the animation if the 

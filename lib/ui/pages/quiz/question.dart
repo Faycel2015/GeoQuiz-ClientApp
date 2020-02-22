@@ -174,7 +174,6 @@ class Answers extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isMap = answers.first.answer.type == ResourceType.location;
-    isMap = true;
     if (isMap) {
       return AnswersMap(
         key: GlobalKey(), // to reset the scroll to the beginning
