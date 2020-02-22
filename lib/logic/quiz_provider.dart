@@ -45,15 +45,6 @@ class QuizProvider extends ChangeNotifier {
       state = QuizProviderState.ERROR;
       return Future.error(null);
     }
-    var q = _questions.first;
-    q.entitled = Resource(resource: "Paris", type: ResourceType.text);
-    q.answers = <QuizAnswer> [
-      QuizAnswer(answer: Resource(resource: "0.1;0.1", type: ResourceType.location), isCorrect: true),
-      QuizAnswer(answer: Resource(resource: "0.2;0.5", type: ResourceType.location), isCorrect: false),
-      QuizAnswer(answer: Resource(resource: "0.9;0.9", type: ResourceType.location), isCorrect: false),
-      QuizAnswer(answer: Resource(resource: "0.5;0.5", type: ResourceType.location), isCorrect: false),
-    ];
-    _questions.add(q);
     _prepareQuestion();
       
     _questionsIterator = _questions.iterator;

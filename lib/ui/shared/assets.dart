@@ -14,4 +14,5 @@ class Assets {
 
   static const menu = "assets/menu.svg";
   static const worldmap = "assets/worldmap.svg";
+  static const marker = "assets/marker.svg";
 }

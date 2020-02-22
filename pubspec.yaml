@@ -39,6 +39,7 @@ flutter:
   assets:
     - assets/menu.svg
     - assets/worldmap.svg
+    - assets/marker.svg
 
   # fonts:
   #   - family: Schyler
