@@ -4,17 +4,14 @@ import 'package:app/logic/quiz_provider.dart';
 import 'package:app/models/models.dart';
 import 'package:app/ui/pages/quiz/question.dart';
 import 'package:app/ui/pages/result/results.dart';
-import 'package:app/ui/shared/assets.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/values.dart';
-import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
 import 'package:app/ui/widgets/scroll_view_no_effect.dart';
-import 'package:app/utils/assets_loader.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+
 
 
 /// TweenSequence used to animate the [TimerWidget] for questions timer
@@ -173,7 +170,11 @@ class _QuizPageState extends State<QuizPage> {
 
   reset() {
     timerKey.currentState.reset();
-    controller.animateTo(0, curve: Curves.easeOutQuad, duration: Duration(milliseconds: 500));
+    controller.animateTo(
+      0, 
+      curve: Curves.easeOutQuad, 
+      duration: Duration(milliseconds: 500)
+    );
   }
 
 
