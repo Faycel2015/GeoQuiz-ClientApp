@@ -5,7 +5,7 @@ import 'package:flutter/widgets.dart';
 
 class ThemesProvider extends ChangeNotifier {
 
-  final LocalDatabaseRepository _localRepo;
+  final ILocalDatabaseRepository _localRepo;
 
   List<QuizTheme> themes;
 
@@ -17,7 +17,7 @@ class ThemesProvider extends ChangeNotifier {
   }
 
   ThemesProvider({
-    @required LocalDatabaseRepository localRepo
+    @required ILocalDatabaseRepository localRepo
   }) : _localRepo = localRepo;
 
 

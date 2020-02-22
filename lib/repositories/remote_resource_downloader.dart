@@ -3,11 +3,12 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 
 
 
-abstract class IRemoteResourceHandler {
+abstract class IRemoteResourcesDownloader {
 
   Future<Map<String, String>> downloadResources();
   Future<String> get storageDirectory;
@@ -16,10 +17,13 @@ abstract class IRemoteResourceHandler {
 
 
 
-class FirebaseResourceDownloader  implements IRemoteResourceHandler {
+class FirebaseResourceDownloader  implements IRemoteResourcesDownloader {
 
   final _storage = FirebaseStorage.instance.ref();
   var dio = Dio();
+  final Logger logger;
+
+  FirebaseResourceDownloader(this.logger);
 
 
   @override

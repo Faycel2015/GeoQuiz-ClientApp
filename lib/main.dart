@@ -1,9 +1,9 @@
+import 'package:app/locator.dart';
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/logic/startup_checker.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
-import 'package:app/repositories/remote_resource_downloader.dart';
 import 'package:app/ui/pages/home/homepage.dart';
 import 'package:app/ui/pages/start_up.dart';
 import 'package:app/ui/shared/dimens.dart';
@@ -23,31 +23,31 @@ import 'package:sqflite/sqflite.dart';
 /// [Provider] can then be used with [Consumer] widget or simply by retreive
 /// the instance : `Provider.of<[provider class]>(context)`.
 ///
-/// We also create our repository objects before to launch the app, and we give 
-/// hese repositories to the providers who need it. This prevents having 
-/// singletons with global states shared throughout the application.
+/// We retrieve repositories to use in the app thanks to the [locator] global
+/// instance that inject our dependencies inside the different providers.
 void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  final localRepo = SQLiteLocalDatabaseRepository();
-  final resourceDownloader = FirebaseResourceDownloader();
-  final remoteRepo = FirebaseRemoteDatabaseRepository(resourceDownloader: resourceDownloader);
-
+  setupServiceLocator();
   // await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider<StartUpCheckerProvider>(create: (context) => StartUpCheckerProvider(
-          localRepo: localRepo,
-          remoteRepo: remoteRepo,
-        )..performStartUpProcess()),
-        ChangeNotifierProvider<ThemesProvider>(create: (context) => ThemesProvider(
-          localRepo: localRepo,
-        )),
-        ChangeNotifierProvider<QuizProvider>(create: (context) => QuizProvider(
-          localRepo: localRepo,
-        )),
+        ChangeNotifierProvider<StartUpCheckerProvider>(
+          create: (context) => StartUpCheckerProvider(
+            localRepo: locator<ILocalDatabaseRepository>(),
+            remoteRepo: locator<IRemoteDatabaseRepository>(),
+          )..performStartUpProcess()
+        ),
+        ChangeNotifierProvider<ThemesProvider>(
+          create: (context) => ThemesProvider(
+            localRepo: locator<ILocalDatabaseRepository>(),
+          )
+        ),
+        ChangeNotifierProvider<QuizProvider>(
+          create: (context) => QuizProvider(
+            localRepo: locator<ILocalDatabaseRepository>(),
+          )
+        ),
       ],
       child: GeoQuizApp(),
     )
@@ -95,6 +95,8 @@ class GeoQuizApp extends StatelessWidget {
   }
 }
 
+
+
 /// Extension of [ColorScheme] methods with [success] color
 /// 
 /// Use extension method to this it's the simplest solution (imo).
@@ -109,6 +111,7 @@ extension GeoQuizColorScheme on ColorScheme {
   Color get success => const Color(0xFF28a745);
   Color get onSuccess => Colors.white;
 }
+
 
 
 /// See "documentation" repo to know more about the app theming
@@ -165,5 +168,8 @@ final geoQuizTheme = ThemeData(
     subtitle2: TextStyle(fontSize: 16),
 
     button: TextStyle(fontSize: 15)
-  ).apply(bodyColor: Colors.white, displayColor: Colors.white))
+  ).apply(
+    bodyColor: Colors.white, 
+    displayColor: Colors.white
+  ))
 );

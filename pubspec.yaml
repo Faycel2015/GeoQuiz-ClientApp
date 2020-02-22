@@ -19,7 +19,7 @@ dependencies:
       url: git://github.com/danysz/flutterfire.git
       ref: master
       path: packages/firebase_storage
-  logger: ^0.8.3
+  logger: ^0.6.0
   google_fonts: ^0.3.2
   flutter_svg: ^0.16.1
   path_provider: ^1.6.0
@@ -27,6 +27,7 @@ dependencies:
   archive: ^2.0.11
   url_launcher: ^5.4.1
   in_app_purchase: ^0.3.1
+  get_it: ^3.1.0
 
 dev_dependencies:
   flutter_test:

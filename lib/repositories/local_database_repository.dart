@@ -1,6 +1,7 @@
 import 'package:app/models/models.dart';
 import 'package:app/utils/database_content_wrapper.dart';
 import 'package:flutter/widgets.dart';
+import 'package:logger/logger.dart';
 import 'package:sqflite/sqflite.dart';
 
 
@@ -9,7 +10,7 @@ import 'package:sqflite/sqflite.dart';
 /// It handles the static and dynamic data :
 ///   - static data are : themes and questions
 ///   - dynamic data are : local progression
-abstract class LocalDatabaseRepository {
+abstract class ILocalDatabaseRepository {
 
   /// Get the current version of the local database
   /// return null if the database is not yet created
@@ -28,10 +29,14 @@ abstract class LocalDatabaseRepository {
 
 
 
-/// [LocalDatabaseRepository] that use SQLite to manage the data.
+/// [ILocalDatabaseRepository] that use SQLite to manage the data.
 /// It uses the sqflite package https://pub.dev/packages/sqflite (in particular  
 /// see current issues when adding new features to make sure it is supported)
-class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
+class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
+
+  final Logger logger;
+
+  SQLiteLocalDatabaseRepository(this.logger);
 
   /// Open the database, get the version
   /// if the version is equals to 0 it returns null (no database)
@@ -39,6 +44,7 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
   Future<int> currentDatabaseVersion() async {
     var _db = await openDatabase(_Identifiers.DATABASE_NAME);
     var v = await _db.getVersion();
+    logger.i("Local database version $v");
     await _db.close();
     return v == 0 ? null : v;
   }
@@ -64,6 +70,7 @@ class SQLiteLocalDatabaseRepository implements LocalDatabaseRepository {
       print(result.where((r) => r is DatabaseException).length.toString() + " errors");
     } catch (e) { // if nothing is commit, we reset the version to 0
       await db.setVersion(0);
+      logger.e("$e");
       return Future.error(e);
     }
     await db.close();

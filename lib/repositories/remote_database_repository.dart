@@ -8,10 +8,12 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:logger/logger.dart';
+
 
 
 /// Repository to manage data stored in a remote database.
-abstract class RemoteDatabaseRepository {
+abstract class IRemoteDatabaseRepository {
 
   /// Return the current version of the remote database
   /// Can return null or throw an exception
@@ -25,7 +27,7 @@ abstract class RemoteDatabaseRepository {
 
 
 
-/// Implementation of [RemoteDatabaseRepository] to use Firebase platform, in
+/// Implementation of [IRemoteDatabaseRepository] to use Firebase platform, in
 /// particular Cloud Firestore and Cloud Storage
 /// This class DOES NOT handle the connexion to the platform.
 /// 
@@ -35,15 +37,16 @@ abstract class RemoteDatabaseRepository {
 /// See [_RemoteThemeAdapter] and [_RemoteQuestionAdapter]
 /// These adapters implements [QuizTheme] and [QuizQuestion] and transform use 
 /// the json representation (a [Map] in reality) to build the instances.
-class FirebaseRemoteDatabaseRepository implements RemoteDatabaseRepository {
+class FirebaseRemoteDatabaseRepository implements IRemoteDatabaseRepository {
 
   static const timeoutDuration = Duration(seconds: 5);
-
+  
+  final Logger logger;
   final _firebaseStorage = FirebaseStorage().ref();
-  final IRemoteResourceHandler _resourceDownloader;
+  final IRemoteResourcesDownloader _resourceDownloader;
 
-  FirebaseRemoteDatabaseRepository({
-    @required IRemoteResourceHandler resourceDownloader
+  FirebaseRemoteDatabaseRepository(this.logger, {
+    @required IRemoteResourcesDownloader resourceDownloader
   }) : this._resourceDownloader = resourceDownloader;
 
   /// Retrieve the content of the version file, and returns the version number 

@@ -13,10 +13,8 @@ import 'package:flutter/widgets.dart';
 /// Moreover, a state is maintained to notify errors, status, etc. to listeners.
 class StartUpCheckerProvider extends ChangeNotifier {
 
-  final _logger = AppLogger();
-
-  final RemoteDatabaseRepository _remoteRepo;
-  final LocalDatabaseRepository _localRepo;
+  final IRemoteDatabaseRepository _remoteRepo;
+  final ILocalDatabaseRepository _localRepo;
 
   bool startUpVerificationDone;
   bool localDatabaseUpToDate;
@@ -28,8 +26,8 @@ class StartUpCheckerProvider extends ChangeNotifier {
 
 
   StartUpCheckerProvider({
-    @required RemoteDatabaseRepository remoteRepo, 
-    @required LocalDatabaseRepository localRepo
+    @required IRemoteDatabaseRepository remoteRepo, 
+    @required ILocalDatabaseRepository localRepo
   }) : this._remoteRepo = remoteRepo,
        this._localRepo = localRepo;
 
@@ -51,7 +49,7 @@ class StartUpCheckerProvider extends ChangeNotifier {
     this.localDatabaseUpToDate = localVersion == remoteVersion;
     this.startUpVerificationDone = true;
     notifyListeners();
-    _logState();
+    // _logState();
   }
 
 
@@ -61,9 +59,9 @@ class StartUpCheckerProvider extends ChangeNotifier {
     int remoteVersion;
     try {
       remoteVersion = await _remoteRepo.currentDatabaseVersion();
-      _logger.i("Current remote database version: $remoteVersion");
+      // _logger.i("Current remote database version: $remoteVersion");
     } catch(e) {
-      _logger.w("Unable to fetch the database remote version", e);
+      // _logger.w("Unable to fetch the database remote version", e);
     }
     return remoteVersion;
   }
@@ -75,9 +73,9 @@ class StartUpCheckerProvider extends ChangeNotifier {
     int localVersion;
     try {
       localVersion = await _localRepo.currentDatabaseVersion();
-      _logger.i("Current local database version: $localVersion");
+      // _logger.i("Current local database version: $localVersion");
     } catch(e) {
-      _logger.e("Unable to get the database local version", e);
+      // _logger.e("Unable to get the database local version", e);
     }
     return localVersion;
   }
@@ -87,13 +85,13 @@ class StartUpCheckerProvider extends ChangeNotifier {
   Future<bool> _updateLocalDatabase({@required int version}) async {
     try {
       var remoteDatabaseContent = await _remoteRepo.downloadDatabase();
-      _logger.i("${remoteDatabaseContent.themes.length} themes");
-      _logger.i("${remoteDatabaseContent.questions.length} questions");
+      // _logger.i("${remoteDatabaseContent.themes.length} themes");
+      // _logger.i("${remoteDatabaseContent.questions.length} questions");
       await _localRepo.updateStaticDatabase(version, remoteDatabaseContent);
-      _logger.i("Local database successfully updated");
+      // _logger.i("Local database successfully updated");
       return true;
     } catch(e) {
-      _logger.e("Unable to update the local database", e);
+      // _logger.e("Unable to update the local database", e);
       return false;
     }
   }
@@ -107,7 +105,7 @@ class StartUpCheckerProvider extends ChangeNotifier {
     state += "\n\tlocalDatabaseUpToDate: $localDatabaseUpToDate";
     state += "\n\treadyToStart: $readyToStart";
     state += "\n\terror: $error";
-    _logger.i("Start up process done : \n" + state);
+    // _logger.i("Start up process done : \n" + state);
   }
 }
 

@@ -7,7 +7,7 @@ import 'package:flutter/widgets.dart';
 
 class QuizProvider extends ChangeNotifier {
 
-  final LocalDatabaseRepository _localRepo;
+  final ILocalDatabaseRepository _localRepo;
 
   var _state = QuizProviderState.IDLE;
   QuizProviderState get state => _state;
@@ -26,7 +26,7 @@ class QuizProvider extends ChangeNotifier {
   int get currentNumber => _questions.indexOf(_questionsIterator.current) + 1; 
   
 
-  QuizProvider({LocalDatabaseRepository localRepo}) : _localRepo = localRepo;
+  QuizProvider({ILocalDatabaseRepository localRepo}) : _localRepo = localRepo;
   
 
   Future<void> prepareGame(Set<QuizTheme> selectedThemes) async {
@@ -78,11 +78,6 @@ class QuizProvider extends ChangeNotifier {
       }
     }
   }
-
-
-
-
-
 }
 
 
