@@ -72,7 +72,7 @@ class _QuestionViewState extends State<QuestionView> {
             if (ready) widget.onReady();
           }
         ),
-        FlexSpacer(big: true,),
+        FlexSpacer.big(),
         Answers(
           answers: widget.question.answers,
           onSelected: widget.showResult ? null : onSelectedAnswer,

@@ -2,7 +2,7 @@ import 'package:app/utils/color_operations.dart';
 import 'package:flutter/widgets.dart';
 
 
-/// Linear gradient background from a single color. Take the whole space.
+/// Linear gradient background from a single color. Take the whole space
 /// 
 /// From the given [color] the widget will create a color gradient from a 
 /// lighten tint and end with a darken tint.

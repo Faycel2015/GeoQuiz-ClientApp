@@ -3,15 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 
-/// Rounded button with no elevation and respects the app theming
-///
-/// The default background color is [ThemeData.colorScheme.secondary]. So, the
-/// front color ([icon] and [label]) is the corresponding onSecondary.
-/// If the flag [light] is set to true, then the background color is the
-/// primaryVariant and the text color is onPrimary.
+/// Rounded button with no elevation that respects the app theming
 /// 
-/// It wraps the label inside a [Flexible] widget to all multiple line
-/// text label.
+/// Prefer using the widget to display button in the app as it already defines
+/// all theming property acconrdingly to the app UI guidelines.
+/// 
+/// It dispays a [FlatButton], so refer to its documentation for more 
+/// information about its behavior.
+///
+/// The default background color is [ThemeData.colorScheme.secondary]. 
+/// So, the front color ([icon] and [label]) is the corresponding 
+/// [ThemeData.colorScheme.onSecondary] color.
+/// 
+/// If the flag [light] is set to true, then the background color is the
+/// primaryVariant color and the text color is the onPrimary color.
+/// 
+/// It wraps the label inside a [Flexible] widget to allow multiple lines
+/// inside the text label.
 /// 
 /// ```dart
 /// Button(
@@ -23,6 +31,7 @@ import 'package:flutter/widgets.dart';
 /// )
 /// ```
 class Button extends StatelessWidget {
+
   final Widget icon;
   final String label;
   final Function onPressed;

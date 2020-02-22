@@ -107,7 +107,7 @@ class _QuizPageState extends State<QuizPage> {
   Widget build(BuildContext context) {
     return Consumer<QuizProvider>(builder: (context, quizProvider, _) {
       final currentQuestion = quizProvider.currentQuestion;
-      return GeoQuizLayout(
+      return AppLayout(
         body: currentQuestion == null 
           ? ResultsPage()
           : WillPopScope(

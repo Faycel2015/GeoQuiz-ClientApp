@@ -1,22 +1,53 @@
 import 'package:app/ui/shared/dimens.dart';
 import 'package:flutter/widgets.dart';
 
-/// Widget used to add spacing (padding) between widgets
-/// 
-/// Used typically in [Row] or [Column].
-/// 
-/// It will create a square widget of [Values.normalSpacing]
-/// If you want a bigger space, set the flag [big] to true. The [Dimens.bigSpacing]
-/// value will be used
-class FlexSpacer extends StatelessWidget {
-  
-  final bool big;
 
-  FlexSpacer({this.big = false});
+/// Enum used to characterize the type of space used by the [FlexSpacer]
+enum _FlexSpacerType {normal, big, small}
+
+
+/// Empty widget to add space between widgets
+/// 
+/// Typically used in [Row] or [Column]
+/// 
+/// ```dart
+/// Column(
+///   children: <Widget>[
+///     Text(...),
+///     FlexSpacer.big(),
+///     MyWidget(),
+///     FlexSpacer(),
+///     MyOtherWidget(),
+///   ]
+/// )
+/// ```
+class FlexSpacer extends StatelessWidget {
+
+  final _FlexSpacerType spaceType;
+
+  /// Create a normal spacer : [Dimens.normalSpacing]
+  FlexSpacer() : spaceType = _FlexSpacerType.normal;
+
+  /// Create a small spacer : [Dimens.smallSpacing]
+  FlexSpacer.small() : spaceType = _FlexSpacerType.small;
+
+  /// Create a big spacer : [Dimens.bigSpacing]
+  FlexSpacer.big() : spaceType = _FlexSpacerType.big;
 
   @override
   Widget build(BuildContext context) {
-    final space = big ? Dimens.bigSpacing : Dimens.normalSpacing;
+    var space;
+    switch (spaceType) {
+      case _FlexSpacerType.normal:
+        space = Dimens.normalSpacing;
+        break;
+      case _FlexSpacerType.small:
+        space = Dimens.smallSpacing;
+        break;
+      case _FlexSpacerType.big:
+        space = Dimens.bigSpacing;
+        break;
+    }
     return SizedBox(
       width: space,
       height: space,

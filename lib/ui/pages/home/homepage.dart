@@ -38,7 +38,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return GeoQuizLayout( 
+    return AppLayout( 
       body: Stack(
         children: <Widget>[
           ScrollViewNoEffect(

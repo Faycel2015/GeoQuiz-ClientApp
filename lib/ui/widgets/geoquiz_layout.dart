@@ -12,19 +12,20 @@ import 'package:flutter/widgets.dart';
 ///         |--- SafeArea
 ///             |--- [body]
 /// 
-/// The [GradientBackground] is defined from the [color] property. See the 
-/// GradientBackground documentation.
+/// The [GradientBackground] is rendered from the [color] property. See the 
+/// GradientBackground documentation for more information  about how it is
+/// rendered.
 /// 
 /// The content is wrapped inside a [SafeArea] widget to avoid intrusions by
-/// the operating system. n addition, you can define the [bodyPadding]. By 
+/// the operating system. In addition, you can define the [bodyPadding]. By 
 /// default no padding is applied.
-class GeoQuizLayout extends StatelessWidget {
+class AppLayout extends StatelessWidget {
 
   final Widget body;
   final Color color;
   final EdgeInsets bodyPadding;
 
-  GeoQuizLayout({
+  AppLayout({
     @required this.body, 
     this.color, 
     this.bodyPadding

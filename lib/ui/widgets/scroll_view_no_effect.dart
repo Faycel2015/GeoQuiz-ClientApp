@@ -10,11 +10,11 @@ import 'package:flutter/widgets.dart';
 /// Use [ScrollConfigarion] widget to define the new scroll behavior with this
 /// behvior.
 /// 
-/// To remove the glow on the whole application, you can add it right under the
-/// root tree.
+/// You can used [ScrollViewNoEffect] widget to directly rendered a 
+/// [SingleChildScrolView] without scroll effect.
 /// 
-/// To remove it on a specific ListView, instead wrap only the desired ListView.
-/// 
+/// Or, you can used it directly with the [ScrollConfiguration] widget to remove 
+/// it on a specific [ListView] for example:
 /// ```dart
 /// ScrollConfiguration(
 ///   behavior: BasicScrollWithoutGlow(),
@@ -24,16 +24,20 @@ import 'package:flutter/widgets.dart';
 /// )
 /// ```
 ///
-/// Source: https://stackoverflow.com/a/51119796
+/// Source (stackoverflow): https://stackoverflow.com/a/51119796
 class BasicScrollWithoutGlow extends ScrollBehavior {
   @override
-  Widget buildViewportChrome(BuildContext context, Widget child, AxisDirection axisDirection) {
+  Widget buildViewportChrome(BuildContext _, Widget child, AxisDirection __) {
     return child;
   }
 }
 
 
 
+/// Wraps a [SingleChildScrollView] with attached a non-effect behavior
+///
+/// Apply the [BasicScrollWithoutGlow] to a [SingleChildScrollView] to remove
+/// the glow effect on Android.
 class ScrollViewNoEffect extends StatelessWidget {
 
   final Widget child;
@@ -51,5 +55,4 @@ class ScrollViewNoEffect extends StatelessWidget {
       ),
     );
   }
-
 }
