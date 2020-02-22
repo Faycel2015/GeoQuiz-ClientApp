@@ -100,6 +100,7 @@ class _QuizPageState extends State<QuizPage> {
   /// false is it's the question time, false if it's the question result time
   bool showQuestionResults = false;
   var timerKey = GlobalKey<_TimerWidgetState>();
+  var questionKey = GlobalKey();
   var controller = ScrollController();
 
   @override
@@ -118,7 +119,7 @@ class _QuizPageState extends State<QuizPage> {
                   child: Padding(
                     padding: EdgeInsets.only(top: 50),
                     child: QuestionView(
-                      key: GlobalKey(),
+                      key: questionKey,
                       question: currentQuestion,
                       showResult: showQuestionResults,
                       onAnswerSelected: (answer) => finishRound(answer: answer),
@@ -165,6 +166,7 @@ class _QuizPageState extends State<QuizPage> {
   /// generate a rebuilt as the [QuizProvider.nextRound()] method notify 
   /// the provider listeners.
   nextRound() {
+    questionKey = GlobalKey();
     reset();
     showQuestionResults = false;
     Provider.of<QuizProvider>(context, listen: false).nextRound();

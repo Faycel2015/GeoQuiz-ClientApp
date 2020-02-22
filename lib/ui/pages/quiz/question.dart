@@ -49,40 +49,40 @@ class _QuestionViewState extends State<QuestionView> {
   @override
   Widget build(BuildContext context) {
     return  Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
-            child: Row(
-              children: <Widget>[
-                Expanded(
-                  child: ThemeEntitled(theme: widget.question.theme,)
-                ),
-                QuestionNumber(
-                  current: widget.currentNumber, 
-                  max: widget.totalNumber,
-                ),
-              ],
-            ),
+      children: <Widget>[
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
+          child: Row(
+            children: <Widget>[
+              Expanded(
+                child: ThemeEntitled(theme: widget.question.theme,)
+              ),
+              QuestionNumber(
+                current: widget.currentNumber, 
+                max: widget.totalNumber,
+              ),
+            ],
           ),
-          FlexSpacer(),
-          QuestionEntitled(
-            entitled: widget.question.entitled,
-            onCompletelyRendered: () {
-              this._questionEntitledLoaded = true;
-              if (ready) widget.onReady();
-            }
-          ),
-          FlexSpacer(big: true,),
-          Answers(
-            answers: widget.question.answers,
-            onSelected: widget.showResult ? null : onSelectedAnswer,
-            selectedAnswer: selectedAnswer,
-            onCompletelyRendered: () {
-              this._answersLoaded = true;
-              if (ready) widget.onReady();
-            }
-          )
-        ],
+        ),
+        FlexSpacer(),
+        QuestionEntitled(
+          entitled: widget.question.entitled,
+          onCompletelyRendered: () {
+            this._questionEntitledLoaded = true;
+            if (ready) widget.onReady();
+          }
+        ),
+        FlexSpacer(big: true,),
+        Answers(
+          answers: widget.question.answers,
+          onSelected: widget.showResult ? null : onSelectedAnswer,
+          selectedAnswer: selectedAnswer,
+          onCompletelyRendered: () {
+            this._answersLoaded = true;
+            if (ready) widget.onReady();
+          }
+        )
+      ],
     );
   }
 
@@ -119,15 +119,21 @@ class QuestionEntitled extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    onCompletelyRendered();
+    WidgetsBinding.instance.addPostFrameCallback((_) => onCompletelyRendered());
+
+    Widget child;
     switch (entitled.type) {
       case ResourceType.image:
-        return buildImage(context);
+        child = buildImage(context);
         break;
       case ResourceType.text:
       default:
-        return buildText(context);
+        child = buildText(context);
     }
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
+      child: child,
+    );
   }
 
   Widget buildText(BuildContext context) {

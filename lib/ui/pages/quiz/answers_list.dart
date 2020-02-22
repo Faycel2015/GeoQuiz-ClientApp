@@ -1,9 +1,10 @@
 import 'package:app/models/models.dart';
-import 'package:app/main.dart';
+import 'package:app/ui/pages/quiz/answers.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/widgets/surface_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+
 
 class AnswersList extends StatelessWidget {
   final List<QuizAnswer> answers;
@@ -27,10 +28,10 @@ class AnswersList extends StatelessWidget {
             width: double.infinity,
             child: Padding(
               padding: const EdgeInsets.only(bottom: Dimens.smallSpacing),
-              child: AnswerItem(
+              child: ListAnswerItem(
                 answer: a,
                 onSelected: onSelected == null ? null : () => onSelected(a),
-                isSelected: selectedAnswer != null && a == selectedAnswer && !a.isCorrect 
+                isSelected: selectedAnswer != null && a == selectedAnswer 
               ),
             ),
           )
@@ -41,33 +42,30 @@ class AnswersList extends StatelessWidget {
 }
 
 
-class AnswerItem extends StatelessWidget {
 
-  final QuizAnswer answer;
-  final Function onSelected;
-  final bool isSelected;
-  bool get showResult => onSelected == null;
 
-  AnswerItem({@required this.answer, @required this.onSelected, this.isSelected = false});
+
+
+class ListAnswerItem extends AnswerItem {
+
+  ListAnswerItem({
+    QuizAnswer answer, 
+    void Function() onSelected, 
+    bool isSelected = false
+  }) : super(
+    answer: answer,
+    onSelected: onSelected,
+    isSelected: isSelected
+  );
 
   @override
   Widget build(BuildContext context) {
-    var backColor = Theme.of(context).colorScheme.surface;
-    var textColor = Theme.of(context).colorScheme.onSurface;
-    if (showResult && answer.isCorrect) {
-      backColor = Theme.of(context).colorScheme.success;
-      textColor = Theme.of(context).colorScheme.onSuccess;
-    }
-    if (showResult && isSelected && !answer.isCorrect) {
-      backColor = Theme.of(context).colorScheme.error;
-      textColor = Theme.of(context).colorScheme.onError;
-    }
-    
+    final textTheme = Theme.of(context).textTheme;
     return SurfaceCard(
       onPressed: onSelected,
-      color: backColor,
+      color: backColor(context),
       child: DefaultTextStyle(
-        style: Theme.of(context).textTheme.subtitle1.apply(color: textColor),
+        style: textTheme.subtitle1.apply(color: frontColor(context)),
         child: Text(answer.answer.resource)
       ),
     );

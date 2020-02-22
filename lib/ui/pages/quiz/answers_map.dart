@@ -1,13 +1,13 @@
-
 import 'dart:ui';
 
-import 'package:app/main.dart';
 import 'package:app/models/models.dart';
+import 'package:app/ui/pages/quiz/answers.dart';
 import 'package:app/ui/shared/assets.dart';
 import 'package:app/utils/assets_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 
 class AnswersMap extends StatefulWidget {
 
@@ -50,7 +50,6 @@ class _AnswersMapState extends State<AnswersMap> with SingleTickerProviderStateM
     controller.dispose();
   }
 
-
   @override
   Widget build(BuildContext context) {
     if (worldmapDrawable == null) {
@@ -73,12 +72,12 @@ class _AnswersMapState extends State<AnswersMap> with SingleTickerProviderStateM
                   width: width,
                   height: height,
                 ),
-                ...widget.answers.map((a) => AnswerMapItem(
+                ...widget.answers.map((a) => MapAnswerItem(
                   answer: a,
                   onSelected: isResult ? null : () => widget.onSelected(a),
                   mapWidth: width,
                   mapHeight: height,
-                  isSelected: widget.selectedAnswer != null && a == widget.selectedAnswer && !a.isCorrect,
+                  isSelected: widget.selectedAnswer != null && a == widget.selectedAnswer,
                 )),
               ] 
             ),
@@ -168,35 +167,27 @@ class WordlMapPainter extends CustomPainter {
 
 
 
-class AnswerMapItem extends StatelessWidget {
+class MapAnswerItem extends AnswerItem {
 
-  final QuizAnswer answer;
-  final void Function() onSelected;
-  final bool isSelected;
   final double mapWidth;
   final double mapHeight;
 
-  bool get showResult => onSelected == null;
 
-  AnswerMapItem({
-    @required this.answer,
-    @required this.onSelected, 
+  MapAnswerItem({
+    QuizAnswer answer, 
+    void Function() onSelected, 
+    bool isSelected = false,
     @required this.mapWidth,
     @required this.mapHeight,
-    this.isSelected = false
-  });
+  }) : super(
+    answer: answer,
+    onSelected: onSelected,
+    isSelected: isSelected
+  );
 
 
   @override
   Widget build(BuildContext context) {
-    var backColor = Theme.of(context).colorScheme.surface;
-    if (showResult && answer.isCorrect) {
-      backColor = Theme.of(context).colorScheme.success;
-    }
-    if (showResult && isSelected && !answer.isCorrect) {
-      backColor = Theme.of(context).colorScheme.error;
-    }
-
     var position = parseMapPosition();
     return Positioned(
       left: position.x,
@@ -205,7 +196,7 @@ class AnswerMapItem extends StatelessWidget {
         onTap: onSelected,
         child: Icon(
           Icons.location_on, 
-          color: backColor, 
+          color: backColor(context), 
           size: 45, 
         ),
       ),
