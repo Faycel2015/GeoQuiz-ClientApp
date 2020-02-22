@@ -1,16 +1,18 @@
-/// [String] constants shared across the app UI.
+/// String constants destined to be used by the UI widgets 
 /// 
 /// Consider always add strings used in the app in this class to avoids 
 /// hard-coded strings spread out in the app widgets.
 /// 
-/// Everything is constant, so the constructor is private
-/// as it makes no sense to create an instance of this class.
+/// Everything is constant, so the constructor is private as it makes no sense 
+/// to create an instance of this class.
 class Strings  {
+
   Strings._();
 
   // General
   static const String appName = "GeoQuiz";
   static const String loading = "Loading ...";
+
 
   // Homepage
   static const String homepageTitle = "Hi,";
@@ -20,8 +22,6 @@ class Strings  {
   static const String launchQuiz = "Let's go";
   static const String quizConfigurationInvalid = "Please select themes to play !";
   static const String quizPreparationError = "Unexpected error occured.";
-
-
 
 
   // Menu

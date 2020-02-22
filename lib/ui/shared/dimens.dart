@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 
-/// Useful constants share destined to be used by the UI widgets 
+/// Useful constants destined to be used by the UI widgets 
 /// 
 /// e.g. padding, font size, font weight, margin, etc.
 /// 
