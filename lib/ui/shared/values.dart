@@ -14,4 +14,7 @@ class Values {
   
   /// Time in milliseconds to let the user see the correct answer
   static const resultDuration = 2000;
+
+  /// Local database name
+  static const sqlLiteDatabaseName = "database.db";
 }

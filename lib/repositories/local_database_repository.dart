@@ -1,4 +1,5 @@
 import 'package:app/models/models.dart';
+import 'package:app/ui/shared/values.dart';
 import 'package:app/utils/database_content_wrapper.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
@@ -42,7 +43,7 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   /// if the version is equals to 0 it returns null (no database)
   @override
   Future<int> currentDatabaseVersion() async {
-    var _db = await openDatabase(_Identifiers.DATABASE_NAME);
+    var _db = await openDatabase(LocalDatabaseIdentifiers.DATABASE_NAME);
     var v = await _db.getVersion();
     logger.i("Local database version $v");
     await _db.close();
@@ -54,16 +55,16 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   /// and themes (wrapped in a [DatabaseContentWrapper]) to the database
   @override
   Future<void> updateStaticDatabase(int version, DatabaseContentWrapper wrapper) async {
-    var db = await openDatabase(_Identifiers.DATABASE_NAME, version: version);
+    var db = await openDatabase(LocalDatabaseIdentifiers.DATABASE_NAME, version: version);
 
     await _reinitDatabase(db);
 
     var batch = db.batch();
     for (var t in wrapper.themes??[]) {
-      batch.insert(_Identifiers.THEMES_TABLE, _LocalThemeAdapter.toMap(t));
+      batch.insert(LocalDatabaseIdentifiers.THEMES_TABLE, _LocalThemeAdapter.toMap(t));
     }
     for (var q in wrapper.questions??[]) {
-      batch.insert(_Identifiers.QUESTIONS_TABLE, _LocalQuestionAdapter.toMap(q));
+      batch.insert(LocalDatabaseIdentifiers.QUESTIONS_TABLE, _LocalQuestionAdapter.toMap(q));
     }
     try {
       var result = await batch.commit(continueOnError: true);
@@ -80,9 +81,9 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   /// Returns the list of themes
   @override
   Future<List<QuizTheme>> getThemes() async {
-    var db = await openDatabase(_Identifiers.DATABASE_NAME);
+    var db = await openDatabase(LocalDatabaseIdentifiers.DATABASE_NAME);
     var themes = List<QuizTheme>();
-    var themesData = await db.query(_Identifiers.THEMES_TABLE);
+    var themesData = await db.query(LocalDatabaseIdentifiers.THEMES_TABLE);
     for (var t in themesData) {
       themes.add(_LocalThemeAdapter(data: t));
     }
@@ -95,20 +96,20 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   /// of the questions are in [themes] collection.
   @override
   Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes}) async {
-    final db = await openDatabase(_Identifiers.DATABASE_NAME);
+    final db = await openDatabase(LocalDatabaseIdentifiers.DATABASE_NAME);
     final themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
     
     final rawQuestions = await db.query(
-      _Identifiers.QUESTIONS_TABLE, 
+      LocalDatabaseIdentifiers.QUESTIONS_TABLE, 
       limit: count,
-      where: "${_Identifiers.QUESTION_THEME} IN (${themeIDs.join(',')})",
+      where: "${LocalDatabaseIdentifiers.QUESTION_THEME} IN (${themeIDs.join(',')})",
       orderBy: "RANDOM()"
     );
 
     final questions = List<QuizQuestion>();
     for (var q in rawQuestions) {
       try {
-        var t = themes.where((t) => t.id == q[_Identifiers.QUESTION_THEME]).first;
+        var t = themes.where((t) => t.id == q[LocalDatabaseIdentifiers.QUESTION_THEME]).first;
         questions.add(_LocalQuestionAdapter(data: q, theme: t));
       } catch (e) { }
     }
@@ -120,26 +121,26 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   /// Drop the static tables (questions, themes)
   /// and recreate theme completly
   Future<void> _reinitDatabase(Database db) async {
-    await db.execute("DROP TABLE IF EXISTS ${_Identifiers.THEMES_TABLE};");
-    await db.execute("DROP TABLE IF EXISTS ${_Identifiers.QUESTIONS_TABLE};");
+    await db.execute("DROP TABLE IF EXISTS ${LocalDatabaseIdentifiers.THEMES_TABLE};");
+    await db.execute("DROP TABLE IF EXISTS ${LocalDatabaseIdentifiers.QUESTIONS_TABLE};");
     await db.execute('''
-      CREATE TABLE ${_Identifiers.THEMES_TABLE} (
-        ${_Identifiers.THEME_ID} text primary key,
-        ${_Identifiers.THEME_TITLE} text not null,
-        ${_Identifiers.THEME_ICON} text not null,
-        ${_Identifiers.THEME_COLOR} int not null,
-        ${_Identifiers.THEME_ENTITLED} text not null
+      CREATE TABLE ${LocalDatabaseIdentifiers.THEMES_TABLE} (
+        ${LocalDatabaseIdentifiers.THEME_ID} text primary key,
+        ${LocalDatabaseIdentifiers.THEME_TITLE} text not null,
+        ${LocalDatabaseIdentifiers.THEME_ICON} text not null,
+        ${LocalDatabaseIdentifiers.THEME_COLOR} int not null,
+        ${LocalDatabaseIdentifiers.THEME_ENTITLED} text not null
       )
     ''');
     await db.execute('''
-      CREATE TABLE ${_Identifiers.QUESTIONS_TABLE} (
-        ${_Identifiers.QUESTION_ID} text primary key,
-        ${_Identifiers.QUESTION_THEME} text not null,
-        ${_Identifiers.QUESTION_ENTITLED} text not null,
-        ${_Identifiers.QUESTION_ENTITLED_TYPE} text not null,
-        ${_Identifiers.QUESTION_ANSWERS} text not null,
-        ${_Identifiers.QUESTION_ANSWERS_TYPE} text not null,
-        ${_Identifiers.QUESTION_DIFFICULTY} int not null
+      CREATE TABLE ${LocalDatabaseIdentifiers.QUESTIONS_TABLE} (
+        ${LocalDatabaseIdentifiers.QUESTION_ID} text primary key,
+        ${LocalDatabaseIdentifiers.QUESTION_THEME} text not null,
+        ${LocalDatabaseIdentifiers.QUESTION_ENTITLED} text not null,
+        ${LocalDatabaseIdentifiers.QUESTION_ENTITLED_TYPE} text not null,
+        ${LocalDatabaseIdentifiers.QUESTION_ANSWERS} text not null,
+        ${LocalDatabaseIdentifiers.QUESTION_ANSWERS_TYPE} text not null,
+        ${LocalDatabaseIdentifiers.QUESTION_DIFFICULTY} int not null
       )
     ''');
   }
@@ -165,20 +166,20 @@ class _LocalThemeAdapter implements QuizTheme  {
   String entitled;
 
   _LocalThemeAdapter({@required Map<String, Object> data}) {
-    this.id = data[_Identifiers.THEME_ID];
-    this.title = data[_Identifiers.THEME_TITLE];
-    this.icon = data[_Identifiers.THEME_ICON];
-    this.color = data[_Identifiers.THEME_COLOR];
-    this.entitled = data[_Identifiers.QUESTION_ENTITLED];
+    this.id = data[LocalDatabaseIdentifiers.THEME_ID];
+    this.title = data[LocalDatabaseIdentifiers.THEME_TITLE];
+    this.icon = data[LocalDatabaseIdentifiers.THEME_ICON];
+    this.color = data[LocalDatabaseIdentifiers.THEME_COLOR];
+    this.entitled = data[LocalDatabaseIdentifiers.QUESTION_ENTITLED];
   }
 
   static Map<String, dynamic> toMap(QuizTheme theme) =>
     {
-      _Identifiers.THEME_ID: theme.id,
-      _Identifiers.THEME_TITLE: theme.title,
-      _Identifiers.THEME_ICON: theme.icon,
-      _Identifiers.THEME_COLOR: theme.color,
-      _Identifiers.THEME_ENTITLED: theme.entitled
+      LocalDatabaseIdentifiers.THEME_ID: theme.id,
+      LocalDatabaseIdentifiers.THEME_TITLE: theme.title,
+      LocalDatabaseIdentifiers.THEME_ICON: theme.icon,
+      LocalDatabaseIdentifiers.THEME_COLOR: theme.color,
+      LocalDatabaseIdentifiers.THEME_ENTITLED: theme.entitled
     };
 }
 
@@ -208,35 +209,35 @@ class _LocalQuestionAdapter implements QuizQuestion {
   int difficulty;
 
   _LocalQuestionAdapter({@required QuizTheme theme, @required Map<String, Object> data}) {
-    this.id = data[_Identifiers.QUESTION_ID];
+    this.id = data[LocalDatabaseIdentifiers.QUESTION_ID];
     this.theme = theme;
 
-    final _entitled = data[_Identifiers.QUESTION_ENTITLED];
-    final _entitledType = _strToType(data[_Identifiers.QUESTION_ENTITLED_TYPE]);
+    final _entitled = data[LocalDatabaseIdentifiers.QUESTION_ENTITLED];
+    final _entitledType = _strToType(data[LocalDatabaseIdentifiers.QUESTION_ENTITLED_TYPE]);
     this.entitled = Resource(resource: _entitled, type: _entitledType);
 
-    final _answersStr = (data[_Identifiers.QUESTION_ANSWERS] as String);
+    final _answersStr = (data[LocalDatabaseIdentifiers.QUESTION_ANSWERS] as String);
     final _answers = _answersStr.split(serializationCharacter);
-    final _answersType = _strToType(data[_Identifiers.QUESTION_ANSWERS_TYPE]);
+    final _answersType = _strToType(data[LocalDatabaseIdentifiers.QUESTION_ANSWERS_TYPE]);
     this.answers = _answers.map(
       (a) => QuizAnswer(answer: Resource(resource: a, type: _answersType))
       ).toList();
     this.answers.first.isCorrect = true;
 
-    this.difficulty = data[_Identifiers.QUESTION_DIFFICULTY];
+    this.difficulty = data[LocalDatabaseIdentifiers.QUESTION_DIFFICULTY];
   }
 
   static Map<String, dynamic> toMap(QuizQuestion question) {
     var answers = question.answers.map((a) => a.answer.resource).join(serializationCharacter);
     var answersType = _typeToStr(question.answers.first.answer.type);
     return {
-      _Identifiers.QUESTION_ID: question.id,
-      _Identifiers.QUESTION_THEME: question.theme.id,
-      _Identifiers.QUESTION_ENTITLED: question.entitled.resource,
-      _Identifiers.QUESTION_ENTITLED_TYPE: _typeToStr(question.entitled.type),
-      _Identifiers.QUESTION_ANSWERS: answers,
-      _Identifiers.QUESTION_ANSWERS_TYPE: answersType,
-      _Identifiers.QUESTION_DIFFICULTY: 1,
+      LocalDatabaseIdentifiers.QUESTION_ID: question.id,
+      LocalDatabaseIdentifiers.QUESTION_THEME: question.theme.id,
+      LocalDatabaseIdentifiers.QUESTION_ENTITLED: question.entitled.resource,
+      LocalDatabaseIdentifiers.QUESTION_ENTITLED_TYPE: _typeToStr(question.entitled.type),
+      LocalDatabaseIdentifiers.QUESTION_ANSWERS: answers,
+      LocalDatabaseIdentifiers.QUESTION_ANSWERS_TYPE: answersType,
+      LocalDatabaseIdentifiers.QUESTION_DIFFICULTY: 1,
     };
   }
 
@@ -262,10 +263,10 @@ class _LocalQuestionAdapter implements QuizQuestion {
 
 
 /// Identifiers (filename, attribute, key, etc.) used for the SQL database
-class _Identifiers {
-  _Identifiers._();
+class LocalDatabaseIdentifiers {
+  LocalDatabaseIdentifiers._();
 
-  static const DATABASE_NAME = "database.db";
+  static const DATABASE_NAME = Values.sqlLiteDatabaseName;
 
   static const THEMES_TABLE = "themes";
   static const QUESTIONS_TABLE = "questions";
