@@ -1,4 +1,5 @@
 import 'package:app/repositories/local_database_repository.dart';
+import 'package:app/repositories/local_progression_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
 import 'package:app/repositories/remote_resource_downloader.dart';
 import 'package:app/utils/app_logger.dart';
@@ -29,5 +30,8 @@ void setupServiceLocator() {
     () => FirebaseRemoteDatabaseRepository(AppLogger("FirebaseRemoteDatabaseRepository"),
       resourceDownloader: locator<IRemoteResourcesDownloader>()
     )
+  );
+  locator.registerLazySingleton<ILocalProgressionRepository>(
+    () => SQLiteLocalProgressionRepository()
   );
 }
