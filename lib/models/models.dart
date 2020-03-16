@@ -17,6 +17,9 @@ class QuizTheme {
   String entitled;
   String icon;
   int color;
+
+  bool operator ==(o) => o is QuizTheme && id == o.id;
+  int get hashCode => id.hashCode;
 }
 
 

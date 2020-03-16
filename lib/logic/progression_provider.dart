@@ -14,8 +14,10 @@ class LocalProgressionProvider extends ChangeNotifier {
 
 
   LocalProgressionProvider({
-    @required ILocalProgressionRepository progressionRepo
-  }) : _progressionRepo = progressionRepo;  
+    @required ILocalProgressionRepository progressionRepo,
+    @required ILocalDatabaseRepository localDbRepo,
+  }) : _progressionRepo = progressionRepo,
+      _databaseRepo = localDbRepo;
 
 
   /// Notify clients
@@ -28,5 +30,6 @@ class LocalProgressionProvider extends ChangeNotifier {
   /// Throw an exception if an error occured
   updateProgressions(List<QuizQuestion> questions) async {
     await _progressionRepo.addQuestions(questions);
+    loadProgressions();
   }
 }

@@ -33,7 +33,7 @@ class QuizScore extends StatelessWidget {
   Widget build(BuildContext context) {
     final quizProvider = Provider.of<QuizProvider>(context, listen: false);
 
-    return Text("${quizProvider.goodAnswers} good answers");
+    return Text("${quizProvider.correctlyAnsweredQuestion.length} good answers");
 
   }
 }
@@ -60,7 +60,7 @@ class ResultsButtonList extends StatelessWidget {
   }
 
   onReplay(context) async {
-    await Provider.of<QuizProvider>(context, listen: false).reinit();
+    await Provider.of<QuizProvider>(context, listen: false).reinitForReplay();
     _goTo(context, QuizPage());
   }
 

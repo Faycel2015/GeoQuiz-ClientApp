@@ -1,6 +1,8 @@
+import 'package:app/logic/progression_provider.dart';
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/models/models.dart';
+import 'package:app/models/progression.dart';
 import 'package:app/ui/pages/home/menu.dart';
 import 'package:app/ui/pages/quiz/quiz.dart';
 import 'package:app/ui/shared/assets.dart';
@@ -164,16 +166,19 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      key: _formKey,
-      child:  SelectableThemesForm(
-        themes: widget.themes,
-        validator: (themes) => themes.isEmpty ? "" : null,
-        onSaved: (themes) => _selectedThemes = themes,
-        padding: Dimens.screenMargin,
-        spacing: Dimens.normalSpacing,
-        label: Text(Strings.selectThemes),
-        size: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
+    return Consumer<LocalProgressionProvider>(
+      builder: (_, localProgression, __) => Form(
+        key: _formKey,
+        child:  SelectableThemesForm(
+          themes: widget.themes,
+          progressions: localProgression.progressions,
+          validator: (themes) => themes.isEmpty ? "" : null,
+          onSaved: (themes) => _selectedThemes = themes,
+          padding: Dimens.screenMargin,
+          spacing: Dimens.normalSpacing,
+          label: Text(Strings.selectThemes),
+          size: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
+        ),
       ),
     );
   }
@@ -283,6 +288,7 @@ class SelectableThemesForm extends FormField<Set<QuizTheme>> {
   SelectableThemesForm({
     Key key,
     @required List<QuizTheme> themes,
+    Map<QuizTheme, QuizThemeProgression> progressions,
     FormFieldSetter<Set<QuizTheme>> onSaved,
     FormFieldValidator<Set<QuizTheme>> validator,
     Set<QuizTheme> initialValue,
@@ -316,6 +322,7 @@ class SelectableThemesForm extends FormField<Set<QuizTheme>> {
             children: themes.map((t) => 
               ThemeCard(
                 theme: t, 
+                progression: progressions == null || !progressions.containsKey(t) ? null : progressions[t],
                 selected: state.value.contains(t),
                 onSelect: () {
                   if (!state.value.remove(t))
@@ -351,10 +358,12 @@ class ThemeCard extends StatelessWidget {
   final QuizTheme theme;
   final bool selected;
   final Function onSelect;
+  final QuizThemeProgression progression;
 
   ThemeCard({
     Key key,
     @required this.theme, 
+    this.progression,
     this.onSelect,
     this.selected = false
   }) : super(key: key);
@@ -370,6 +379,10 @@ class ThemeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
+          Text(
+            progression?.percentage?.toString()??"null",
+            style: Theme.of(context).textTheme.subtitle2.apply(color: textColor)
+          ),
           Text(
             theme.title, 
             overflow: TextOverflow.fade,

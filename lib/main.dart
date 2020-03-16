@@ -1,8 +1,10 @@
 import 'package:app/locator.dart';
+import 'package:app/logic/progression_provider.dart';
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/logic/startup_checker.dart';
 import 'package:app/logic/themes_provider.dart';
 import 'package:app/repositories/local_database_repository.dart';
+import 'package:app/repositories/local_progression_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
 import 'package:app/ui/pages/home/homepage.dart';
 import 'package:app/ui/pages/start_up.dart';
@@ -27,7 +29,9 @@ import 'package:sqflite/sqflite.dart';
 /// instance that inject our dependencies inside the different providers.
 void main() async {
   setupServiceLocator();
-  // await deleteDatabase("database.db");
+
+  WidgetsFlutterBinding.ensureInitialized();
+  await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(
@@ -48,6 +52,12 @@ void main() async {
             localRepo: locator<ILocalDatabaseRepository>(),
           )
         ),
+        ChangeNotifierProvider<LocalProgressionProvider>(
+          create: (context) => LocalProgressionProvider(
+            progressionRepo: locator<ILocalProgressionRepository>(),
+            localDbRepo: locator<ILocalDatabaseRepository>()
+          )..loadProgressions(),
+        )
       ],
       child: GeoQuizApp(),
     )

@@ -1,6 +1,7 @@
 import 'package:app/models/models.dart';
 import 'package:app/models/progression.dart';
 import 'package:app/repositories/local_database_repository.dart';
+import 'package:app/repositories/sqlite_helper.dart';
 import 'package:app/ui/shared/values.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -37,17 +38,21 @@ abstract class ILocalProgressionRepository {
 /// Table fields :
 /// - `question_id` :
 class SQLiteLocalProgressionRepository implements ILocalProgressionRepository {
+
+  final int version = 1;
+
+  final SQLiteHelper database = SQLiteHelper();
   
   ///
   ///
   ///
   @override
   Future addQuestions(List<QuizQuestion> questions) async {
-    var db = await open();
+    var db = await database.open();
     var batch = db.batch();
     for (var question in questions) {
-      batch.insert(_Identifiers.PROGRESSIONS_TABLE, {
-        _Identifiers.PROGRESSION_QUESTION: question.id
+      batch.insert(LocalDatabaseIdentifiers.PROGRESSIONS_TABLE, {
+        LocalDatabaseIdentifiers.PROGRESSION_QUESTION: question.id
       });
     }
     await batch.commit(continueOnError: true);
@@ -59,41 +64,33 @@ class SQLiteLocalProgressionRepository implements ILocalProgressionRepository {
   ///
   @override
   Future<Map<QuizTheme, QuizThemeProgression>> retrieveProgressions(List<QuizTheme> themes) async {
-    var db = await open();
+    var db = await database.open();
 
     var progress = Map<QuizTheme, QuizThemeProgression>();
     for (var theme in themes) {
-      var queryRes = await db.rawQuery('''
+      var countQuestion = await db.rawQuery('''
         SELECT COUNT() 
         FROM ${LocalDatabaseIdentifiers.QUESTIONS_TABLE} A
-        WHERE A.${LocalDatabaseIdentifiers.QUESTION_THEME} = ${theme.id}
-        INNER JOIN ${LocalDatabaseIdentifiers.QUESTIONS_TABLE} B
-        ON A.${_Identifiers.PROGRESSION_QUESTION} = B.${LocalDatabaseIdentifiers.QUESTION_ID}
+        WHERE A.${LocalDatabaseIdentifiers.QUESTION_THEME} = '${theme.id}'
       ''');
-      print("");
+      var countAnsweredQuestions = await db.rawQuery('''
+        SELECT COUNT() 
+        FROM ${LocalDatabaseIdentifiers.QUESTIONS_TABLE} A
+        INNER JOIN ${LocalDatabaseIdentifiers.PROGRESSIONS_TABLE} B
+        ON A.${LocalDatabaseIdentifiers.QUESTION_ID} = B.${LocalDatabaseIdentifiers.PROGRESSION_QUESTION}
+        WHERE A.${LocalDatabaseIdentifiers.QUESTION_THEME} = '${theme.id}'
+      ''');
+
+      int countTotal = Sqflite.firstIntValue(countQuestion);
+      int countAnswered = Sqflite.firstIntValue(countAnsweredQuestions);
+      int percentage = countTotal == 0 ? 0 : ((countAnswered / countTotal) * 100).round();
+      progress[theme] = QuizThemeProgression(
+        theme: theme, 
+        percentage: percentage
+      );
       // progress[theme] = queryRes.first;
     }
+    progress.remove(themes.first);
     return progress;
   }
-
-
-  Future<Database> open() async {
-    return await openDatabase(_Identifiers.DATABASE_NAME, onCreate: (db, v) {
-      db.execute('''
-        CREATE TABLE ${_Identifiers.PROGRESSIONS_TABLE}(
-          ${_Identifiers.PROGRESSION_QUESTION} text not null
-        )
-        ''');
-    });
-  }
-}
-
-
-class _Identifiers {
-  _Identifiers._();
-
-  static const DATABASE_NAME = Values.sqlLiteDatabaseName;
-  static const PROGRESSIONS_TABLE = "local_progression";
-
-  static const PROGRESSION_QUESTION = "question_id";
 }

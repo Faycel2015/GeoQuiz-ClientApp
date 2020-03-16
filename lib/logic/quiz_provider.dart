@@ -19,7 +19,7 @@ class QuizProvider extends ChangeNotifier {
   Set<QuizTheme> _themes;
   List<QuizQuestion> _questions;
   Iterator<QuizQuestion> _questionsIterator;
-  int goodAnswers = 0;
+  List<QuizQuestion> correctlyAnsweredQuestion = [];
   
   QuizQuestion get currentQuestion => _questionsIterator?.current;
   int get totalNumber => _questions.length;
@@ -36,6 +36,8 @@ class QuizProvider extends ChangeNotifier {
     _questions = null;
     _questionsIterator = null;
     _themes = selectedThemes;
+    correctlyAnsweredQuestion = [];
+
 
     try {
       _questions = await _localRepo.getQuestions(count: 10, themes: selectedThemes);
@@ -53,16 +55,17 @@ class QuizProvider extends ChangeNotifier {
     state = QuizProviderState.PREPARED;
   }
 
-  void updateScore(bool correct) {
-    goodAnswers += (correct ? 1 : 0);
+  void addCorrectlyAnsweredQuestion(QuizQuestion question) {
+    correctlyAnsweredQuestion.add(question);
   }
 
-  void nextRound() {
-    _questionsIterator.moveNext();
+  bool nextRound() {
+    bool res = _questionsIterator.moveNext();
     notifyListeners();
+    return res;
   }
 
-  Future<void> reinit() async {
+  Future<void> reinitForReplay() async {
     await prepareGame(this._themes);
   }
 

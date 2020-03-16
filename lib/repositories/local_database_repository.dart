@@ -1,5 +1,5 @@
 import 'package:app/models/models.dart';
-import 'package:app/ui/shared/values.dart';
+import 'package:app/repositories/sqlite_helper.dart';
 import 'package:app/utils/database_content_wrapper.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
@@ -36,6 +36,8 @@ abstract class ILocalDatabaseRepository {
 class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
 
   final Logger logger;
+  
+  final SQLiteHelper database = SQLiteHelper();
 
   SQLiteLocalDatabaseRepository(this.logger);
 
@@ -43,10 +45,8 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   /// if the version is equals to 0 it returns null (no database)
   @override
   Future<int> currentDatabaseVersion() async {
-    var _db = await openDatabase(LocalDatabaseIdentifiers.DATABASE_NAME);
-    var v = await _db.getVersion();
+    var v = await database.getVersion();
     logger.i("Local database version $v");
-    await _db.close();
     return v == 0 ? null : v;
   }
 
@@ -55,9 +55,10 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   /// and themes (wrapped in a [DatabaseContentWrapper]) to the database
   @override
   Future<void> updateStaticDatabase(int version, DatabaseContentWrapper wrapper) async {
-    var db = await openDatabase(LocalDatabaseIdentifiers.DATABASE_NAME, version: version);
+    var db = await database.open(version: version);
 
-    await _reinitDatabase(db);
+    await database.deleteTheme(db);
+    await database.deleteQuestions(db);
 
     var batch = db.batch();
     for (var t in wrapper.themes??[]) {
@@ -81,7 +82,7 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   /// Returns the list of themes
   @override
   Future<List<QuizTheme>> getThemes() async {
-    var db = await openDatabase(LocalDatabaseIdentifiers.DATABASE_NAME);
+    var db = await database.open();
     var themes = List<QuizTheme>();
     var themesData = await db.query(LocalDatabaseIdentifiers.THEMES_TABLE);
     for (var t in themesData) {
@@ -96,7 +97,7 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   /// of the questions are in [themes] collection.
   @override
   Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes}) async {
-    final db = await openDatabase(LocalDatabaseIdentifiers.DATABASE_NAME);
+    var db = await database.open();
     final themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
     
     final rawQuestions = await db.query(
@@ -116,34 +117,6 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
     await db.close();
     return questions;
   }
-
-
-  /// Drop the static tables (questions, themes)
-  /// and recreate theme completly
-  Future<void> _reinitDatabase(Database db) async {
-    await db.execute("DROP TABLE IF EXISTS ${LocalDatabaseIdentifiers.THEMES_TABLE};");
-    await db.execute("DROP TABLE IF EXISTS ${LocalDatabaseIdentifiers.QUESTIONS_TABLE};");
-    await db.execute('''
-      CREATE TABLE ${LocalDatabaseIdentifiers.THEMES_TABLE} (
-        ${LocalDatabaseIdentifiers.THEME_ID} text primary key,
-        ${LocalDatabaseIdentifiers.THEME_TITLE} text not null,
-        ${LocalDatabaseIdentifiers.THEME_ICON} text not null,
-        ${LocalDatabaseIdentifiers.THEME_COLOR} int not null,
-        ${LocalDatabaseIdentifiers.THEME_ENTITLED} text not null
-      )
-    ''');
-    await db.execute('''
-      CREATE TABLE ${LocalDatabaseIdentifiers.QUESTIONS_TABLE} (
-        ${LocalDatabaseIdentifiers.QUESTION_ID} text primary key,
-        ${LocalDatabaseIdentifiers.QUESTION_THEME} text not null,
-        ${LocalDatabaseIdentifiers.QUESTION_ENTITLED} text not null,
-        ${LocalDatabaseIdentifiers.QUESTION_ENTITLED_TYPE} text not null,
-        ${LocalDatabaseIdentifiers.QUESTION_ANSWERS} text not null,
-        ${LocalDatabaseIdentifiers.QUESTION_ANSWERS_TYPE} text not null,
-        ${LocalDatabaseIdentifiers.QUESTION_DIFFICULTY} int not null
-      )
-    ''');
-  }
 }
 
 
@@ -158,12 +131,7 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
 /// painful to implements [Map] as there are a lot of methods. Instead there is 
 /// simply the static method [toMap] that take a [QuizTheme] and return the 
 /// [Map].
-class _LocalThemeAdapter implements QuizTheme  {
-  String id;
-  String title;
-  String icon;
-  int color;
-  String entitled;
+class _LocalThemeAdapter extends QuizTheme  {
 
   _LocalThemeAdapter({@required Map<String, Object> data}) {
     this.id = data[LocalDatabaseIdentifiers.THEME_ID];
@@ -258,30 +226,4 @@ class _LocalQuestionAdapter implements QuizQuestion {
       default: throw("Not supported type");
     }
   }
-}
-
-
-
-/// Identifiers (filename, attribute, key, etc.) used for the SQL database
-class LocalDatabaseIdentifiers {
-  LocalDatabaseIdentifiers._();
-
-  static const DATABASE_NAME = Values.sqlLiteDatabaseName;
-
-  static const THEMES_TABLE = "themes";
-  static const QUESTIONS_TABLE = "questions";
-
-  static const THEME_ID = "id";
-  static const THEME_TITLE = "title";
-  static const THEME_ENTITLED = "entitled";
-  static const THEME_ICON = "icon";
-  static const THEME_COLOR = "color";
-
-  static const QUESTION_ID = "id";
-  static const QUESTION_THEME = "theme";
-  static const QUESTION_ENTITLED = "entitled";
-  static const QUESTION_ENTITLED_TYPE = "entitled_type";
-  static const QUESTION_ANSWERS = "answers";
-  static const QUESTION_ANSWERS_TYPE = "answers_type";
-  static const QUESTION_DIFFICULTY = "difficulty";
 }

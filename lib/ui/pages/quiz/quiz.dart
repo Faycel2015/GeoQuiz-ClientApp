@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:app/logic/progression_provider.dart';
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/models/models.dart';
 import 'package:app/ui/pages/quiz/question.dart';
@@ -122,7 +123,7 @@ class _QuizPageState extends State<QuizPage> {
                       key: questionKey,
                       question: currentQuestion,
                       showResult: showQuestionResults,
-                      onAnswerSelected: (answer) => finishRound(answer: answer),
+                      onAnswerSelected: (answer) => finishRound(question: currentQuestion, answer: answer),
                       currentNumber: quizProvider.currentNumber,
                       totalNumber: quizProvider.totalNumber,
                       onReady: () => Future.microtask(
@@ -153,10 +154,11 @@ class _QuizPageState extends State<QuizPage> {
   /// Finish the current round and so to display result
   /// Calls [QuizProvider.updateScore()] and sets state is called to rebuild the
   /// tree (it will start a new timer and show correct and wrong answers)
-  finishRound({QuizAnswer answer}) {
+  finishRound({QuizQuestion question, QuizAnswer answer}) {
     reset();
     bool isCorrect = answer?.isCorrect??false;
-    Provider.of<QuizProvider>(context, listen: false).updateScore(isCorrect);
+    if (isCorrect)
+      Provider.of<QuizProvider>(context, listen: false).addCorrectlyAnsweredQuestion(question);
     setState(() => showQuestionResults = true);
   }
 
@@ -169,7 +171,11 @@ class _QuizPageState extends State<QuizPage> {
     questionKey = GlobalKey();
     reset();
     showQuestionResults = false;
-    Provider.of<QuizProvider>(context, listen: false).nextRound();
+    bool hasNext = Provider.of<QuizProvider>(context, listen: false).nextRound();
+    if (!hasNext) {
+      var correctQuestions = Provider.of<QuizProvider>(context, listen: false).correctlyAnsweredQuestion;
+      Provider.of<LocalProgressionProvider>(context, listen: false).updateProgressions(correctQuestions);
+    }
   }
 
   reset() {

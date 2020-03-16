@@ -148,13 +148,7 @@ class FirebaseRemoteDatabaseRepository implements IRemoteDatabaseRepository {
 
 /// Adapter used to adapt our remote data objects to [QuizTheme]
 /// Used in [FirebaseRemoteDatabaseRepository].
-class _RemoteThemeAdapter implements QuizTheme {
-  String id;
-  String title;
-  String icon;
-  int color;
-  String entitled;
-
+class _RemoteThemeAdapter extends QuizTheme {
   _RemoteThemeAdapter({Map<String, Object> data}) {
     this.id = data[_Identifiers.THEME_ID];
     this.title = data[_Identifiers.THEME_TITLE];

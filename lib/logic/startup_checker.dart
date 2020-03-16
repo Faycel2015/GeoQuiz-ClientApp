@@ -49,7 +49,13 @@ class StartUpCheckerProvider extends ChangeNotifier {
     this.localDatabaseUpToDate = localVersion == remoteVersion;
     this.startUpVerificationDone = true;
     notifyListeners();
-    // _logState();
+
+
+    // this.remoteDataFethed = true;
+    // this.localDatabaseExists = true;
+    // this.localDatabaseUpToDate = true;
+    // this.startUpVerificationDone = true;
+    // notifyListeners();
   }
 
 
