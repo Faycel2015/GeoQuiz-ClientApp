@@ -9,7 +9,9 @@ import 'package:app/ui/shared/assets.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
 import 'package:app/ui/widgets/button.dart';
+import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
+import 'package:app/ui/widgets/progress_bar.dart';
 import 'package:app/ui/widgets/scroll_view_no_effect.dart';
 import 'package:app/ui/widgets/surface_card.dart';
 import 'package:app/utils/snackbar_handler.dart';
@@ -379,10 +381,11 @@ class ThemeCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
-            progression?.percentage?.toString()??"null",
-            style: Theme.of(context).textTheme.subtitle2.apply(color: textColor)
+          ProgressBar(
+            percentage: progression?.percentage??0,
+            color: iconColor
           ),
+          FlexSpacer.small(),
           Text(
             theme.title, 
             overflow: TextOverflow.fade,
@@ -392,7 +395,7 @@ class ThemeCard extends StatelessWidget {
           Expanded(child: Container()),
           SvgPicture.string(
             theme.icon, 
-            height: 50, 
+            height: 40, 
             color: iconColor
           )
         ],
