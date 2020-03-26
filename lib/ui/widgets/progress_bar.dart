@@ -50,9 +50,10 @@ class ProgressBar extends StatelessWidget {
             ),
             Positioned(
               top: 0,right: 0,
-              child: Text(percentage.toString() + "%",
+              child: Text(
+                percentage.toString() + "%",
                 style: TextStyle(color: color),
-              ),
+              ),    
             )
           ],
         ),

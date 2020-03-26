@@ -10,10 +10,10 @@ class Values {
   Values._();
 
   /// Time in milliseconds to let the user answer the question
-  static const questionDuration = 5000;
+  static const questionDuration = 1000;
   
   /// Time in milliseconds to let the user see the correct answer
-  static const resultDuration = 2000;
+  static const resultDuration = 500;
 
   /// Local database name
   static const sqlLiteDatabaseName = "database.db";
