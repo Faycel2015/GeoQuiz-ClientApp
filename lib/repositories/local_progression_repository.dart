@@ -1,8 +1,6 @@
 import 'package:app/models/models.dart';
 import 'package:app/models/progression.dart';
-import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/sqlite_helper.dart';
-import 'package:app/ui/shared/values.dart';
 import 'package:sqflite/sqflite.dart';
 
 
@@ -88,9 +86,7 @@ class SQLiteLocalProgressionRepository implements ILocalProgressionRepository {
         theme: theme, 
         percentage: percentage
       );
-      // progress[theme] = queryRes.first;
     }
-    progress.remove(themes.first);
     return progress;
   }
 }

@@ -16,10 +16,12 @@ import 'package:logger/logger.dart';
 abstract class IRemoteDatabaseRepository {
 
   /// Return the current version of the remote database
+  /// 
   /// Can return null or throw an exception
   Future<int> currentDatabaseVersion();
 
   /// Return the entire content of the database
+  /// 
   /// WARNING: this operation can be slow if the database contains a lot 
   ///          of data
   Future<DatabaseContentWrapper> downloadDatabase();

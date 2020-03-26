@@ -17,13 +17,12 @@ class QuizProvider extends ChangeNotifier {
   }
 
   Set<QuizTheme> _themes;
-  List<QuizQuestion> _questions;
   Iterator<QuizQuestion> _questionsIterator;
   List<QuizQuestion> correctlyAnsweredQuestion = [];
   
   QuizQuestion get currentQuestion => _questionsIterator?.current;
-  int get totalNumber => _questions.length;
-  int get currentNumber => _questions.indexOf(_questionsIterator.current) + 1; 
+  int totalQuestionNumber = 0;
+  int currentQuestionNumber = 0; 
   
 
   QuizProvider({ILocalDatabaseRepository localRepo}) : _localRepo = localRepo;
@@ -33,25 +32,13 @@ class QuizProvider extends ChangeNotifier {
     if (state == QuizProviderState.IN_PROGRESS)
       return ;
     state = QuizProviderState.IN_PROGRESS;
-    _questions = null;
-    _questionsIterator = null;
     _themes = selectedThemes;
     correctlyAnsweredQuestion = [];
-
-
-    try {
-      _questions = await _localRepo.getQuestions(count: 10, themes: selectedThemes);
-    } catch (e) {}
-
-    if (_questions == null || _questions.isEmpty) {
-      state = QuizProviderState.ERROR;
-      return Future.error(null);
-    }
-    _prepareQuestion();
-      
-    _questionsIterator = _questions.iterator;
+    var questions = await _prepareQuestion();
+    _questionsIterator = questions.iterator;
     _questionsIterator.moveNext();
-
+    currentQuestionNumber = 0;
+    totalQuestionNumber = questions.length;
     state = QuizProviderState.PREPARED;
   }
 
@@ -61,6 +48,7 @@ class QuizProvider extends ChangeNotifier {
 
   bool nextRound() {
     bool res = _questionsIterator.moveNext();
+    currentQuestionNumber += 1;
     notifyListeners();
     return res;
   }
@@ -70,8 +58,17 @@ class QuizProvider extends ChangeNotifier {
   }
 
 
-  _prepareQuestion() {
-    for (var q in _questions) {
+  Future<List<QuizQuestion>> _prepareQuestion() async {
+    var questions = [];
+    try {
+      questions = await _localRepo.getQuestions(count: 10, themes: _themes);
+    } catch (e) {}
+
+    if (questions == null || questions.isEmpty) {
+      state = QuizProviderState.ERROR;
+      return Future.error(null);
+    } 
+    for (var q in questions) {
       q.answers.shuffle();
       int i = 0;
       while (q.answers.length > 4 && i < q.answers.length) {
@@ -80,6 +77,7 @@ class QuizProvider extends ChangeNotifier {
         i++;
       }
     }
+    return questions;
   }
 }
 

@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Consumer<ThemesProvider>(
                   builder: (context, themesProvider, _) =>
-                    themesProvider.state == ThemeProviderState.NOT_INIT
+                    themesProvider.state == ThemeProviderState.not_init
                       ? _LoadingData()
                       : QuizConfiguration(
                           key: quizForm,

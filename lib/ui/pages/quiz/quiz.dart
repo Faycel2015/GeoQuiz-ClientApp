@@ -124,8 +124,8 @@ class _QuizPageState extends State<QuizPage> {
                       question: currentQuestion,
                       showResult: showQuestionResults,
                       onAnswerSelected: (answer) => finishRound(question: currentQuestion, answer: answer),
-                      currentNumber: quizProvider.currentNumber,
-                      totalNumber: quizProvider.totalNumber,
+                      currentNumber: quizProvider.currentQuestionNumber,
+                      totalNumber: quizProvider.totalQuestionNumber,
                       onReady: () => Future.microtask(
                         () => timerKey.currentState.start(showQuestionResults ? resultDuration : questionDuration)
                       ),

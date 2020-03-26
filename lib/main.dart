@@ -19,7 +19,7 @@ import 'package:sqflite/sqflite.dart';
 
 /// Entry point for the application, it will basically run the app.
 /// 
-/// The app is wrapped in a [MultiProvider] widget to provide [Provider]s to the
+/// The app is wrapped in a [MultiProvider] widget to provide [Provider]s down the
 /// tree. The main application widget is [GeoQuizApp].
 /// 
 /// [Provider] can then be used with [Consumer] widget or simply by retreive
@@ -45,7 +45,7 @@ void main() async {
         ChangeNotifierProvider<ThemesProvider>(
           create: (context) => ThemesProvider(
             localRepo: locator<ILocalDatabaseRepository>(),
-          )
+          )..loadThemes()
         ),
         ChangeNotifierProvider<QuizProvider>(
           create: (context) => QuizProvider(
@@ -87,20 +87,10 @@ class GeoQuizApp extends StatelessWidget {
           if (!startUpChecker.readyToStart) {
             return StartUpView(error: startUpChecker.error);
           } else {
-            loadTheme(context);
             return HomePage();
           }
         }
       ),
-      
-    );
-  }
-
-  /// We scheduled a microtask to wait previous Provider asynchronous tasks
-  /// finished
-  loadTheme(context) {
-    Future.microtask(
-      () => Provider.of<ThemesProvider>(context, listen: false).loadThemes()
     );
   }
 }
