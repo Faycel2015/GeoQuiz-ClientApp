@@ -1,4 +1,5 @@
 import 'package:app/models/models.dart';
+import 'package:app/repositories/local_progression_repository.dart';
 import 'package:app/repositories/sqlite_helper.dart';
 import 'package:app/utils/database_content_wrapper.dart';
 import 'package:flutter/widgets.dart';
@@ -38,8 +39,11 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   final Logger logger;
   
   final SQLiteHelper database = SQLiteHelper();
+  final ILocalProgressionRepository localProgressionRepo;
 
-  SQLiteLocalDatabaseRepository(this.logger);
+  SQLiteLocalDatabaseRepository(this.logger, {
+    @required this.localProgressionRepo
+  });
 
   /// Open the database, get the version
   /// if the version is equals to 0 it returns null (no database)
@@ -96,16 +100,31 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   /// Get a list of questions of maximum [count] elements and where the themes
   /// of the questions are in [themes] collection.
   @override
-  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes}) async {
-    var db = await database.open();
+  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes}) async {    
+    final db = await database.open();
     final themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
     
-    final rawQuestions = await db.query(
-      LocalDatabaseIdentifiers.QUESTIONS_TABLE, 
-      limit: count,
-      where: "${LocalDatabaseIdentifiers.QUESTION_THEME} IN (${themeIDs.join(',')})",
-      orderBy: "RANDOM()"
-    );
+    final answeredQuestion = await db.rawQuery('''
+      SELECT ${LocalDatabaseIdentifiers.QUESTION_ID}
+      FROM ${LocalDatabaseIdentifiers.QUESTIONS_TABLE} A
+      INNER JOIN ${LocalDatabaseIdentifiers.PROGRESSIONS_TABLE} B
+      ON A.${LocalDatabaseIdentifiers.QUESTION_ID} = B.${LocalDatabaseIdentifiers.PROGRESSION_QUESTION}
+      WHERE A.${LocalDatabaseIdentifiers.QUESTION_THEME} IN (${themeIDs.join(',')})
+      ORDER BY RANDOM()
+    '''); //  immutable and unmodifiable list
+    
+    final listQuestionsID = answeredQuestion.map((q) => "'${q[LocalDatabaseIdentifiers.QUESTION_ID]}'").toList();
+    listQuestionsID.removeRange(0, (answeredQuestion.length / 3).round());
+
+    final rawQuestions = await db.rawQuery('''
+      SELECT *
+      FROM ${LocalDatabaseIdentifiers.QUESTIONS_TABLE}
+      WHERE ${LocalDatabaseIdentifiers.QUESTION_THEME} IN (${themeIDs.join(',')})
+        AND ${LocalDatabaseIdentifiers.QUESTION_ID} NOT IN (${listQuestionsID.join(",")})
+      ORDER BY ${LocalDatabaseIdentifiers.QUESTION_DIFFICULTY}, RANDOM()
+      LIMIT $count
+    ''');
+    
 
     final questions = List<QuizQuestion>();
     for (var q in rawQuestions) {
@@ -163,18 +182,12 @@ class _LocalThemeAdapter extends QuizTheme  {
 /// too painful to implements [Map] as there are a lot of methods. Instead there 
 /// is simply the static method [toMap] that take a [QuizQuestion] and return 
 /// the [Map].
-class _LocalQuestionAdapter implements QuizQuestion {
+class _LocalQuestionAdapter extends QuizQuestion {
+
   static const serializationCharacter = "##";
   static const typeTxt = "txt";
   static const typeImg = "img";
   static const typeLoc = "loc";
-
-  String id;
-  QuizTheme theme;
-  Resource entitled;
-  ResourceType entitledType;
-  List<QuizAnswer> answers;
-  int difficulty;
 
   _LocalQuestionAdapter({@required QuizTheme theme, @required Map<String, Object> data}) {
     this.id = data[LocalDatabaseIdentifiers.QUESTION_ID];
@@ -205,7 +218,7 @@ class _LocalQuestionAdapter implements QuizQuestion {
       LocalDatabaseIdentifiers.QUESTION_ENTITLED_TYPE: _typeToStr(question.entitled.type),
       LocalDatabaseIdentifiers.QUESTION_ANSWERS: answers,
       LocalDatabaseIdentifiers.QUESTION_ANSWERS_TYPE: answersType,
-      LocalDatabaseIdentifiers.QUESTION_DIFFICULTY: 1,
+      LocalDatabaseIdentifiers.QUESTION_DIFFICULTY: question.difficulty,
     };
   }
 

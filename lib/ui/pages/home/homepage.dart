@@ -168,20 +168,25 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<LocalProgressionProvider>(
-      builder: (_, localProgression, __) => Form(
-        key: _formKey,
-        child:  SelectableThemesForm(
-          themes: widget.themes,
-          progressions: localProgression.progressions,
-          validator: (themes) => themes.isEmpty ? "" : null,
-          onSaved: (themes) => _selectedThemes = themes,
-          padding: Dimens.screenMargin,
-          spacing: Dimens.normalSpacing,
-          label: Text(Strings.selectThemes),
-          size: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
+    return Column(
+      children: <Widget>[
+        Consumer<LocalProgressionProvider>(
+          builder: (_, localProgression, __) => Form(
+            key: _formKey,
+            child:  SelectableThemesForm(
+              themes: widget.themes,
+              progressions: localProgression.progressions,
+              validator: (themes) => themes.isEmpty ? "" : null,
+              onSaved: (themes) => _selectedThemes = themes,
+              padding: Dimens.screenMargin,
+              spacing: Dimens.normalSpacing,
+              label: Text(Strings.selectThemes),
+              size: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
+            ),
+          ),
         ),
-      ),
+        DifficultyChooser()
+      ],
     );
   }
 
@@ -412,6 +417,9 @@ class ThemeCard extends StatelessWidget {
 class DifficultyChooser extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Text("difficulty chooser");
+    return Checkbox(
+      value: true,
+      onChanged: (b) {},
+    );
   }
 }

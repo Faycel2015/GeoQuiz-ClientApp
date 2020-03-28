@@ -62,7 +62,9 @@ class QuizProvider extends ChangeNotifier {
     var questions = [];
     try {
       questions = await _localRepo.getQuestions(count: 10, themes: _themes);
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
 
     if (questions == null || questions.isEmpty) {
       state = QuizProviderState.ERROR;
