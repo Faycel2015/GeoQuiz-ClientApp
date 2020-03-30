@@ -185,7 +185,10 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
             ),
           ),
         ),
-        DifficultyChooser()
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
+          child: DifficultyChooser()
+        )
       ],
     );
   }
@@ -414,12 +417,75 @@ class ThemeCard extends StatelessWidget {
 
 ///
 ///
-class DifficultyChooser extends StatelessWidget {
+class DifficultyChooser extends StatefulWidget {
+
+  final Function(bool) onSelect;
+
+  DifficultyChooser({
+    Key key,
+    @required this.onSelect
+  }) : super(key: key);
+
+  @override
+  _DifficultyChooserState createState() => _DifficultyChooserState();
+}
+
+class _DifficultyChooserState extends State<DifficultyChooser> {
+
+  bool checked = false;
+  int currentDifficulty = 0;
+
   @override
   Widget build(BuildContext context) {
-    return Checkbox(
-      value: true,
-      onChanged: (b) {},
+    return Column(
+      children: <Widget>[
+        InkWell(
+          onTap: () => setState(() => checked = !checked),
+          child: Row(
+            children: <Widget>[
+              Container(
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.white, width: 3),
+                  borderRadius: Dimens.borderRadius
+                ),
+                child: SizedBox(
+                  width: 25,
+                  height: 25,
+                  child: checked ? Icon(Icons.check) : Container()
+                ),
+              ),
+              FlexSpacer.small(),
+              Text("Automatic difficulty")
+            ]
+          ),
+        ),
+        if (!checked)
+        ...[
+          Slider(
+            min: 0,
+            max: 4,
+            value: currentDifficulty.toDouble(),
+            activeColor: Colors.white,
+            inactiveColor: Colors.white.withOpacity(0.2),
+            divisions: 4,
+            onChanged: (a) => setState(() => currentDifficulty = a.round()),
+          ),
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Text("Beginner")
+              ),
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: Text("Expert")
+                )
+              ),  
+            ],
+          ),
+        ]
+          
+      ],
     );
   }
 }

@@ -21,13 +21,19 @@ GetIt locator = GetIt.instance;
 /// ```
 void setupServiceLocator() {
   locator.registerLazySingleton<ILocalDatabaseRepository>(
-    () => SQLiteLocalDatabaseRepository(AppLogger("SQLiteLocalDatabaseRepository"))
+    () => SQLiteLocalDatabaseRepository(
+      AppLogger("SQLiteLocalDatabaseRepository"),
+      localProgressionRepo: locator<ILocalProgressionRepository>()
+    )
   );
   locator.registerLazySingleton<IRemoteResourcesDownloader>(
-    () => FirebaseResourceDownloader(AppLogger("FirebaseResourceDownloader"))
+    () => FirebaseResourceDownloader(
+      AppLogger("FirebaseResourceDownloader")
+    )
   );
   locator.registerLazySingleton<IRemoteDatabaseRepository>(
-    () => FirebaseRemoteDatabaseRepository(AppLogger("FirebaseRemoteDatabaseRepository"),
+    () => FirebaseRemoteDatabaseRepository(
+      AppLogger("FirebaseRemoteDatabaseRepository"),
       resourceDownloader: locator<IRemoteResourcesDownloader>()
     )
   );

@@ -56,6 +56,7 @@ class FirebaseRemoteDatabaseRepository implements IRemoteDatabaseRepository {
   Future<int> currentDatabaseVersion() async {
     final versionFile = await _getContentFile(_Identifiers.VERSION_FILENAME);
     final version = versionFile == null ? null : int.parse(versionFile);
+    logger.i("Remote version : $version");
     return version;
   }
 

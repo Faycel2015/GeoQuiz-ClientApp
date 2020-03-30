@@ -73,7 +73,8 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
     }
     try {
       var result = await batch.commit(continueOnError: true);
-      print(result.where((r) => r is DatabaseException).length.toString() + " errors");
+      logger.i("Updated. " + result.where((r) => r is DatabaseException).length.toString() + " errors");
+      logger.i("New local version : $version");
     } catch (e) { // if nothing is commit, we reset the version to 0
       await db.setVersion(0);
       logger.e("$e");
