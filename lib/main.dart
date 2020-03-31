@@ -30,8 +30,8 @@ import 'package:sqflite/sqflite.dart';
 void main() async {
   setupServiceLocator();
 
-  // WidgetsFlutterBinding.ensureInitialized();
-  // await deleteDatabase("database.db");
+  WidgetsFlutterBinding.ensureInitialized();
+  await deleteDatabase("database.db");
 
   runApp(
     MultiProvider(

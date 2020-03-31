@@ -141,7 +141,9 @@ class FirebaseRemoteDatabaseRepository implements IRemoteDatabaseRepository {
         final theme = themes.where((t) => t.id == questionThemeID).first;
         final question = _RemoteQuestionAdapter(data: questionData, theme: theme, resources: resources);
         questions.add(question);
-      } catch(e) {print(e);}
+      } catch(e) {
+        logger.e("Unable to get $questionData. $e");
+      }
     }
     return questions;
   }

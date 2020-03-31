@@ -41,7 +41,7 @@ class FirebaseResourceDownloader  implements IRemoteResourcesDownloader {
       await dio.download(url, localPath);
       try {
         filesOnTheUserDevice.addAll(await _unzip(localPath));
-      } catch (_) { } 
+      } catch (e) {} 
     }
     return filesOnTheUserDevice;
 
@@ -80,5 +80,4 @@ class FirebaseResourceDownloader  implements IRemoteResourcesDownloader {
     final directory = await getTemporaryDirectory();
     return directory.path;
   }
-
 }
