@@ -2,7 +2,16 @@ import 'dart:async';
 
 import 'package:app/models/models.dart';
 import 'package:app/repositories/local_database_repository.dart';
+import 'package:app/ui/pages/home/homepage.dart';
 import 'package:flutter/widgets.dart';
+
+class QuizConfig {
+
+  Set<QuizTheme> themes;
+  DifficultyData difficultyData;
+
+  QuizConfig({this.themes, this.difficultyData});
+}
 
 
 class QuizProvider extends ChangeNotifier {
@@ -16,23 +25,26 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Set<QuizTheme> _themes;
+  QuizConfig _config;
   Iterator<QuizQuestion> _questionsIterator;
+
   List<QuizQuestion> correctlyAnsweredQuestion = [];
-  
   QuizQuestion get currentQuestion => _questionsIterator?.current;
   int totalQuestionNumber = 0;
   int currentQuestionNumber = 0; 
   
 
-  QuizProvider({ILocalDatabaseRepository localRepo}) : _localRepo = localRepo;
+  QuizProvider({
+    ILocalDatabaseRepository localRepo
+  }) : _localRepo = localRepo;
   
 
-  Future<void> prepareGame(Set<QuizTheme> selectedThemes) async {
+  // 0 < difficulty < 100
+  Future prepareGame(QuizConfig config) async {
     if (state == QuizProviderState.IN_PROGRESS)
       return ;
     state = QuizProviderState.IN_PROGRESS;
-    _themes = selectedThemes;
+    _config = config;
     correctlyAnsweredQuestion = [];
     var questions = await _prepareQuestion();
     _questionsIterator = questions.iterator;
@@ -42,9 +54,11 @@ class QuizProvider extends ChangeNotifier {
     state = QuizProviderState.PREPARED;
   }
 
+
   void addCorrectlyAnsweredQuestion(QuizQuestion question) {
     correctlyAnsweredQuestion.add(question);
   }
+
 
   bool nextRound() {
     bool res = _questionsIterator.moveNext();
@@ -53,15 +67,16 @@ class QuizProvider extends ChangeNotifier {
     return res;
   }
 
-  Future<void> reinitForReplay() async {
-    await prepareGame(this._themes);
+
+  Future reinitForReplay() async {
+    await prepareGame(_config);
   }
 
 
   Future<List<QuizQuestion>> _prepareQuestion() async {
     var questions = [];
     try {
-      questions = await _localRepo.getQuestions(count: 10, themes: _themes);
+      questions = await _localRepo.getQuestions(count: 10, themes: _config.themes);
     } catch (e) {
       print(e);
     }

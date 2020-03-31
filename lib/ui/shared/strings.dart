@@ -22,6 +22,7 @@ class Strings  {
   static const String launchQuiz = "Let's go";
   static const String quizConfigurationInvalid = "Please select themes to play !";
   static const String quizPreparationError = "Unexpected error occured.";
+  static const String difficultyAutomaticLabel = "Automatic difficulty";
 
 
   // Menu

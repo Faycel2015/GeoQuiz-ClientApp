@@ -38,7 +38,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
-  var quizForm = GlobalKey<_QuizConfigurationState>();
+  var quizForm = GlobalKey<QuizConfigurationState>();
 
   @override
   Widget build(BuildContext context) {
@@ -158,45 +158,52 @@ class QuizConfiguration extends StatefulWidget {
   QuizConfiguration({Key key, @required this.themes}) : super(key: key);
 
   @override
-  _QuizConfigurationState createState() => _QuizConfigurationState();
+  QuizConfigurationState createState() => QuizConfigurationState();
 }
 
-class _QuizConfigurationState extends State<QuizConfiguration> {
+class QuizConfigurationState extends State<QuizConfiguration> {
 
   final _formKey = GlobalKey<FormState>();
-  var _selectedThemes = Set<QuizTheme>();
+  var selectedThemes = Set<QuizTheme>();
+  var difficulty = DifficultyData(automatic: true);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        Consumer<LocalProgressionProvider>(
-          builder: (_, localProgression, __) => Form(
-            key: _formKey,
-            child:  SelectableThemesForm(
+    return Form(
+      key: _formKey,
+      child: Column(
+        children: <Widget>[
+          Consumer<LocalProgressionProvider>(
+            builder: (_, localProgression, __) => SelectableThemesForm(
               themes: widget.themes,
               progressions: localProgression.progressions,
               validator: (themes) => themes.isEmpty ? "" : null,
-              onSaved: (themes) => _selectedThemes = themes,
+              onSaved: (themes) => selectedThemes = themes,
               padding: Dimens.screenMargin,
               spacing: Dimens.normalSpacing,
               label: Text(Strings.selectThemes),
               size: MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
             ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
-          child: DifficultyChooser()
-        )
-      ],
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
+            child: DifficultyChooser(
+              initial: difficulty,
+              onSaved: (newDifficulty) => difficulty = newDifficulty,
+            )
+          )
+        ],
+      )
     );
   }
 
-  Set<QuizTheme> submitForm() {
+  QuizConfig buildQuiConfiguration() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-      return _selectedThemes;
+      return QuizConfig(
+        themes: selectedThemes,
+        difficultyData: difficulty,
+      )
     } else {
       _handleInvalidForm();
       return null;
@@ -222,7 +229,7 @@ class _QuizConfigurationState extends State<QuizConfiguration> {
 /// - else the button will be enable.
 class LaunchQuizButton extends StatefulWidget {
 
-  final GlobalKey<_QuizConfigurationState> quizForm;
+  final GlobalKey<QuizConfigurationState> quizForm;
 
   LaunchQuizButton({@required this.quizForm});
 
@@ -248,11 +255,12 @@ class _LaunchQuizButtonState extends State<LaunchQuizButton> {
   }
 
   _onSubmit() async {
-    var selectedThemes = widget.quizForm.currentState.submitForm();
-    if (selectedThemes != null) {
+    var config = widget.quizForm.currentState.buildQuiConfiguration();
+    if (config != null) {
       setState(() => inProgress = true);
       try {
-        await Provider.of<QuizProvider>(context, listen: false).prepareGame(selectedThemes);
+        var quizProvider = Provider.of<QuizProvider>(context, listen: false);
+        await quizProvider.prepareGame(config);
         _launchQuiz();
       } catch (_) {
         _handlePreparationError(_);
@@ -417,75 +425,89 @@ class ThemeCard extends StatelessWidget {
 
 ///
 ///
-class DifficultyChooser extends StatefulWidget {
+class DifficultyChooser extends FormField<DifficultyData> {
 
-  final Function(bool) onSelect;
+  final void Function(DifficultyData) onSaved;
+  final DifficultyData initial;
 
   DifficultyChooser({
     Key key,
-    @required this.onSelect
-  }) : super(key: key);
-
-  @override
-  _DifficultyChooserState createState() => _DifficultyChooserState();
+    @required this.initial,
+    @required this.onSaved
+  }) : super(
+    key: key,
+    onSaved: onSaved,
+    initialValue: initial,
+    builder: (state) {
+      var value = state.value;
+      return Column(
+        children: <Widget>[
+          InkWell(
+            onTap: () {
+              var newValue = DifficultyData(
+                automatic: !value.automatic,
+                difficultyChose: value.difficultyChose
+              );
+              state.didChange(newValue);
+            },
+            child: Row(
+              children: <Widget>[
+                Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.white, width: 3),
+                    borderRadius: Dimens.borderRadius
+                  ),
+                  child: SizedBox(
+                    width: 25,
+                    height: 25,
+                    child: value.automatic ? Icon(Icons.check) : Container()
+                  ),
+                ),
+                FlexSpacer.small(),
+                Text(Strings.difficultyAutomaticLabel)
+              ]
+            ),
+          ),
+          if (!value.automatic)
+            Row(
+              children: <Widget>[
+                Text("👶", style: TextStyle(fontSize: 25)),
+                Expanded(
+                  child: Slider(
+                    min: 0,
+                    max: 100,
+                    value: value.difficultyChose.toDouble(),
+                    activeColor: Colors.white,
+                    inactiveColor: Colors.white.withOpacity(0.2),
+                    onChanged: (a) {
+                      var newValue = DifficultyData(
+                        automatic: value.automatic,
+                        difficultyChose: a.round()
+                      );
+                      state.didChange(newValue);
+                    },
+                  ),
+                ),
+                Text("🦸‍♂️", style: TextStyle(fontSize: 25)), 
+              ],
+            ),
+        ],
+      );
+    }
+  );
 }
 
-class _DifficultyChooserState extends State<DifficultyChooser> {
 
-  bool checked = false;
-  int currentDifficulty = 0;
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: <Widget>[
-        InkWell(
-          onTap: () => setState(() => checked = !checked),
-          child: Row(
-            children: <Widget>[
-              Container(
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.white, width: 3),
-                  borderRadius: Dimens.borderRadius
-                ),
-                child: SizedBox(
-                  width: 25,
-                  height: 25,
-                  child: checked ? Icon(Icons.check) : Container()
-                ),
-              ),
-              FlexSpacer.small(),
-              Text("Automatic difficulty")
-            ]
-          ),
-        ),
-        if (!checked)
-        ...[
-          Slider(
-            min: 0,
-            max: 4,
-            value: currentDifficulty.toDouble(),
-            activeColor: Colors.white,
-            inactiveColor: Colors.white.withOpacity(0.2),
-            divisions: 4,
-            onChanged: (a) => setState(() => currentDifficulty = a.round()),
-          ),
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Text("Beginner")
-              ),
-              Expanded(
-                child: Align(
-                  alignment: Alignment.centerRight,
-                  child: Text("Expert")
-                )
-              ),  
-            ],
-          ),
-        ]
-          
-      ],
-    );
-  }
+class DifficultyData {
+  bool _automatic = true;
+  bool get automatic => _automatic??true;
+  set automatic(b) => _automatic = b;
+  int _difficultyChose;
+  int get difficultyChose => _difficultyChose??0;
+  set difficultyChose(v) => _difficultyChose = v;
+  DifficultyData({
+    bool automatic, 
+    int difficultyChose
+  }) : _automatic = automatic,
+       _difficultyChose = difficultyChose;
 }
