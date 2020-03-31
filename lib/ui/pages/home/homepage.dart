@@ -203,7 +203,7 @@ class QuizConfigurationState extends State<QuizConfiguration> {
       return QuizConfig(
         themes: selectedThemes,
         difficultyData: difficulty,
-      )
+      );
     } else {
       _handleInvalidForm();
       return null;

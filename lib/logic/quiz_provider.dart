@@ -76,7 +76,7 @@ class QuizProvider extends ChangeNotifier {
   Future<List<QuizQuestion>> _prepareQuestion() async {
     var questions = [];
     try {
-      questions = await _localRepo.getQuestions(count: 10, themes: _config.themes);
+      questions = await _localRepo.getQuestions(count: 10, themes: _config.themes, difficulty: _config.difficultyData);
     } catch (e) {
       print(e);
     }

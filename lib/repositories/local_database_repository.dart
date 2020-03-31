@@ -1,6 +1,9 @@
+import 'dart:math';
+
 import 'package:app/models/models.dart';
 import 'package:app/repositories/local_progression_repository.dart';
 import 'package:app/repositories/sqlite_helper.dart';
+import 'package:app/ui/pages/home/homepage.dart';
 import 'package:app/utils/database_content_wrapper.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
@@ -26,7 +29,7 @@ abstract class ILocalDatabaseRepository {
 
   /// Get list of questions
   /// [count] is the number of questions to return
-  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes});
+  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes, DifficultyData difficulty});
 }
 
 
@@ -100,35 +103,55 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
 
   /// Get a list of questions of maximum [count] elements and where the themes
   /// of the questions are in [themes] collection.
+  /// 
+  /// If we are in an automatic mode we chose questions the easier questions
+  /// not answered correctly
   @override
-  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes}) async {    
+  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes, DifficultyData difficulty}) async {    
     final db = await database.open();
     final themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
     
-    final answeredQuestion = await db.rawQuery('''
-      SELECT ${LocalDatabaseIdentifiers.QUESTION_ID}
-      FROM ${LocalDatabaseIdentifiers.QUESTIONS_TABLE} A
-      INNER JOIN ${LocalDatabaseIdentifiers.PROGRESSIONS_TABLE} B
-      ON A.${LocalDatabaseIdentifiers.QUESTION_ID} = B.${LocalDatabaseIdentifiers.PROGRESSION_QUESTION}
-      WHERE A.${LocalDatabaseIdentifiers.QUESTION_THEME} IN (${themeIDs.join(',')})
-      ORDER BY RANDOM()
-    '''); //  immutable and unmodifiable list
-    
-    final listQuestionsID = answeredQuestion.map((q) => "'${q[LocalDatabaseIdentifiers.QUESTION_ID]}'").toList();
-    listQuestionsID.removeRange(0, (answeredQuestion.length / 3).round());
-
-    final rawQuestions = await db.rawQuery('''
-      SELECT *
+    var baseQuery = '''
       FROM ${LocalDatabaseIdentifiers.QUESTIONS_TABLE}
       WHERE ${LocalDatabaseIdentifiers.QUESTION_THEME} IN (${themeIDs.join(',')})
-        AND ${LocalDatabaseIdentifiers.QUESTION_ID} NOT IN (${listQuestionsID.join(",")})
-      ORDER BY ${LocalDatabaseIdentifiers.QUESTION_DIFFICULTY}, RANDOM()
-      LIMIT $count
-    ''');
+    ''';
+
+    if (difficulty.automatic) { 
+      final answeredQuestion = await db.rawQuery('''
+        SELECT ${LocalDatabaseIdentifiers.QUESTION_ID}
+        FROM ${LocalDatabaseIdentifiers.QUESTIONS_TABLE} A
+        INNER JOIN ${LocalDatabaseIdentifiers.PROGRESSIONS_TABLE} B
+        ON A.${LocalDatabaseIdentifiers.QUESTION_ID} = B.${LocalDatabaseIdentifiers.PROGRESSION_QUESTION}
+        WHERE A.${LocalDatabaseIdentifiers.QUESTION_THEME} IN (${themeIDs.join(',')})
+        ORDER BY RANDOM()
+      '''); //  immutable and unmodifiable list
     
+      final listQuestionsID = answeredQuestion.map((q) => "'${q[LocalDatabaseIdentifiers.QUESTION_ID]}'").toList();
+      // we remove some questions of the list to improve to let the user play with questions that he already answered
+      listQuestionsID.removeRange(0, (answeredQuestion.length / 3).round());
+      baseQuery += "AND ${LocalDatabaseIdentifiers.QUESTION_ID} NOT IN (${listQuestionsID.join(",")})";
+    }
+
+    var countQuestionQuery = await db.rawQuery('''
+      SELECT COUNT(*)
+      $baseQuery
+    ''');
+    var countTotal = Sqflite.firstIntValue(countQuestionQuery);
+
+    var lowerBound = 0;
+    if (!difficulty.automatic)
+      lowerBound = min(countTotal - count, (difficulty.difficultyChose / 100 * countTotal).round());
+    var upperBound = lowerBound + count;
+
+    final questionsQuery = await db.rawQuery('''
+      SELECT *
+      $baseQuery
+      ORDER BY ${LocalDatabaseIdentifiers.QUESTION_DIFFICULTY}, RANDOM()
+      LIMIT $lowerBound, $upperBound
+    ''');
 
     final questions = List<QuizQuestion>();
-    for (var q in rawQuestions) {
+    for (var q in questionsQuery) {
       try {
         var t = themes.where((t) => t.id == q[LocalDatabaseIdentifiers.QUESTION_THEME]).first;
         questions.add(_LocalQuestionAdapter(data: q, theme: t));
