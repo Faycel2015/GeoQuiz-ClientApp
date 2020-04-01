@@ -1,7 +1,7 @@
 import 'package:app/models/models.dart';
-import 'package:app/themes/themes_provider.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
+import 'package:app/ui/themes/themes_provider.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:app/ui/widgets/progress_bar.dart';
 import 'package:app/ui/widgets/provider_notifier.dart';

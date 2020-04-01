@@ -1,4 +1,4 @@
-import 'package:app/startup/startup_provider.dart';
+import 'package:app/ui/startup/startup_provider.dart';
 import 'package:app/ui/widgets/geoquiz_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';

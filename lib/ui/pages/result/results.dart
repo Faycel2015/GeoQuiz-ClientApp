@@ -1,8 +1,8 @@
 import 'package:app/logic/quiz_provider.dart';
-import 'package:app/themes/themes_progress_list.dart';
 import 'package:app/ui/pages/home/homepage.dart';
 import 'package:app/ui/pages/quiz/quiz.dart';
 import 'package:app/ui/shared/dimens.dart';
+import 'package:app/ui/themes/themes_progress_list.dart';
 import 'package:app/ui/widgets/button.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
 import 'package:flutter/material.dart';
