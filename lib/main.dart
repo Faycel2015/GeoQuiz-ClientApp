@@ -5,6 +5,7 @@ import 'package:app/startup/startup_provider.dart';
 import 'package:app/ui/pages/home/homepage.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
+import 'package:app/ui/widgets/base_page.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
@@ -49,7 +50,7 @@ class GeoQuizApp extends StatelessWidget {
       title: Strings.appName,
       theme: geoQuizTheme,
       onGenerateRoute: Router.generateRoute,
-      home: Consumer<StartUpProvider>(
+      home: BasePage<StartUpProvider>(
         builder: (context, startUpProvider, _) => startUpProvider.isReady
             ? HomePage()
             : StartUpPage(status: startUpProvider.status)
