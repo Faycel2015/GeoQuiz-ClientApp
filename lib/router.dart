@@ -1,4 +1,4 @@
-import 'package:app/ui/pages/home/homepage.dart';
+import 'package:app/ui/homepage/homepage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 

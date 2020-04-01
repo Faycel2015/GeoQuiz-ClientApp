@@ -1,5 +1,5 @@
-import 'package:app/repositories/local_database_repository.dart';
-import 'package:app/repositories/remote_database_repository.dart';
+import 'package:app/services/local_database_service.dart';
+import 'package:app/services/remote_database_service.dart';
 import 'package:flutter/widgets.dart';
 
 /// The current status of the [StartUpProvider]

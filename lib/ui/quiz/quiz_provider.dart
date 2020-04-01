@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:app/models/models.dart';
-import 'package:app/repositories/local_database_repository.dart';
-import 'package:app/ui/pages/home/homepage.dart';
+import 'package:app/services/local_database_service.dart';
+import 'package:app/ui/homepage/homepage.dart';
 import 'package:flutter/widgets.dart';
 
 class QuizConfig {

@@ -2,10 +2,10 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:app/models/models.dart';
-import 'package:app/ui/pages/quiz/answers_list.dart';
-import 'package:app/ui/pages/quiz/answers_map.dart';
-import 'package:app/ui/shared/dimens.dart';
-import 'package:app/ui/widgets/flex_spacer.dart';
+import 'package:app/ui/quiz/answers_list.dart';
+import 'package:app/ui/quiz/answers_map.dart';
+import 'package:app/ui/shared/res/dimens.dart';
+import 'package:app/ui/shared/widgets/flex_spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';

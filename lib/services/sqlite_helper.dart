@@ -1,4 +1,3 @@
-import 'package:app/ui/shared/values.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:sqflite/sqlite_api.dart';
 
@@ -71,7 +70,7 @@ class SQLiteHelper {
 class LocalDatabaseIdentifiers {
   LocalDatabaseIdentifiers._();
 
-  static const DATABASE_NAME = Values.sqlLiteDatabaseName;
+  static const DATABASE_NAME = "database.db";
 
   static const THEMES_TABLE = "themes";
   static const QUESTIONS_TABLE = "questions";

@@ -1,9 +1,9 @@
-import 'package:app/logic/quiz_provider.dart';
-import 'package:app/ui/pages/home/homepage.dart';
-import 'package:app/ui/pages/quiz/quiz.dart';
-import 'package:app/ui/shared/dimens.dart';
-import 'package:app/ui/widgets/button.dart';
-import 'package:app/ui/widgets/flex_spacer.dart';
+import 'package:app/ui/homepage/homepage.dart';
+import 'package:app/ui/quiz/quiz.dart';
+import 'package:app/ui/quiz/quiz_provider.dart';
+import 'package:app/ui/shared/res/dimens.dart';
+import 'package:app/ui/shared/widgets/button.dart';
+import 'package:app/ui/shared/widgets/flex_spacer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';

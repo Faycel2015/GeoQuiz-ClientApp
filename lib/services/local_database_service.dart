@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:app/models/models.dart';
-import 'package:app/repositories/local_progression_repository.dart';
-import 'package:app/repositories/sqlite_helper.dart';
-import 'package:app/ui/pages/home/homepage.dart';
+import 'package:app/services/local_progression_service.dart';
+import 'package:app/services/sqlite_helper.dart';
+import 'package:app/ui/homepage/homepage.dart';
 import 'package:app/utils/database_content_wrapper.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';

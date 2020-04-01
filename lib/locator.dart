@@ -1,8 +1,8 @@
-import 'package:app/logic/quiz_provider.dart';
-import 'package:app/repositories/local_database_repository.dart';
-import 'package:app/repositories/local_progression_repository.dart';
-import 'package:app/repositories/remote_database_repository.dart';
-import 'package:app/repositories/remote_resource_downloader.dart';
+import 'package:app/services/local_database_service.dart';
+import 'package:app/services/local_progression_service.dart';
+import 'package:app/services/remote_database_service.dart';
+import 'package:app/services/remote_resource_downloader_service.dart';
+import 'package:app/ui/quiz/quiz_provider.dart';
 import 'package:app/ui/startup/startup_provider.dart';
 import 'package:app/ui/themes/themes_provider.dart';
 import 'package:app/utils/app_logger.dart';

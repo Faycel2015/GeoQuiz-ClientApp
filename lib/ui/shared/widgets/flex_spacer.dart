@@ -1,4 +1,4 @@
-import 'package:app/ui/shared/dimens.dart';
+import 'package:app/ui/shared/res/dimens.dart';
 import 'package:flutter/widgets.dart';
 
 

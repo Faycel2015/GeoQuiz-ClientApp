@@ -1,19 +1,36 @@
 import 'package:app/models/models.dart';
-import 'package:app/repositories/local_database_repository.dart';
+import 'package:app/services/local_database_service.dart';
 import 'package:flutter/widgets.dart';
 
+///
+enum ThemeProviderState {
+  ///
+  not_init,
 
+  ///
+  init,
+
+  ///
+  error,
+}
+
+///
+///
+///
 class ThemesProvider extends ChangeNotifier {
-
-  final ILocalDatabaseRepository _localRepo;
-
-  List<QuizTheme> themes;
-  var state = ThemeProviderState.not_init;
-
-
+  ///
   ThemesProvider({
     @required ILocalDatabaseRepository localRepo
   }) : _localRepo = localRepo;
+
+  ///
+  final ILocalDatabaseRepository _localRepo;
+
+  ///
+  List<QuizTheme> themes;
+  
+  ///
+  ThemeProviderState state = ThemeProviderState.not_init;
 
 
   loadThemes() async {
@@ -43,8 +60,3 @@ class ThemesProvider extends ChangeNotifier {
 }
 
 
-enum ThemeProviderState {
-  not_init,
-  init,
-  error,
-}

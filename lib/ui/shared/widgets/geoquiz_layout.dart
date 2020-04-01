@@ -1,4 +1,4 @@
-import 'package:app/ui/widgets/gradient_background.dart';
+import 'package:app/ui/shared/widgets/gradient_background.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 

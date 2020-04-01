@@ -1,11 +1,11 @@
 import 'package:app/locator.dart';
 import 'package:app/router.dart';
-import 'package:app/ui/pages/home/homepage.dart';
-import 'package:app/ui/shared/dimens.dart';
-import 'package:app/ui/shared/strings.dart';
+import 'package:app/ui/homepage/homepage.dart';
+import 'package:app/ui/shared/res/dimens.dart';
+import 'package:app/ui/shared/res/strings.dart';
+import 'package:app/ui/shared/widgets/provider_notifier.dart';
 import 'package:app/ui/startup/startup_page.dart';
 import 'package:app/ui/startup/startup_provider.dart';
-import 'package:app/ui/widgets/provider_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:sqflite/sqflite.dart';

@@ -1,12 +1,13 @@
-import 'package:app/ui/shared/dimens.dart';
+import 'package:app/ui/shared/res/dimens.dart';
+import 'package:app/ui/shared/widgets/flex_spacer.dart';
+import 'package:app/ui/shared/widgets/progress_bar.dart';
+import 'package:app/ui/shared/widgets/provider_notifier.dart';
 import 'package:app/ui/themes/themes_provider.dart';
-import 'package:app/ui/widgets/flex_spacer.dart';
-import 'package:app/ui/widgets/progress_bar.dart';
-import 'package:app/ui/widgets/provider_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/svg.dart';
 
+///
 class ThemesProgressList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

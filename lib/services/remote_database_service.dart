@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:app/models/models.dart';
-import 'package:app/repositories/remote_resource_downloader.dart';
+import 'package:app/services/remote_resource_downloader_service.dart';
 import 'package:app/utils/database_content_wrapper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';

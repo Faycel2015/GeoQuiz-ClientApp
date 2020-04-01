@@ -1,9 +1,9 @@
 import 'dart:ui';
 
 import 'package:app/models/models.dart';
-import 'package:app/ui/pages/quiz/answers.dart';
-import 'package:app/ui/shared/assets.dart';
-import 'package:app/ui/widgets/flex_spacer.dart';
+import 'package:app/ui/quiz/answers.dart';
+import 'package:app/ui/shared/res/assets.dart';
+import 'package:app/ui/shared/widgets/flex_spacer.dart';
 import 'package:app/utils/assets_loader.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';

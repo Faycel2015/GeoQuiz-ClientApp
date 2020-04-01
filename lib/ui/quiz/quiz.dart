@@ -1,13 +1,13 @@
 import 'dart:async';
 
-import 'package:app/logic/quiz_provider.dart';
 import 'package:app/models/models.dart';
-import 'package:app/ui/pages/quiz/question.dart';
-import 'package:app/ui/pages/result/results.dart';
-import 'package:app/ui/shared/dimens.dart';
-import 'package:app/ui/shared/values.dart';
-import 'package:app/ui/widgets/geoquiz_layout.dart';
-import 'package:app/ui/widgets/scroll_view_no_effect.dart';
+import 'package:app/ui/quiz/question.dart';
+import 'package:app/ui/quiz/quiz_provider.dart';
+import 'package:app/ui/quiz/results.dart';
+import 'package:app/ui/shared/res/dimens.dart';
+import 'package:app/ui/shared/res/values.dart';
+import 'package:app/ui/shared/widgets/geoquiz_layout.dart';
+import 'package:app/ui/shared/widgets/scroll_view_no_effect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
