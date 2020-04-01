@@ -13,6 +13,20 @@ class QuizConfig {
   QuizConfig({this.themes, this.difficultyData});
 }
 
+enum QuizState {
+  /// nothin happened
+  idle,
+
+  /// loading questions
+  busy,
+
+  /// party in progress
+  inProgress,
+
+  /// party finished
+  finished,
+}
+
 
 class QuizProvider extends ChangeNotifier {
 
@@ -25,7 +39,7 @@ class QuizProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  QuizConfig _config;
+  final QuizConfig config;
   Iterator<QuizQuestion> _questionsIterator;
 
   List<QuizQuestion> correctlyAnsweredQuestion = [];
@@ -35,16 +49,16 @@ class QuizProvider extends ChangeNotifier {
   
 
   QuizProvider({
-    ILocalDatabaseRepository localRepo
-  }) : _localRepo = localRepo;
+    ILocalDatabaseRepository localDbService,
+    this.config
+  }) : _localRepo = localDbService;
   
 
   // 0 < difficulty < 100
-  Future prepareGame(QuizConfig config) async {
+  Future prepareGame() async {
     if (state == QuizProviderState.IN_PROGRESS)
       return ;
     state = QuizProviderState.IN_PROGRESS;
-    _config = config;
     correctlyAnsweredQuestion = [];
     var questions = await _prepareQuestion();
     _questionsIterator = questions.iterator;
@@ -68,15 +82,12 @@ class QuizProvider extends ChangeNotifier {
   }
 
 
-  Future reinitForReplay() async {
-    await prepareGame(_config);
-  }
 
 
   Future<List<QuizQuestion>> _prepareQuestion() async {
     var questions = [];
     try {
-      questions = await _localRepo.getQuestions(count: 10, themes: _config.themes, difficulty: _config.difficultyData);
+      questions = await _localRepo.getQuestions(count: 10, themes: config.themes, difficulty: config.difficultyData);
     } catch (e) {
       print(e);
     }

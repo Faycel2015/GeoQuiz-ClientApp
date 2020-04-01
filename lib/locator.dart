@@ -2,7 +2,6 @@ import 'package:app/services/local_database_service.dart';
 import 'package:app/services/local_progression_service.dart';
 import 'package:app/services/remote_database_service.dart';
 import 'package:app/services/remote_resource_downloader_service.dart';
-import 'package:app/ui/quiz/quiz_provider.dart';
 import 'package:app/ui/startup/startup_provider.dart';
 import 'package:app/ui/themes/themes_provider.dart';
 import 'package:app/utils/app_logger.dart';
@@ -13,6 +12,11 @@ import 'package:get_it/get_it.dart';
 /// Before to use it to retrieve objects it needs to be initialized by calling
 /// [setupLocator] static method, it will lazy initialized the services and
 /// the providers.
+/// 
+/// It register all services used in the app and providers that can be accessed
+/// anywhere in the app. For providers used only in specific page and without
+/// accessible anywhere, use the traditionnal approach with the
+/// [ChangeNotifierProvider] and [Consumer] widgets.
 /// 
 /// {@tool sample}
 /// To retrieve the MockProvider
@@ -77,19 +81,14 @@ class Locator {
   static _registerProviders() {
     _locator.registerLazySingleton<StartUpProvider>(() => 
       StartUpProvider(
-        localRepo: _locator<ILocalDatabaseRepository>(),
-        remoteRepo: _locator<IRemoteDatabaseRepository>(),
+        localDbService: _locator<ILocalDatabaseRepository>(),
+        remoteDbService: _locator<IRemoteDatabaseRepository>(),
       )..init()
     );
     _locator.registerLazySingleton<ThemesProvider>(() => 
       ThemesProvider(
         localRepo: _locator<ILocalDatabaseRepository>(),
       )..loadThemes()
-    );
-    _locator.registerLazySingleton<QuizProvider>(() => 
-      QuizProvider(
-        localRepo: _locator<ILocalDatabaseRepository>(),
-      )
     );
   }
 }

@@ -57,16 +57,16 @@ enum StartUpStatus {
 class StartUpProvider extends ChangeNotifier {
   /// Create the provider with necessary services, doesn't launch any process
   StartUpProvider({
-    @required IRemoteDatabaseRepository remoteRepo, 
-    @required ILocalDatabaseRepository localRepo
-  }) : this._remoteRepo = remoteRepo,
-       this._localRepo = localRepo;
+    @required IRemoteDatabaseRepository remoteDbService, 
+    @required ILocalDatabaseRepository localDbService
+  }) : this._remoteDbService = remoteDbService,
+       this._localDbService = localDbService;
 
   /// Service used to fetch questions and themes.
-  final IRemoteDatabaseRepository _remoteRepo;
+  final IRemoteDatabaseRepository _remoteDbService;
 
   /// Service used to update the local database.
-  final ILocalDatabaseRepository _localRepo;
+  final ILocalDatabaseRepository _localDbService;
 
   /// See [status] getter and setter. It is private because when the status
   /// changed, it will notify listeners.
@@ -96,8 +96,8 @@ class StartUpProvider extends ChangeNotifier {
   init() async {
     status = StartUpStatus.busy;
 
-    int remoteVersion = await _remoteRepo.currentDatabaseVersion();
-    int localVersion = await _localRepo.currentDatabaseVersion();
+    int remoteVersion = await _remoteDbService.currentDatabaseVersion();
+    int localVersion = await _localDbService.currentDatabaseVersion();
 
     bool needToBeUpdated = remoteVersion != null 
         && (localVersion == null || localVersion != remoteVersion);
@@ -113,8 +113,8 @@ class StartUpProvider extends ChangeNotifier {
   /// update the local database to a new [version]
   Future<bool> _updateLocalDatabase({@required int version}) async {
     try {
-      var remoteDatabaseContent = await _remoteRepo.downloadDatabase();
-      await _localRepo.updateStaticDatabase(version, remoteDatabaseContent);
+      var remoteDatabaseContent = await _remoteDbService.downloadDatabase();
+      await _localDbService.updateStaticDatabase(version, remoteDatabaseContent);
       return true;
     } catch(e) {
       return false;

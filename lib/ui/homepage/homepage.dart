@@ -29,11 +29,11 @@ import 'package:provider/provider.dart';
 /// Note: is the [ThemesProvider] is not yet initialized, the [_LoadingData] 
 /// widget will be displayed.
 class HomePage extends StatefulWidget {
-
-  static const routeName = "/homepage";
-
   @override
   _HomePageState createState() => _HomePageState();
+
+  ///
+  static const routeName = "/homepage";
 }
 
 class _HomePageState extends State<HomePage> {
@@ -216,62 +216,30 @@ class QuizConfigurationState extends State<QuizConfiguration> {
 /// - if the state is [QuizProviderState.IN_PROGRESS] the button will be
 ///   diasble and a loading message will be dispalyed
 /// - else the button will be enable.
-class LaunchQuizButton extends StatefulWidget {
+class LaunchQuizButton extends StatelessWidget {
 
   final GlobalKey<QuizConfigurationState> quizForm;
 
   LaunchQuizButton({@required this.quizForm});
 
   @override
-  _LaunchQuizButtonState createState() => _LaunchQuizButtonState();
-}
-
-class _LaunchQuizButtonState extends State<LaunchQuizButton> {
-
-  bool inProgress = false;
-
-  @override
   Widget build(BuildContext context) {
     return ProviderNotifier<QuizProvider>(
       builder: (context, quizProvider, _) {
         return Button(
-          label: inProgress ? Strings.loadingThemes : Strings.launchQuiz,
+          label: Strings.launchQuiz,
           icon: Icon(Icons.chevron_right),
-          onPressed: inProgress ? null : _onSubmit,
+          onPressed: () => onSubmit(context),
         );
       }
     );
   }
 
-  _onSubmit() async {
-    var config = widget.quizForm.currentState.buildQuiConfiguration();
+  void onSubmit(BuildContext context) async {
+    var config = quizForm.currentState.buildQuiConfiguration();
     if (config != null) {
-      setState(() => inProgress = true);
-      try {
-        var quizProvider = Provider.of<QuizProvider>(context, listen: false);
-        await quizProvider.prepareGame(config);
-        _launchQuiz();
-      } catch (_) {
-        _handlePreparationError(_);
-      }
-      setState(() => inProgress = false);
+      Navigator.pushNamed(context, QuizPage.routeName);
     }
-  }
-
-  _launchQuiz() {
-    if (mounted) {
-      Navigator.push(context, MaterialPageRoute(
-        builder: (context) => QuizPage()
-      ));
-    }
-  }
-
-  _handlePreparationError(_) {
-    showSnackbar(
-      context: context,
-      critical: true,
-      content: Text(Strings.quizPreparationError)
-    );
   }
 }
 

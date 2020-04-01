@@ -60,17 +60,15 @@ class ResultsButtonList extends StatelessWidget {
   }
 
   onReplay(context) async {
-    await Provider.of<QuizProvider>(context, listen: false).reinitForReplay();
-    _goTo(context, QuizPage());
+    var provider = Provider.of<QuizProvider>(context, listen: false);
+    Navigator.pushReplacementNamed(
+      context, 
+      QuizPage.routeName, 
+      arguments: provider.config
+    );
   }
 
   onHome(context) {
-    _goTo(context, HomePage());
-  }
-
-  _goTo(BuildContext context, Widget page) {
-    Navigator.of(context).pushReplacement(MaterialPageRoute(
-      builder: (context) => page
-    ));
+    Navigator.pushReplacementNamed(context, HomePage.routeName);
   }
 }

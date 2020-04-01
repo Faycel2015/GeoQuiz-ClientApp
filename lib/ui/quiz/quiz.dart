@@ -1,6 +1,8 @@
 import 'dart:async';
 
+import 'package:app/locator.dart';
 import 'package:app/models/models.dart';
+import 'package:app/services/local_database_service.dart';
 import 'package:app/ui/quiz/question.dart';
 import 'package:app/ui/quiz/quiz_provider.dart';
 import 'package:app/ui/quiz/results.dart';
@@ -91,8 +93,19 @@ final resultDuration = Duration(milliseconds: Values.resultDuration);
 /// [showQuestionResults] flag is reset to false and the [QuizProvider.nextRound] 
 /// method is called to go to the next question.
 class QuizPage extends StatefulWidget {
+
+  QuizPage({
+    Key key,
+    @required this.quizConfig,
+  }) : super(key: key);
+
+  final QuizConfig quizConfig;
+
   @override
   _QuizPageState createState() => _QuizPageState();
+
+
+  static const routeName = "/quiz";
 }
 
 class _QuizPageState extends State<QuizPage> {
@@ -105,49 +118,55 @@ class _QuizPageState extends State<QuizPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<QuizProvider>(builder: (context, quizProvider, _) {
-      final currentQuestion = quizProvider.currentQuestion;
-      return AppLayout(
-        body: currentQuestion == null 
-          ? ResultsPage()
-          : WillPopScope(
-            onWillPop: preventMissReturned,
-            child: Stack(
-              children: <Widget>[
-                ScrollViewNoEffect(
-                  controller: controller,
-                  child: Padding(
-                    padding: EdgeInsets.only(top: 50),
-                    child: QuestionView(
-                      key: questionKey,
-                      question: currentQuestion,
-                      showResult: showQuestionResults,
-                      onAnswerSelected: (answer) => finishRound(question: currentQuestion, answer: answer),
-                      currentNumber: quizProvider.currentQuestionNumber,
-                      totalNumber: quizProvider.totalQuestionNumber,
-                      onReady: () => Future.microtask(
-                        () => timerKey.currentState.start(showQuestionResults ? resultDuration : questionDuration)
+    return ChangeNotifierProvider(
+      create: (_) => QuizProvider(
+        config: widget.quizConfig,
+        localDbService: Locator.of<ILocalDatabaseRepository>()
+      ),
+      child: Consumer<QuizProvider>(builder: (context, quizProvider, _) {
+        final currentQuestion = quizProvider.currentQuestion;
+        return AppLayout(
+          body: currentQuestion == null 
+            ? ResultsPage()
+            : WillPopScope(
+              onWillPop: preventMissReturned,
+              child: Stack(
+                children: <Widget>[
+                  ScrollViewNoEffect(
+                    controller: controller,
+                    child: Padding(
+                      padding: EdgeInsets.only(top: 50),
+                      child: QuestionView(
+                        key: questionKey,
+                        question: currentQuestion,
+                        showResult: showQuestionResults,
+                        onAnswerSelected: (answer) => finishRound(question: currentQuestion, answer: answer),
+                        currentNumber: quizProvider.currentQuestionNumber,
+                        totalNumber: quizProvider.totalQuestionNumber,
+                        onReady: () => Future.microtask(
+                          () => timerKey.currentState.start(showQuestionResults ? resultDuration : questionDuration)
+                        ),
                       ),
                     ),
                   ),
-                ),
-                Align(
-                  alignment: Alignment.topRight,
-                  child: Padding(
-                    padding: Dimens.screenMargin,
-                    child: TimerWidget(
-                      key: timerKey, // to restart the animation when the tree is rebuilt
-                      onFinished: showQuestionResults ? nextRound : finishRound,
-                      animatedColor: !showQuestionResults,
-                      colorSequence: timerColorTweenSequence,
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: Padding(
+                      padding: Dimens.screenMargin,
+                      child: TimerWidget(
+                        key: timerKey, // to restart the animation when the tree is rebuilt
+                        onFinished: showQuestionResults ? nextRound : finishRound,
+                        animatedColor: !showQuestionResults,
+                        colorSequence: timerColorTweenSequence,
+                      ),
                     ),
-                  ),
-                ), 
-              ],
-            )
-        ),
-      );
-    });
+                  ), 
+                ],
+              )
+          ),
+        );
+      }),
+    );
   }
 
   /// Finish the current round and so to display result
