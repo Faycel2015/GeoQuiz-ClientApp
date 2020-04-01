@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 
-class StartUpView extends StatelessWidget {
-
+class StartUpPage extends StatelessWidget {
   final bool error;
 
-  StartUpView({Key key, this.error = false}) : super(key: key);
+  StartUpPage({
+    Key key, 
+    this.error = false
+  }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
@@ -16,7 +18,6 @@ class StartUpView extends StatelessWidget {
   }
 }
 
-
 class _Loading extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,7 +26,6 @@ class _Loading extends StatelessWidget {
     );
   }
 }
-
 
 class _Error extends StatelessWidget {
   @override

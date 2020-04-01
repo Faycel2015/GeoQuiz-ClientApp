@@ -11,7 +11,7 @@ import 'package:flutter/widgets.dart';
 /// not the local database will be updated with the data fetched in the remote
 /// database.
 /// Moreover, a state is maintained to notify errors, status, etc. to listeners.
-class StartUpCheckerProvider extends ChangeNotifier {
+class StartUpProvider extends ChangeNotifier {
 
   final IRemoteDatabaseRepository _remoteRepo;
   final ILocalDatabaseRepository _localRepo;
@@ -25,7 +25,7 @@ class StartUpCheckerProvider extends ChangeNotifier {
   bool get readyToStart => (startUpVerificationDone??false) && (localDatabaseExists??false);
 
 
-  StartUpCheckerProvider({
+  StartUpProvider({
     @required IRemoteDatabaseRepository remoteRepo, 
     @required ILocalDatabaseRepository localRepo
   }) : this._remoteRepo = remoteRepo,

@@ -1,13 +1,8 @@
 import 'package:app/locator.dart';
-import 'package:app/logic/progression_provider.dart';
-import 'package:app/logic/quiz_provider.dart';
-import 'package:app/logic/startup_checker.dart';
-import 'package:app/logic/themes_provider.dart';
-import 'package:app/repositories/local_database_repository.dart';
-import 'package:app/repositories/local_progression_repository.dart';
-import 'package:app/repositories/remote_database_repository.dart';
+import 'package:app/router.dart';
+import 'package:app/startup/startup_page.dart';
+import 'package:app/startup/startup_provider.dart';
 import 'package:app/ui/pages/home/homepage.dart';
-import 'package:app/ui/pages/start_up.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/shared/strings.dart';
 import 'package:flutter/material.dart';
@@ -15,87 +10,53 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-
-
-/// Entry point for the application, it will basically run the app.
+/// Entry point for the application. Set up the [Locator] and create the
+/// widget tree.
 /// 
-/// The app is wrapped in a [MultiProvider] widget to provide [Provider]s down the
-/// tree. The main application widget is [GeoQuizApp].
+/// It runs the app by creating the root widget of the app, the root widget if
+/// [GeoQuizApp].
 /// 
-/// [Provider] can then be used with [Consumer] widget or simply by retreive
-/// the instance : `Provider.of<[provider class]>(context)`.
-///
-/// We retrieve repositories to use in the app thanks to the [locator] global
-/// instance that inject our dependencies inside the different providers.
+/// This function is automatically called by the engine, so you don't have to
+/// call this function anywhere. The behavior is not defined if you call this
+/// function again, as the services and providers are register here, calling
+/// this function again will try to re-register the services and provider and
+/// will caused an exception.
+/// 
+/// See also :
+/// 
+///  * [MaterialApp], which if the root of the application.
+///  * [Locator], which if the service locator.
+///   
 void main() async {
-  setupServiceLocator();
-
-  WidgetsFlutterBinding.ensureInitialized();
-  await deleteDatabase("database.db");
-
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider<StartUpCheckerProvider>(
-          create: (context) => StartUpCheckerProvider(
-            localRepo: locator<ILocalDatabaseRepository>(),
-            remoteRepo: locator<IRemoteDatabaseRepository>(),
-          )..performStartUpProcess()
-        ),
-        ChangeNotifierProvider<ThemesProvider>(
-          create: (context) => ThemesProvider(
-            localRepo: locator<ILocalDatabaseRepository>(),
-          )..loadThemes()
-        ),
-        ChangeNotifierProvider<QuizProvider>(
-          create: (context) => QuizProvider(
-            localRepo: locator<ILocalDatabaseRepository>(),
-          )
-        ),
-        ChangeNotifierProvider<LocalProgressionProvider>(
-          create: (context) => LocalProgressionProvider(
-            progressionRepo: locator<ILocalProgressionRepository>(),
-            localDbRepo: locator<ILocalDatabaseRepository>()
-          )..loadProgressions(),
-        )
-      ],
-      child: GeoQuizApp(),
-    )
-  );
+  Locator.setupLocator();
+  // WidgetsFlutterBinding.ensureInitialized();
+  // await deleteDatabase("database.db");
+  runApp(GeoQuizApp());
 } 
 
-
-
-/// Main widget for the application. 
+/// Root of the application, it builds a [MaterialApp].
 /// 
-/// It build a [MaterialApp] to define the app title, the theme and the home 
-/// widget.
+/// The material app defined the application title, the theme, and the route
+/// generator used to navigate between the different screens. To know more about 
+/// the routing, see [Router].
 /// 
-/// The home widget depends of the [StartUpCheckerProvider] state.
-/// Depending on the [StartUpCheckerProvider.readyToStart] properties
-/// we build the [StartUpView] or the [HomePage].
+/// Depending on the [StartUpProvider] state etheir the [Homepage] or the 
+/// [StartUpPage] will be displayed (home of the material application).
 class GeoQuizApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: Strings.appName,
-
       theme: geoQuizTheme,
-  
-      home: Consumer<StartUpCheckerProvider>(
-        builder: (context, startUpChecker, _) {
-          if (!startUpChecker.readyToStart) {
-            return StartUpView(error: startUpChecker.error);
-          } else {
-            return HomePage();
-          }
-        }
+      onGenerateRoute: Router.generateRoute,
+      home: Consumer<StartUpProvider>(
+        builder: (context, startUpProvider, _) => startUpProvider.readyToStart
+            ? HomePage()
+            : StartUpPage()
       ),
     );
   }
 }
-
-
 
 /// Extension of [ColorScheme] methods with [success] color
 /// 
@@ -111,8 +72,6 @@ extension GeoQuizColorScheme on ColorScheme {
   Color get success => const Color(0xFF28a745);
   Color get onSuccess => Colors.white;
 }
-
-
 
 /// See "documentation" repo to know more about the app theming
 /// 
@@ -173,3 +132,4 @@ final geoQuizTheme = ThemeData(
     displayColor: Colors.white
   ))
 );
+

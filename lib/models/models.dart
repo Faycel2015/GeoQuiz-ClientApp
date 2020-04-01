@@ -30,6 +30,9 @@ class QuizQuestion {
   Resource entitled;
   List<QuizAnswer> answers;
   int difficulty;
+
+  bool operator ==(o) => o is QuizQuestion && id == o.id;
+  int get hashCode => id.hashCode;
 }
 
 /// A resource is made of the actual resource content ([resource]) and its 

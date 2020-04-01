@@ -1,8 +1,8 @@
 import 'package:app/logic/progression_provider.dart';
 import 'package:app/logic/quiz_provider.dart';
-import 'package:app/logic/themes_provider.dart';
 import 'package:app/models/models.dart';
 import 'package:app/models/progression.dart';
+import 'package:app/themes_provider.dart';
 import 'package:app/ui/pages/home/menu.dart';
 import 'package:app/ui/pages/quiz/quiz.dart';
 import 'package:app/ui/shared/assets.dart';
@@ -31,6 +31,8 @@ import 'package:provider/provider.dart';
 /// Note: is the [ThemesProvider] is not yet initialized, the [_LoadingData] 
 /// widget will be displayed.
 class HomePage extends StatefulWidget {
+
+  static const routeName = "/homepage";
 
   @override
   _HomePageState createState() => _HomePageState();
