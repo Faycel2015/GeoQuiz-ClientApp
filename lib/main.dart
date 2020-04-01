@@ -50,15 +50,15 @@ class GeoQuizApp extends StatelessWidget {
       theme: geoQuizTheme,
       onGenerateRoute: Router.generateRoute,
       home: Consumer<StartUpProvider>(
-        builder: (context, startUpProvider, _) => startUpProvider.readyToStart
+        builder: (context, startUpProvider, _) => startUpProvider.isReady
             ? HomePage()
-            : StartUpPage()
+            : StartUpPage(status: startUpProvider.status)
       ),
     );
   }
 }
 
-/// Extension of [ColorScheme] methods with [success] color
+/// Extension of [ColorScheme] to add color related to "success".
 /// 
 /// Use extension method to this it's the simplest solution (imo).
 /// It is not the perfect solution as there are mainly 2 limitations :
@@ -69,24 +69,28 @@ class GeoQuizApp extends StatelessWidget {
 ///
 /// See https://dart.dev/guides/language/extension-methods
 extension GeoQuizColorScheme on ColorScheme {
+  /// The color used to indicate a succeed operation 
   Color get success => const Color(0xFF28a745);
+
+  /// A color that's clearly legible when drawn on [success].
   Color get onSuccess => Colors.white;
 }
 
-/// See "documentation" repo to know more about the app theming
+/// See "documentation" repo to know more about the app theming.
 /// 
 /// Flutter is actually migrating color theming from ThemeData properties to
 /// [ColorScheme]. Some widgets still use ThemeData color properties so there
 /// are some redondant color definition ... Ultimately, there should no longer 
 /// be color properties (e.g. [ThemeData.primaryColor] is replaced by
-/// [ThemeData.colorScheme.primary])
+/// [ThemeData.colorScheme.primary]).
 /// 
-/// Note: ThemeData are extended with extension method (see [GeoQuizColorScheme])
-///       to add success color as it is no currently parts of the material
-///       theming colors.
+/// NThemeData are extended with extension method (see [GeoQuizColorScheme]) to 
+/// add success color as it is no currently parts of the material theming 
+/// colors.
 /// 
-/// See https://github.com/GeoQuiz-v2/documents
-/// See https://github.com/flutter/flutter/issues/36624#issuecomment-513863862
+/// See also :
+/// 
+///  * [App theming](https://github.com/GeoQuiz-v2/documents/blob/master/geoquiz_material_theming.png)
 final geoQuizTheme = ThemeData(
   primaryColor: Color(0xFF4E19C8),
   primaryColorLight: Color(0xFF916DE4),

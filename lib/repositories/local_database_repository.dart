@@ -19,6 +19,7 @@ abstract class ILocalDatabaseRepository {
 
   /// Get the current version of the local database
   /// return null if the database is not yet created
+  /// TODO: never returned an exception
   Future<int> currentDatabaseVersion();
 
   /// Update the static part of the database (themes, questions)

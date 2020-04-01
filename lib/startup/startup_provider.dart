@@ -2,6 +2,22 @@ import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
 import 'package:flutter/widgets.dart';
 
+///
+///
+enum StartUpStatus {
+  ///
+  idle,
+
+  ///
+  busy,
+
+  ///
+  loaded,
+
+  ///
+  error,
+}
+
 
 /// Perform operations when the app starts.
 /// 
@@ -13,70 +29,41 @@ import 'package:flutter/widgets.dart';
 /// Moreover, a state is maintained to notify errors, status, etc. to listeners.
 class StartUpProvider extends ChangeNotifier {
 
-  final IRemoteDatabaseRepository _remoteRepo;
-  final ILocalDatabaseRepository _localRepo;
-
-  bool startUpVerificationDone;
-  bool localDatabaseUpToDate;
-  bool remoteDataFetched;
-  bool localDatabaseExists;
-
-  bool get error => !(localDatabaseExists??true);
-  bool get readyToStart => (startUpVerificationDone??false) && (localDatabaseExists??false);
-
-
   StartUpProvider({
     @required IRemoteDatabaseRepository remoteRepo, 
     @required ILocalDatabaseRepository localRepo
   }) : this._remoteRepo = remoteRepo,
        this._localRepo = localRepo;
 
+  final IRemoteDatabaseRepository _remoteRepo;
 
-  /// See class level documentation
-  performStartUpProcess() async {
-    int remoteVersion = await _getRemoteDbVersion();
-    int localVersion = await _getLocalDbVersion();
+  final ILocalDatabaseRepository _localRepo;
 
-    if (remoteVersion != null && (localVersion == null || localVersion != remoteVersion)) {
-      bool updateResult = await _updateLocalDatabase(version: remoteVersion);
-      localVersion = updateResult ? remoteVersion : null;
-    }
+  StartUpStatus _status = StartUpStatus.idle;
 
-    this.remoteDataFetched = (remoteVersion == null);
-    this.localDatabaseExists = (localVersion != null);
-    this.localDatabaseUpToDate = (localVersion == remoteVersion);
-    this.startUpVerificationDone = true;
+  bool get isReady => status == StartUpStatus.loaded;
+
+  StartUpStatus get status => _status;
+
+  set status(StartUpStatus newStatus) {
+    _status = newStatus;
     notifyListeners();
   }
+  /// See class level documentation
+  performStartUpProcess() async {
+    status = StartUpStatus.busy;
 
-  // performStartUpProcess() async {
-  //   this.remoteDataFethed = true;
-  //   this.localDatabaseExists = true;
-  //   this.localDatabaseUpToDate = true;
-  //   this.startUpVerificationDone = true;
-  //   notifyListeners();
-  // }
+    int remoteVersion = await _remoteRepo.currentDatabaseVersion();
+    int localVersion = await _localRepo.currentDatabaseVersion();
 
+    bool needToBeUpdated = remoteVersion != null 
+        && (localVersion == null || localVersion != remoteVersion);
+    if (needToBeUpdated) {
+      bool result = await _updateLocalDatabase(version: remoteVersion);
+      localVersion = result == true ? remoteVersion : null;
+    }
 
-  /// returns the remote database version
-  /// returns null if an error occured
-  Future<int> _getRemoteDbVersion() async {
-    int remoteVersion;
-    try {
-      remoteVersion = await _remoteRepo.currentDatabaseVersion();
-    } catch(e) { }
-    return remoteVersion;
-  }
-
-
-  /// returns the local database version
-  /// returns null if an error occured
-  Future<int> _getLocalDbVersion() async {
-    int localVersion;
-    try {
-      localVersion = await _localRepo.currentDatabaseVersion();
-    } catch(e) { }
-    return localVersion;
+    status = localVersion == null ? StartUpStatus.error : StartUpStatus.loaded;
   }
 
 
