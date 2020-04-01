@@ -1,11 +1,10 @@
-import 'package:app/logic/progression_provider.dart';
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/repositories/local_database_repository.dart';
 import 'package:app/repositories/local_progression_repository.dart';
 import 'package:app/repositories/remote_database_repository.dart';
 import 'package:app/repositories/remote_resource_downloader.dart';
 import 'package:app/startup/startup_provider.dart';
-import 'package:app/themes_provider.dart';
+import 'package:app/themes/themes_provider.dart';
 import 'package:app/utils/app_logger.dart';
 import 'package:get_it/get_it.dart';
 
@@ -91,12 +90,6 @@ class Locator {
       QuizProvider(
         localRepo: _locator<ILocalDatabaseRepository>(),
       )
-    );
-    _locator.registerLazySingleton<LocalProgressionProvider>(() => 
-      LocalProgressionProvider(
-        progressionRepo: _locator<ILocalProgressionRepository>(),
-        localDbRepo: _locator<ILocalDatabaseRepository>()
-      )..loadProgressions(),
     );
   }
 }

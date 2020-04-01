@@ -17,11 +17,22 @@ class QuizTheme {
   String entitled;
   String icon;
   int color;
+  QuizThemeProgression progression;
 
   bool operator ==(o) => o is QuizTheme && id == o.id;
   int get hashCode => id.hashCode;
 }
 
+
+class QuizThemeProgression {
+  QuizTheme theme;
+  int percentage;
+
+  QuizThemeProgression({
+    @required this.theme, 
+    @required this.percentage
+  });
+}
 
 /// Represtents a question
 class QuizQuestion {

@@ -26,6 +26,20 @@ class ThemesProvider extends ChangeNotifier {
     state = ThemeProviderState.init;
     notifyListeners();
   }
+
+  /// Throw an exception if an error occured
+  // updateProgressions(List<QuizQuestion> questions) async {
+  //   await _progressionRepo.addQuestions(questions);
+  //   loadProgressions();
+  // }
+
+
+  /// Notify clients
+  // loadProgressions() async {
+  //   var themes = await _databaseRepo.getThemes();
+  //   progressions = await _progressionRepo.retrieveProgressions(themes);
+  //   notifyListeners();
+  // }
 }
 
 

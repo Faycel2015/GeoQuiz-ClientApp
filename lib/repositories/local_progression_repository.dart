@@ -1,5 +1,4 @@
 import 'package:app/models/models.dart';
-import 'package:app/models/progression.dart';
 import 'package:app/repositories/sqlite_helper.dart';
 import 'package:sqflite/sqflite.dart';
 

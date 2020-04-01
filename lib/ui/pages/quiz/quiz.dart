@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:app/logic/progression_provider.dart';
 import 'package:app/logic/quiz_provider.dart';
 import 'package:app/models/models.dart';
 import 'package:app/ui/pages/quiz/question.dart';
@@ -174,7 +173,7 @@ class _QuizPageState extends State<QuizPage> {
     bool hasNext = Provider.of<QuizProvider>(context, listen: false).nextRound();
     if (!hasNext) {
       var correctQuestions = Provider.of<QuizProvider>(context, listen: false).correctlyAnsweredQuestion;
-      Provider.of<LocalProgressionProvider>(context, listen: false).updateProgressions(correctQuestions);
+      // Provider.of<LocalProgressionProvider>(context, listen: false).updateProgressions(correctQuestions);
     }
   }
 

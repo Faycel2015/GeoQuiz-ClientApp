@@ -2,9 +2,9 @@ import 'package:app/locator.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 
-class BasePage<T extends ChangeNotifier> extends StatefulWidget {
+class ProviderNotifier<T extends ChangeNotifier> extends StatefulWidget {
   ///
-  BasePage({
+  ProviderNotifier({
     Key key,
     @required this.builder,
   }) : super(key: key);
@@ -12,16 +12,16 @@ class BasePage<T extends ChangeNotifier> extends StatefulWidget {
   final Function(BuildContext, T, Widget) builder;
 
   @override
-  _BasePageState<T> createState() => _BasePageState<T>();
+  _ProviderNotifierState<T> createState() => _ProviderNotifierState<T>();
 }
 
-class _BasePageState<T extends ChangeNotifier> extends State<BasePage<T>> {
+class _ProviderNotifierState<T extends ChangeNotifier> extends State<ProviderNotifier<T>> {
   T provider = Locator.of<T>();
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<T>(
-      create: (_) => provider,
+    return ChangeNotifierProvider<T>.value(
+      value: provider,
       child: Consumer<T>(
         builder: widget.builder,
       ),

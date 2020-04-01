@@ -1,15 +1,12 @@
-import 'package:app/logic/progression_provider.dart';
 import 'package:app/logic/quiz_provider.dart';
-import 'package:app/models/progression.dart';
+import 'package:app/themes/themes_progress_list.dart';
 import 'package:app/ui/pages/home/homepage.dart';
 import 'package:app/ui/pages/quiz/quiz.dart';
 import 'package:app/ui/shared/dimens.dart';
 import 'package:app/ui/widgets/button.dart';
 import 'package:app/ui/widgets/flex_spacer.dart';
-import 'package:app/ui/widgets/progress_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
 
 
@@ -25,11 +22,7 @@ class ResultsPage extends StatelessWidget {
           FlexSpacer(),
           Center(child: QuizScore()),
           FlexSpacer.big(),
-          Consumer<LocalProgressionProvider>(
-            builder: (_, localProgression, __) => LocalProgressionsList(
-              progressions: localProgression.progressions.values.toList(),
-            ),
-          ),
+          ThemesProgressList(),
           Expanded(child: Container()),
           Center(child: ResultsButtonList())
         ],
@@ -82,53 +75,5 @@ class ResultsButtonList extends StatelessWidget {
     Navigator.of(context).pushReplacement(MaterialPageRoute(
       builder: (context) => page
     ));
-  }
-}
-
-
-class LocalProgressionsList extends StatelessWidget {
-
-  final List<QuizThemeProgression> progressions;
-
-  LocalProgressionsList({@required this.progressions}) {
-    // progressions.sort();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: Dimens.borderRadius
-      ),
-      padding: EdgeInsets.all(Dimens.surfacePadding),
-      child: LayoutBuilder(
-        builder: (_, constraints) => Wrap(
-            spacing: Dimens.normalSpacing,
-            direction: Axis.vertical,
-            children: progressions.map((p) => 
-              SizedBox(
-                width: constraints.maxWidth,
-                child: Row(
-                  children: <Widget>[
-                    SvgPicture.string(
-                      p.theme.icon, 
-                      height: 35, 
-                      color: Color(p.theme.color)
-                    ),
-                    FlexSpacer.small(),
-                    Expanded(
-                      child: ProgressBar(
-                        percentage: p.percentage,
-                        color: Color(p.theme.color),
-                      ),
-                    ),
-                  ],
-                )
-              )
-            ).toList(),
-          ),
-        ),
-    );
   }
 }
