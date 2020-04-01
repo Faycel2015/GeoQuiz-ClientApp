@@ -3,7 +3,7 @@ import 'package:app/ui/widgets/geoquiz_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-/// A page widget to dispaly information about the startup process
+/// A page widget to dispaly information about the startup process.
 ///
 /// Depending on the [status] it will displayed either the [_StartUpLoadingWidget]
 /// or the [_StartUpErrorWidget].
@@ -12,8 +12,8 @@ import 'package:flutter/widgets.dart';
 /// 
 /// See also :
 /// 
-///  * [StartUpProvider], which handle the start up process and update the status
-///  * [StartUpStatus], which is the enumeration of all possible status
+///  * [StartUpProvider], which handle the start up process and update the status.
+///  * [StartUpStatus], which is the enumeration of all possible status.
 class StartUpPage extends StatelessWidget {
   /// Create a widget that displays an indicator based on [status]
   StartUpPage({
@@ -21,7 +21,7 @@ class StartUpPage extends StatelessWidget {
     @required this.status
   }) : super(key: key);
   
-  /// Status used to display the correct widget
+  /// Status used to display the correct widget.
   final StartUpStatus status;
 
   Widget get _body { 
@@ -45,7 +45,7 @@ class StartUpPage extends StatelessWidget {
   }
 }
 
-/// Widget that displays a loading indicator
+/// Widget that displays a loading indicator.
 class _StartUpLoadingWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -55,7 +55,7 @@ class _StartUpLoadingWidget extends StatelessWidget {
   }
 }
 
-/// Widget that dislays an error indicator
+/// Widget that dislays an error indicator.
 class _StartUpErrorWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

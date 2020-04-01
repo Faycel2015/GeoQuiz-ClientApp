@@ -79,7 +79,7 @@ class Locator {
       StartUpProvider(
         localRepo: _locator<ILocalDatabaseRepository>(),
         remoteRepo: _locator<IRemoteDatabaseRepository>(),
-      )..performStartUpProcess()
+      )..init()
     );
     _locator.registerLazySingleton<ThemesProvider>(() => 
       ThemesProvider(
