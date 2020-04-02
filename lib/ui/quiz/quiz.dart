@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:app/locator.dart';
 import 'package:app/models/models.dart';
 import 'package:app/services/local_database_service.dart';
@@ -9,7 +7,7 @@ import 'package:app/ui/quiz/results.dart';
 import 'package:app/ui/shared/res/dimens.dart';
 import 'package:app/ui/shared/res/values.dart';
 import 'package:app/ui/shared/widgets/geoquiz_layout.dart';
-import 'package:app/ui/shared/widgets/scroll_view_no_effect.dart';
+import 'package:app/ui/themes/themes_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -93,90 +91,92 @@ final resultDuration = Duration(milliseconds: Values.resultDuration);
 /// [showQuestionResults] flag is reset to false and the [QuizProvider.nextRound] 
 /// method is called to go to the next question.
 class QuizPage extends StatefulWidget {
-
+  ///
   QuizPage({
     Key key,
     @required this.quizConfig,
-  }) : super(key: key);
+  }) : assert(quizConfig != null, "quizConfig cannot be null"),
+       super(key: key);
 
+  ///
+  static const routeName = "/quiz";
+  
+  ///
   final QuizConfig quizConfig;
 
   @override
   _QuizPageState createState() => _QuizPageState();
 
 
-  static const routeName = "/quiz";
 }
 
 class _QuizPageState extends State<QuizPage> {
 
   /// false is it's the question time, false if it's the question result time
   bool showQuestionResults = false;
-  var timerKey = GlobalKey<_TimerWidgetState>();
+
   var questionKey = GlobalKey();
-  var controller = ScrollController();
+
+  QuizProvider quizProvider;
+
+  @override
+  initState() {
+    super.initState();
+    quizProvider = QuizProvider(
+      config: widget.quizConfig,
+      localDbService: Locator.of<ILocalDatabaseRepository>()
+    )..prepareGame();
+  }
+  
+  
+
+  Widget _getBody(QuizProvider quizProvider) {
+    switch (quizProvider.state) {
+      case QuizState.busy:
+        return _FetchingQuestionsInProgress(); break;
+      
+      case QuizState.inProgress:
+        final currentQuestion = quizProvider.currentQuestion;
+        return  QuestionView(
+          key: questionKey,
+          question: currentQuestion,
+          currentNumber: quizProvider.currentQuestionNumber,
+          totalNumber: quizProvider.totalQuestionNumber,
+          showResult: showQuestionResults,
+          onFinished: (answer) => !showQuestionResults ?
+            terminateRound(question: currentQuestion, answer: answer)
+            : nextRound()
+        );
+      
+      case QuizState.finished:
+        return ResultsPage();
+      
+      case QuizState.idle:
+      case QuizState.error:
+      default:
+        return _FetchingQuestionsError();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => QuizProvider(
-        config: widget.quizConfig,
-        localDbService: Locator.of<ILocalDatabaseRepository>()
+    return ChangeNotifierProvider<QuizProvider>.value(
+      value: quizProvider,
+      child: Consumer<QuizProvider>(
+        builder: (context, quizProvider, _) => AppLayout(
+          body: _getBody(quizProvider)
+        )
       ),
-      child: Consumer<QuizProvider>(builder: (context, quizProvider, _) {
-        final currentQuestion = quizProvider.currentQuestion;
-        return AppLayout(
-          body: currentQuestion == null 
-            ? ResultsPage()
-            : WillPopScope(
-              onWillPop: preventMissReturned,
-              child: Stack(
-                children: <Widget>[
-                  ScrollViewNoEffect(
-                    controller: controller,
-                    child: Padding(
-                      padding: EdgeInsets.only(top: 50),
-                      child: QuestionView(
-                        key: questionKey,
-                        question: currentQuestion,
-                        showResult: showQuestionResults,
-                        onAnswerSelected: (answer) => finishRound(question: currentQuestion, answer: answer),
-                        currentNumber: quizProvider.currentQuestionNumber,
-                        totalNumber: quizProvider.totalQuestionNumber,
-                        onReady: () => Future.microtask(
-                          () => timerKey.currentState.start(showQuestionResults ? resultDuration : questionDuration)
-                        ),
-                      ),
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: Padding(
-                      padding: Dimens.screenMargin,
-                      child: TimerWidget(
-                        key: timerKey, // to restart the animation when the tree is rebuilt
-                        onFinished: showQuestionResults ? nextRound : finishRound,
-                        animatedColor: !showQuestionResults,
-                        colorSequence: timerColorTweenSequence,
-                      ),
-                    ),
-                  ), 
-                ],
-              )
-          ),
-        );
-      }),
     );
   }
 
   /// Finish the current round and so to display result
   /// Calls [QuizProvider.updateScore()] and sets state is called to rebuild the
   /// tree (it will start a new timer and show correct and wrong answers)
-  finishRound({QuizQuestion question, QuizAnswer answer}) {
-    reset();
+  terminateRound({QuizQuestion question, QuizAnswer answer}) {
     bool isCorrect = answer?.isCorrect??false;
     if (isCorrect)
-      Provider.of<QuizProvider>(context, listen: false).addCorrectlyAnsweredQuestion(question);
+      quizProvider.addCorrectlyAnsweredQuestion(question);
     setState(() => showQuestionResults = true);
   }
 
@@ -187,55 +187,28 @@ class _QuizPageState extends State<QuizPage> {
   /// the provider listeners.
   nextRound() {
     questionKey = GlobalKey();
-    reset();
     showQuestionResults = false;
-    bool hasNext = Provider.of<QuizProvider>(context, listen: false).nextRound();
+    bool hasNext = quizProvider.nextRound();
     if (!hasNext) {
-      var correctQuestions = Provider.of<QuizProvider>(context, listen: false).correctlyAnsweredQuestion;
-      // Provider.of<LocalProgressionProvider>(context, listen: false).updateProgressions(correctQuestions);
+      var correctQuestions = quizProvider.correctlyAnsweredQuestion;
+      Locator.of<ThemesProvider>().updateProgressions(correctQuestions);
     }
   }
+}
 
-  reset() {
-    timerKey.currentState.reset();
-    controller.animateTo(
-      0, 
-      curve: Curves.easeOutQuad, 
-      duration: Duration(milliseconds: 500)
-    );
+///
+class _FetchingQuestionsInProgress extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text("BUSY");
   }
+}
 
-
-  ///
-  ///
-  ///
-  Future<bool> preventMissReturned() {
-    var completer = Completer<bool>();
-    showDialog(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(
-          "Are you sure",
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text("NO"), 
-            onPressed: () {
-              Navigator.pop(context);
-              completer.complete(false);
-            }
-          ),
-          FlatButton(
-            child: Text("YES"),
-            onPressed: () {
-              Navigator.pop(context);
-              completer.complete(true);
-            }
-          )
-        ],
-      )
-    );
-    return completer.future;
+///
+class _FetchingQuestionsError extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Text("ERROR");
   }
 }
 
@@ -278,10 +251,10 @@ class TimerWidget extends StatefulWidget {
        super(key: key);
 
   @override
-  _TimerWidgetState createState() => _TimerWidgetState();
+  TimerWidgetState createState() => TimerWidgetState();
 }
 
-class _TimerWidgetState extends State<TimerWidget> with SingleTickerProviderStateMixin {
+class TimerWidgetState extends State<TimerWidget> with SingleTickerProviderStateMixin {
 
   AnimationController animController;
 

@@ -5,6 +5,7 @@ import 'package:app/services/local_database_service.dart';
 import 'package:app/ui/homepage/homepage.dart';
 import 'package:flutter/widgets.dart';
 
+///
 class QuizConfig {
 
   Set<QuizTheme> themes;
@@ -13,6 +14,7 @@ class QuizConfig {
   QuizConfig({this.themes, this.difficultyData});
 }
 
+///
 enum QuizState {
   /// nothin happened
   idle,
@@ -25,47 +27,56 @@ enum QuizState {
 
   /// party finished
   finished,
+
+  /// an error occured to fetch questions
+  error
 }
 
 
 class QuizProvider extends ChangeNotifier {
 
+  QuizProvider({
+    @required ILocalDatabaseRepository localDbService,
+    @required this.config
+  }) : _localRepo = localDbService;
+
   final ILocalDatabaseRepository _localRepo;
 
-  var _state = QuizProviderState.IDLE;
-  QuizProviderState get state => _state;
+  final QuizConfig config;
+
+  QuizState _state = QuizState.idle;
+
+  QuizState get state => _state;
+
   set state(state) {
     _state = state;
     notifyListeners();
   }
 
-  final QuizConfig config;
   Iterator<QuizQuestion> _questionsIterator;
 
   List<QuizQuestion> correctlyAnsweredQuestion = [];
+
   QuizQuestion get currentQuestion => _questionsIterator?.current;
+
   int totalQuestionNumber = 0;
+  
   int currentQuestionNumber = 0; 
   
-
-  QuizProvider({
-    ILocalDatabaseRepository localDbService,
-    this.config
-  }) : _localRepo = localDbService;
   
 
   // 0 < difficulty < 100
   Future prepareGame() async {
-    if (state == QuizProviderState.IN_PROGRESS)
+    if (state == QuizState.busy)
       return ;
-    state = QuizProviderState.IN_PROGRESS;
+    state = QuizState.busy;
     correctlyAnsweredQuestion = [];
     var questions = await _prepareQuestion();
     _questionsIterator = questions.iterator;
     _questionsIterator.moveNext();
     currentQuestionNumber = 0;
     totalQuestionNumber = questions.length;
-    state = QuizProviderState.PREPARED;
+    state = QuizState.inProgress;
   }
 
 
@@ -76,7 +87,11 @@ class QuizProvider extends ChangeNotifier {
 
   bool nextRound() {
     bool res = _questionsIterator.moveNext();
-    currentQuestionNumber += 1;
+    if (res) {
+      currentQuestionNumber += 1;
+    } else {
+      state = QuizState.finished;
+    }
     notifyListeners();
     return res;
   }
@@ -93,7 +108,7 @@ class QuizProvider extends ChangeNotifier {
     }
 
     if (questions == null || questions.isEmpty) {
-      state = QuizProviderState.ERROR;
+      state = QuizState.error;
       return Future.error(null);
     } 
     for (var q in questions) {
@@ -107,14 +122,4 @@ class QuizProvider extends ChangeNotifier {
     }
     return questions;
   }
-}
-
-
-
-
-enum QuizProviderState {
-  IDLE,
-  IN_PROGRESS,
-  PREPARED,
-  ERROR,
 }

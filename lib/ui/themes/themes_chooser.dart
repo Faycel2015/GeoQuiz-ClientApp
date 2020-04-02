@@ -21,7 +21,7 @@ class ThemesChooser extends StatelessWidget {
   }) : super(key: key);
 
   ///
-  final void Function(List<QuizTheme>) onChanged;
+  final void Function(Set<QuizTheme>) onChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +31,7 @@ class ThemesChooser extends StatelessWidget {
         validator: (themes) => themes.isEmpty ? "" : null,
         onSaved: (themes) {
           if (onChanged != null)
-            onChanged(themes.toList());
+            onChanged(themes);
         },
         padding: Dimens.screenMargin,
         spacing: Dimens.normalSpacing,

@@ -173,7 +173,9 @@ class QuizConfigurationState extends State<QuizConfiguration> {
       key: _formKey,
       child: Column(
         children: <Widget>[
-          ThemesChooser(),
+          ThemesChooser(
+            onChanged: (themes) => selectedThemes = themes,
+          ),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
             child: DifficultyChooser(
@@ -224,21 +226,17 @@ class LaunchQuizButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ProviderNotifier<QuizProvider>(
-      builder: (context, quizProvider, _) {
-        return Button(
-          label: Strings.launchQuiz,
-          icon: Icon(Icons.chevron_right),
-          onPressed: () => onSubmit(context),
-        );
-      }
+    return Button(
+      label: Strings.launchQuiz,
+      icon: Icon(Icons.chevron_right),
+      onPressed: () => onSubmit(context),
     );
   }
 
   void onSubmit(BuildContext context) async {
     var config = quizForm.currentState.buildQuiConfiguration();
     if (config != null) {
-      Navigator.pushNamed(context, QuizPage.routeName);
+      Navigator.pushNamed(context, QuizPage.routeName, arguments: config);
     }
   }
 }

@@ -1,11 +1,16 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:ui';
 
 import 'package:app/models/models.dart';
 import 'package:app/ui/quiz/answers_list.dart';
 import 'package:app/ui/quiz/answers_map.dart';
+import 'package:app/ui/quiz/quiz.dart';
 import 'package:app/ui/shared/res/dimens.dart';
+import 'package:app/ui/shared/res/values.dart';
 import 'package:app/ui/shared/widgets/flex_spacer.dart';
+import 'package:app/ui/shared/widgets/scroll_view_no_effect.dart';
+import 'package:app/ui/shared/widgets/will_pop_scope_warning.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
@@ -14,24 +19,30 @@ import 'package:path_provider/path_provider.dart';
 /// No need to randomize
 /// No need to limit question lenght
 class QuestionView extends StatefulWidget {
-
-  final QuizQuestion question;
-  final bool showResult;
-  final Function(QuizAnswer) onAnswerSelected;
-  final int totalNumber;
-  final int currentNumber;
-  final Function onReady;
-
-
+  ///
   QuestionView({
     Key key,
     @required this.question, 
     @required this.currentNumber,
     @required this.totalNumber,
-    this.onAnswerSelected, 
-    this.onReady,
+    this.onFinished,
     this.showResult = false,
   }) : super(key: key);
+
+  ///
+  final QuizQuestion question;
+
+  ///
+  final bool showResult;
+
+  ///
+  final int totalNumber;
+
+  ///
+  final int currentNumber;
+  
+  /// answer null if the timer reach the end without selected question
+  final Function(QuizAnswer) onFinished;
 
   @override
   _QuestionViewState createState() => _QuestionViewState();
@@ -39,56 +50,93 @@ class QuestionView extends StatefulWidget {
 
 class _QuestionViewState extends State<QuestionView> {
 
+  final GlobalKey<TimerWidgetState> timerKey = GlobalKey<TimerWidgetState>();
+  final scrollController = ScrollController();
   QuizAnswer selectedAnswer;
   bool get ready => _questionEntitledLoaded && _answersLoaded;
-
   bool _questionEntitledLoaded = false;
   bool _answersLoaded = false;
 
+  ///
+  _onSelectedAnswer(answer) {
+    setState(() => selectedAnswer = answer);
+    timerKey.currentState.reset();
+    scrollController.animateTo(0, 
+      curve: Curves.easeOutQuad, 
+      duration: Duration(milliseconds: 500)
+    );
+    widget.onFinished(answer);
+  }
+
+  ///
+  _startTimer() {
+    var duration = widget.showResult ? Values.resultDuration : Values.questionDuration;
+    timerKey.currentState.start(Duration(milliseconds: duration));
+  }
 
   @override
   Widget build(BuildContext context) {
-    return  Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: ThemeEntitled(theme: widget.question.theme,)
+    return WillPopScopeWarning(
+      child: Stack(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.topRight,
+            child: Padding(
+              padding: Dimens.screenMargin,
+              child: TimerWidget(
+                key: timerKey, // to restart the animation when the tree is rebuilt
+                onFinished: () => _onSelectedAnswer(null),
+                animatedColor: !widget.showResult,
+                colorSequence: timerColorTweenSequence,
               ),
-              QuestionNumber(
-                current: widget.currentNumber, 
-                max: widget.totalNumber,
+            ),
+          ), 
+          ScrollViewNoEffect(
+            controller: scrollController,
+            child: Padding(
+              padding: EdgeInsets.only(top: 50),
+              child:Column(
+                children: <Widget>[
+                  Placeholder(fallbackHeight: 400,),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
+                    child: Row(
+                      children: <Widget>[
+                        Expanded(
+                          child: ThemeEntitled(theme: widget.question.theme,)
+                        ),
+                        QuestionNumber(
+                          current: widget.currentNumber, 
+                          max: widget.totalNumber,
+                        ),
+                      ],
+                    ),
+                  ),
+                  FlexSpacer(),
+                  QuestionEntitled(
+                    entitled: widget.question.entitled,
+                    onCompletelyRendered: () {
+                      _questionEntitledLoaded = true;
+                      if (ready) _startTimer();
+                    }
+                  ),
+                  FlexSpacer.big(),
+                  Answers(
+                    answers: widget.question.answers,
+                    onSelected: widget.showResult ? null : _onSelectedAnswer,
+                    selectedAnswer: selectedAnswer,
+                    onCompletelyRendered: () {
+                      _answersLoaded = true;
+                      if (ready) _startTimer();
+                    }
+                  )
+                ],
               ),
-            ],
-          ),
-        ),
-        FlexSpacer(),
-        QuestionEntitled(
-          entitled: widget.question.entitled,
-          onCompletelyRendered: () {
-            this._questionEntitledLoaded = true;
-            if (ready) widget.onReady();
-          }
-        ),
-        FlexSpacer.big(),
-        Answers(
-          answers: widget.question.answers,
-          onSelected: widget.showResult ? null : onSelectedAnswer,
-          selectedAnswer: selectedAnswer,
-          onCompletelyRendered: () {
-            this._answersLoaded = true;
-            if (ready) widget.onReady();
-          }
-        )
-      ],
+            ),
+          )
+        ],
+      ),
     );
-  }
-
-  onSelectedAnswer(answer) {
-    setState(() => selectedAnswer = answer);
-    widget.onAnswerSelected(answer);
   }
 }
 
@@ -96,10 +144,14 @@ class _QuestionViewState extends State<QuestionView> {
 
 
 class ThemeEntitled extends StatelessWidget {
-  
-  final QuizTheme theme;
+  ///
+  ThemeEntitled({
+    Key key,
+    @required this.theme
+  }) : super(key: key);
 
-  ThemeEntitled({@required this.theme});
+  ///
+  final QuizTheme theme;
 
   @override
   Widget build(BuildContext context) {
@@ -110,31 +162,19 @@ class ThemeEntitled extends StatelessWidget {
 
 
 class QuestionEntitled extends StatelessWidget {
-    
+  ///
+  QuestionEntitled({
+    Key key,
+    @required this.entitled, 
+    @required this.onCompletelyRendered
+  });
+
+  /// 
   final Resource entitled;
+  
+  ///
   final Function onCompletelyRendered;
 
-
-  QuestionEntitled({@required this.entitled, @required this.onCompletelyRendered});
-
-  @override
-  Widget build(BuildContext context) {
-    WidgetsBinding.instance.addPostFrameCallback((_) => onCompletelyRendered());
-
-    Widget child;
-    switch (entitled.type) {
-      case ResourceType.image:
-        child = buildImage(context);
-        break;
-      case ResourceType.text:
-      default:
-        child = buildText(context);
-    }
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
-      child: child,
-    );
-  }
 
   Widget buildText(BuildContext context) {
     return Text(
@@ -160,15 +200,32 @@ class QuestionEntitled extends StatelessWidget {
     final directory = await getApplicationDocumentsDirectory();
     return directory.path;
   }
+
+  @override
+  Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) => onCompletelyRendered());
+
+    Widget child;
+    switch (entitled.type) {
+      case ResourceType.image:
+        child = buildImage(context);
+        break;
+      case ResourceType.text:
+      default:
+        child = buildText(context);
+    }
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
+      child: child,
+    );
+  }
 }
 
-
+///
+///
+///
 class Answers extends StatelessWidget {
-  final List<QuizAnswer> answers;
-  final Function(QuizAnswer) onSelected;
-  final QuizAnswer selectedAnswer;
-  final Function onCompletelyRendered;
-
+  ///
   Answers({
     Key key, 
     @required this.answers, 
@@ -176,6 +233,18 @@ class Answers extends StatelessWidget {
     this.selectedAnswer,
     @required this.onCompletelyRendered
   }) : super(key: key);
+
+  ///
+  final List<QuizAnswer> answers;
+
+  ///
+  final Function(QuizAnswer) onSelected;
+
+  ///
+  final QuizAnswer selectedAnswer;
+
+  ///
+  final Function onCompletelyRendered;
 
   @override
   Widget build(BuildContext context) {
@@ -199,10 +268,9 @@ class Answers extends StatelessWidget {
   }
 }
 
-
-
-
-
+///
+///
+///
 class QuestionNumber extends StatelessWidget {
   final int current;
   final int max;

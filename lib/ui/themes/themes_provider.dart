@@ -1,5 +1,6 @@
 import 'package:app/models/models.dart';
 import 'package:app/services/local_database_service.dart';
+import 'package:app/services/local_progression_service.dart';
 import 'package:flutter/widgets.dart';
 
 ///
@@ -25,6 +26,7 @@ class ThemesProvider extends ChangeNotifier {
 
   ///
   final ILocalDatabaseRepository _localRepo;
+  final ILocalProgressionRepository _progressionRepo = null;
 
   ///
   List<QuizTheme> themes;
@@ -45,10 +47,10 @@ class ThemesProvider extends ChangeNotifier {
   }
 
   /// Throw an exception if an error occured
-  // updateProgressions(List<QuizQuestion> questions) async {
-  //   await _progressionRepo.addQuestions(questions);
-  //   loadProgressions();
-  // }
+  updateProgressions(List<QuizQuestion> questions) async {
+    await _progressionRepo.addQuestions(questions);
+    // loadProgressions();
+  }
 
 
   /// Notify clients
