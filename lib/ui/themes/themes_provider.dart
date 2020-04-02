@@ -21,12 +21,14 @@ enum ThemeProviderState {
 class ThemesProvider extends ChangeNotifier {
   ///
   ThemesProvider({
-    @required ILocalDatabaseRepository localRepo
-  }) : _localRepo = localRepo;
+    @required ILocalDatabaseRepository localRepo,
+    @required ILocalProgressionRepository progressRepo,
+  }) : _localRepo = localRepo,
+       _progressRepo = progressRepo;
 
   ///
   final ILocalDatabaseRepository _localRepo;
-  final ILocalProgressionRepository _progressionRepo = null;
+  final ILocalProgressionRepository _progressRepo;
 
   ///
   List<QuizTheme> themes;
@@ -48,8 +50,8 @@ class ThemesProvider extends ChangeNotifier {
 
   /// Throw an exception if an error occured
   updateProgressions(List<QuizQuestion> questions) async {
-    await _progressionRepo.addQuestions(questions);
-    // loadProgressions();
+    await _progressRepo.addQuestions(questions);
+    loadThemes();
   }
 
 

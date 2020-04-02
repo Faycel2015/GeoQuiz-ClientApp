@@ -98,7 +98,6 @@ class _QuestionPageState extends State<QuestionPage> {
               padding: EdgeInsets.only(top: 50),
               child:Column(
                 children: <Widget>[
-                  Placeholder(fallbackHeight: 400,),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
                     child: Row(

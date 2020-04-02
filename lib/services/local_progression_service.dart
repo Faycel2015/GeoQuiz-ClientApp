@@ -25,7 +25,7 @@ abstract class ILocalProgressionRepository {
   ///
   ///
   ///
-  Future<Map<QuizTheme, QuizThemeProgression>> retrieveProgressions(List<QuizTheme> themes);
+  // Future<Map<QuizTheme, QuizThemeProgression>> retrieveProgressions(List<QuizTheme> themes);
 }
 
 
@@ -56,36 +56,5 @@ class SQLiteLocalProgressionRepository implements ILocalProgressionRepository {
   }
 
 
-  ///
-  ///
-  ///
-  @override
-  Future<Map<QuizTheme, QuizThemeProgression>> retrieveProgressions(List<QuizTheme> themes) async {
-    var db = await database.open();
 
-    var progress = Map<QuizTheme, QuizThemeProgression>();
-    for (var theme in themes) {
-      var countQuestion = await db.rawQuery('''
-        SELECT COUNT() 
-        FROM ${LocalDatabaseIdentifiers.QUESTIONS_TABLE} A
-        WHERE A.${LocalDatabaseIdentifiers.QUESTION_THEME} = '${theme.id}'
-      ''');
-      var countAnsweredQuestions = await db.rawQuery('''
-        SELECT COUNT() 
-        FROM ${LocalDatabaseIdentifiers.QUESTIONS_TABLE} A
-        INNER JOIN ${LocalDatabaseIdentifiers.PROGRESSIONS_TABLE} B
-        ON A.${LocalDatabaseIdentifiers.QUESTION_ID} = B.${LocalDatabaseIdentifiers.PROGRESSION_QUESTION}
-        WHERE A.${LocalDatabaseIdentifiers.QUESTION_THEME} = '${theme.id}'
-      ''');
-
-      int countTotal = Sqflite.firstIntValue(countQuestion);
-      int countAnswered = Sqflite.firstIntValue(countAnsweredQuestions);
-      int percentage = countTotal == 0 ? 0 : ((countAnswered / countTotal) * 100).round();
-      progress[theme] = QuizThemeProgression(
-        theme: theme, 
-        percentage: percentage
-      );
-    }
-    return progress;
-  }
 }

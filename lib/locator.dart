@@ -88,6 +88,7 @@ class Locator {
     _locator.registerLazySingleton<ThemesProvider>(() => 
       ThemesProvider(
         localRepo: _locator<ILocalDatabaseRepository>(),
+        progressRepo: _locator<ILocalProgressionRepository>(),
       )..loadThemes()
     );
   }

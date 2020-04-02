@@ -4,6 +4,7 @@ import 'package:app/ui/quiz/quiz_provider.dart';
 import 'package:app/ui/shared/res/dimens.dart';
 import 'package:app/ui/shared/widgets/button.dart';
 import 'package:app/ui/shared/widgets/flex_spacer.dart';
+import 'package:app/ui/themes/themes_progress_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,8 @@ class ResultsPage extends StatelessWidget {
           Text("Results", style: Theme.of(context).textTheme.headline1,),
           FlexSpacer(),
           Center(child: QuizScore()),
+          FlexSpacer(),
+          ThemesProgressList(),
           Expanded(child: Container()),
           Center(child: ResultsButtonList())
         ],
