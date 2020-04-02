@@ -28,6 +28,8 @@ class ThemesProvider extends ChangeNotifier {
 
   ///
   final ILocalDatabaseRepository _localRepo;
+
+  ///
   final ILocalProgressionRepository _progressRepo;
 
   ///
@@ -36,7 +38,7 @@ class ThemesProvider extends ChangeNotifier {
   ///
   ThemeProviderState state = ThemeProviderState.not_init;
 
-
+  ///
   loadThemes() async {
     state = ThemeProviderState.not_init;
     try {
@@ -53,14 +55,6 @@ class ThemesProvider extends ChangeNotifier {
     await _progressRepo.addQuestions(questions);
     loadThemes();
   }
-
-
-  /// Notify clients
-  // loadProgressions() async {
-  //   var themes = await _databaseRepo.getThemes();
-  //   progressions = await _progressionRepo.retrieveProgressions(themes);
-  //   notifyListeners();
-  // }
 }
 
 

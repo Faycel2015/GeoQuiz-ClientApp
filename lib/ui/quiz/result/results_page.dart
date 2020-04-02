@@ -4,6 +4,7 @@ import 'package:app/ui/quiz/quiz_provider.dart';
 import 'package:app/ui/shared/res/dimens.dart';
 import 'package:app/ui/shared/widgets/button.dart';
 import 'package:app/ui/shared/widgets/flex_spacer.dart';
+import 'package:app/ui/shared/widgets/scroll_view_no_effect.dart';
 import 'package:app/ui/themes/themes_progress_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -15,18 +16,31 @@ class ResultsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: Dimens.screenMargin,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: <Widget>[
-          Text("Results", style: Theme.of(context).textTheme.headline1,),
-          FlexSpacer(),
-          Center(child: QuizScore()),
-          FlexSpacer(),
-          ThemesProgressList(),
-          Expanded(child: Container()),
-          Center(child: ResultsButtonList())
+          ScrollViewNoEffect(
+            child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Results", 
+                    style: Theme.of(context).textTheme.headline1,
+                  ),
+                  FlexSpacer(),
+                  Center(
+                    child: QuizScore()
+                  ),
+                  FlexSpacer(),
+                  ThemesProgressList(),
+                ],
+              ),
+            ),
+          Positioned(
+            bottom: 0, left: 0, right: 0,
+            child: ResultsButtonList(),
+          )
         ],
-      ),
+      )
     );
   }
 }
@@ -45,13 +59,14 @@ class ResultsButtonList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
       children: <Widget>[
         Button(
           icon: Icon(Icons.replay), 
           label: "Replay (same configuration)",
           onPressed: () => onReplay(context), 
         ),
-        FlexSpacer(),
+        FlexSpacer.small(),
         Button(
           icon: Icon(Icons.home),
           label: "Home",
