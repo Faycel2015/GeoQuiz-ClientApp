@@ -3,13 +3,14 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:app/models/models.dart';
-import 'package:app/ui/quiz/answers_list.dart';
-import 'package:app/ui/quiz/answers_map.dart';
+import 'package:app/ui/quiz/question/answers_list.dart';
+import 'package:app/ui/quiz/question/answers_map.dart';
 import 'package:app/ui/quiz/quiz.dart';
 import 'package:app/ui/shared/res/dimens.dart';
 import 'package:app/ui/shared/res/values.dart';
 import 'package:app/ui/shared/widgets/flex_spacer.dart';
 import 'package:app/ui/shared/widgets/scroll_view_no_effect.dart';
+import 'package:app/ui/shared/widgets/timer_widget.dart';
 import 'package:app/ui/shared/widgets/will_pop_scope_warning.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -18,9 +19,9 @@ import 'package:path_provider/path_provider.dart';
 
 /// No need to randomize
 /// No need to limit question lenght
-class QuestionView extends StatefulWidget {
+class QuestionPage extends StatefulWidget {
   ///
-  QuestionView({
+  QuestionPage({
     Key key,
     @required this.question, 
     @required this.currentNumber,
@@ -45,10 +46,10 @@ class QuestionView extends StatefulWidget {
   final Function(QuizAnswer) onFinished;
 
   @override
-  _QuestionViewState createState() => _QuestionViewState();
+  _QuestionPageState createState() => _QuestionPageState();
 }
 
-class _QuestionViewState extends State<QuestionView> {
+class _QuestionPageState extends State<QuestionPage> {
 
   final GlobalKey<TimerWidgetState> timerKey = GlobalKey<TimerWidgetState>();
   final scrollController = ScrollController();

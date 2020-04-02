@@ -1,5 +1,5 @@
 import 'package:app/models/models.dart';
-import 'package:app/ui/quiz/answers.dart';
+import 'package:app/ui/quiz/question/answers.dart';
 import 'package:app/ui/shared/res/dimens.dart';
 import 'package:app/ui/shared/widgets/surface_card.dart';
 import 'package:flutter/material.dart';
