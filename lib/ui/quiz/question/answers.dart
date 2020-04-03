@@ -1,4 +1,4 @@
-import 'package:app/main.dart';
+import 'package:app/theme.dart';
 import 'package:app/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
