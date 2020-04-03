@@ -14,31 +14,33 @@ class Dimens {
 
   Dimens._();
 
-  static const screenMarginX = 25.0;
-  static const screenMarginY = screenMarginX;
-  static const screenMargin = EdgeInsets.symmetric(
+  static const double screenMarginX = 25.0;
+  static const double screenMarginY = screenMarginX;
+  static const EdgeInsets screenMargin = EdgeInsets.symmetric(
     horizontal: screenMarginX, 
     vertical: screenMarginY
   );
 
-  static const smallSpacing = 10.0;
-  static const normalSpacing = 20.0;
-  static const bigSpacing = 30.0;
+  static const double smallSpacing = 10.0;
+  static const double normalSpacing = 20.0;
+  static const double bigSpacing = 30.0;
 
-  static const surfacePadding = 17.0;
+  static const double surfacePadding = 17.0;
 
-  static const radius = 10.0;
-  static final borderRadius = BorderRadius.circular(radius);
-  static final roundedBorderRadius = BorderRadius.circular(999);
+  static const double radius = 10.0;
+  static final BorderRadius borderRadius = BorderRadius.circular(radius);
+  static final BorderRadius roundedBorderRadius = BorderRadius.circular(999);
 
-  static final shadow = BoxShadow(
+  static final BoxShadow shadow = BoxShadow(
     color: Colors.black.withOpacity(0.3), // color of the shadow
     blurRadius: 7, // gaussian attenuation
     spreadRadius: 2 // shadow size
   );
-  static final textShadow = BoxShadow(
+  static final BoxShadow textShadow = BoxShadow(
     color: Colors.black.withOpacity(0.5), // color of the shadow
     blurRadius: 7, // gaussian attenuation
     spreadRadius: 2 // shadow size
   );
+
+  static final double menuIconSize = 34;
 }

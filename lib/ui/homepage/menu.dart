@@ -15,7 +15,20 @@ import 'package:url_launcher/url_launcher.dart';
 /// Each of this item have a corresponding handler method to handle what to do 
 /// when the user click on an item.
 class AppMenu extends StatelessWidget {
+  // _handleDonation(context) {
+  //   showModalBottomSheet(
+  //     context: context, 
+  //     builder: (_) => DonationMenu()
+  //   );
+  // }
 
+  _handleBugReport(context) async {
+    final url = "mailto:$bugReportEmail.com?subject=$bugReportSubject&body=$bugReportBody";
+    if (await canLaunch(url)) {
+      await launch(url);
+    }
+  }
+  
   @override
   Widget build(BuildContext context) {
     return ListView(
@@ -30,27 +43,15 @@ class AppMenu extends StatelessWidget {
         ListTile(
           leading: Icon(Icons.bug_report), 
           title: Text(Strings.menuBugReport), 
-          onTap: () => handleBugReport(context),
+          onTap: () => _handleBugReport(context),
         ),
       ],
     );
   }
-
-  handleDonation(context) {
-    showModalBottomSheet(
-      context: context, 
-      builder: (_) => DonationMenu()
-    );
-  }
-
-  handleBugReport(context) async {
-    final url = "mailto:$bugReportEmail.com?subject=$bugReportSubject&body=$bugReportBody";
-    if (await canLaunch(url)) {
-      await launch(url);
-    }
-  }
 }
 
+/// TBD.
+/// Not yet used.
 class DonationMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

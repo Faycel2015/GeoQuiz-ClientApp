@@ -2,16 +2,31 @@ import 'dart:async';
 
 import 'package:app/models/models.dart';
 import 'package:app/services/local_database_service.dart';
-import 'package:app/ui/homepage/homepage.dart';
 import 'package:flutter/widgets.dart';
 
 ///
 class QuizConfig {
 
   Set<QuizTheme> themes;
-  DifficultyData difficultyData;
+  DifficultyConfig difficultyData;
 
   QuizConfig({this.themes, this.difficultyData});
+}
+
+class DifficultyConfig {
+  static int max = 100;
+  static int min = 0;
+  bool _automatic = true;
+  bool get automatic => _automatic??true;
+  set automatic(b) => _automatic = b;
+  int _difficultyChose;
+  int get difficultyChose => _difficultyChose??0;
+  set difficultyChose(v) => _difficultyChose = v;
+  DifficultyConfig({
+    bool automatic, 
+    int difficultyChose
+  }) : _automatic = automatic,
+       _difficultyChose = difficultyChose;
 }
 
 ///

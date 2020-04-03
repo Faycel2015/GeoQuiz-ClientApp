@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:app/models/models.dart';
 import 'package:app/services/local_progression_service.dart';
 import 'package:app/services/sqlite_helper.dart';
-import 'package:app/ui/homepage/homepage.dart';
+import 'package:app/ui/quiz/quiz_provider.dart';
 import 'package:app/utils/database_content_wrapper.dart';
 import 'package:flutter/widgets.dart';
 import 'package:logger/logger.dart';
@@ -30,7 +30,7 @@ abstract class ILocalDatabaseRepository {
 
   /// Get list of questions
   /// [count] is the number of questions to return
-  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes, DifficultyData difficulty});
+  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes, DifficultyConfig difficulty});
 }
 
 
@@ -144,7 +144,7 @@ class SQLiteLocalDatabaseRepository implements ILocalDatabaseRepository {
   /// If we are in an automatic mode we chose questions the easier questions
   /// not answered correctly
   @override
-  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes, DifficultyData difficulty}) async {    
+  Future<List<QuizQuestion>> getQuestions({int count, Iterable<QuizTheme> themes, DifficultyConfig difficulty}) async {    
     final db = await database.open();
     final themeIDs = themes.map((t) => "'${t.id}'").toList(); // list of the ID surouned by the "'" character
     
