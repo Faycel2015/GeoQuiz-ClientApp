@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
+///
+///
+///
 class WillPopScopeWarning extends StatelessWidget {
 
   WillPopScopeWarning({
@@ -15,7 +18,7 @@ class WillPopScopeWarning extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () => preventMissReturned(context),
+      onWillPop: () => _preventMissReturned(context),
       child: child,
     );
   }
@@ -23,7 +26,7 @@ class WillPopScopeWarning extends StatelessWidget {
   ///
   ///
   ///
-  Future<bool> preventMissReturned(context) {
+  Future<bool> _preventMissReturned(context) {
     var completer = Completer<bool>();
     showDialog(
       context: context,
