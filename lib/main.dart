@@ -1,11 +1,11 @@
-import 'package:app/locator.dart';
-import 'package:app/router.dart';
-import 'package:app/theme.dart';
-import 'package:app/ui/homepage/homepage.dart';
-import 'package:app/ui/shared/res/strings.dart';
-import 'package:app/ui/shared/widgets/provider_notifier.dart';
-import 'package:app/ui/startup/startup_page.dart';
-import 'package:app/ui/startup/startup_provider.dart';
+import 'package:app/src/locator.dart';
+import 'package:app/src/router.dart';
+import 'package:app/src/theme.dart';
+import 'package:app/src/ui/homepage/homepage.dart';
+import 'package:app/src/ui/shared/res/strings.dart';
+import 'package:app/src/ui/shared/widgets/provider_notifier.dart';
+import 'package:app/src/ui/startup/startup_page.dart';
+import 'package:app/src/ui/startup/startup_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:sqflite/sqflite.dart';
 
