@@ -1,3 +1,4 @@
+import 'package:app/router.dart';
 import 'package:app/ui/homepage/homepage.dart';
 import 'package:app/ui/quiz/quiz.dart';
 import 'package:app/ui/quiz/quiz_provider.dart';
@@ -87,6 +88,6 @@ class ResultsButtonList extends StatelessWidget {
   }
 
   onHome(context) {
-    Navigator.pushReplacementNamed(context, HomePage.routeName);
+    Router.returnToHome(context);
   }
 }

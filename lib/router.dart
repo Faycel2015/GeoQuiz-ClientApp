@@ -17,4 +17,8 @@ class Router {
     assert(false, "No route found for ${routeSettings.name}");
     return null;
   }
+
+  static void returnToHome(BuildContext context) {
+    Navigator.popUntil(context, ModalRoute.withName("/"));
+  }
 }

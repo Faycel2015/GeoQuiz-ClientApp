@@ -13,6 +13,7 @@ class QuizConfig {
   QuizConfig({this.themes, this.difficultyData});
 }
 
+/// 0 < difficulty < 100
 class DifficultyConfig {
   static int max = 100;
   static int min = 0;
@@ -77,10 +78,8 @@ class QuizProvider extends ChangeNotifier {
   int totalQuestionNumber = 0;
   
   int currentQuestionNumber = 0; 
-  
-  
 
-  // 0 < difficulty < 100
+  ///
   Future prepareGame() async {
     if (state == QuizState.busy)
       return ;
@@ -94,12 +93,12 @@ class QuizProvider extends ChangeNotifier {
     state = QuizState.inProgress;
   }
 
-
+  ///
   void addCorrectlyAnsweredQuestion(QuizQuestion question) {
     correctlyAnsweredQuestion.add(question);
   }
 
-
+  ///
   bool nextRound() {
     bool res = _questionsIterator.moveNext();
     if (res) {
@@ -111,9 +110,7 @@ class QuizProvider extends ChangeNotifier {
     return res;
   }
 
-
-
-
+  ///
   Future<List<QuizQuestion>> _prepareQuestion() async {
     var questions = [];
     try {
@@ -132,7 +129,7 @@ class QuizProvider extends ChangeNotifier {
       while (q.answers.length > 4 && i < q.answers.length) {
         if (!q.answers[i].isCorrect)
           q.answers.removeAt(i);
-        i++;
+        i += 1;
       }
     }
     return questions;
