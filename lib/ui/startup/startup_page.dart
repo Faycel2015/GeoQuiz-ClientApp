@@ -15,7 +15,7 @@ import 'package:flutter/widgets.dart';
 ///  * [StartUpProvider], which handle the start up process and update the status.
 ///  * [StartUpStatus], which is the enumeration of all possible status.
 class StartUpPage extends StatelessWidget {
-  /// Create a widget that displays an indicator based on [status]
+  /// Create a widget that displays an indicator based on [status].
   StartUpPage({
     Key key, 
     @required this.status

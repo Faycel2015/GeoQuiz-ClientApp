@@ -2,7 +2,7 @@ import 'package:app/services/local_database_service.dart';
 import 'package:app/services/remote_database_service.dart';
 import 'package:flutter/widgets.dart';
 
-/// The current status of the [StartUpProvider]
+/// The current status of the [StartUpProvider].
 enum StartUpStatus {
   /// Startup process not launched, call [StartUpProvider.init] to launched it.
   idle,
@@ -14,12 +14,12 @@ enum StartUpStatus {
 
   /// Startup process finished without errors. It doesn't mean that the local
   /// database version is up-to-date, but it means that a version of the
-  /// local database exists (and maybe up-to-date)
+  /// local database exists (and maybe up-to-date).
   loaded,
 
   /// Startup process finished but an error occured. An error is defined by the
   /// following assertion :
-  ///   -> no local database version exists at the end of the startup process
+  ///   -> no local database version exists at the end of the startup process.
   error,
 }
 
@@ -34,7 +34,7 @@ enum StartUpStatus {
 /// process. See [StartUpStatus] to know exactly the meaning of each status.
 /// 
 /// {@tool sample}
-/// Use it to update what is displayed based on the [status] property
+/// Use it to update what is displayed based on the [status] property.
 /// 
 /// ```dart
 /// ProviderNotifier<StartUpProvider>(
@@ -55,7 +55,7 @@ enum StartUpStatus {
 /// However, you can call again the init method to reinit the provider state to
 /// try to re-update the local database.
 class StartUpProvider extends ChangeNotifier {
-  /// Create the provider with necessary services, doesn't launch any process
+  /// Create the provider with necessary services, doesn't launch any process.
   StartUpProvider({
     @required IRemoteDatabaseRepository remoteDbService, 
     @required ILocalDatabaseRepository localDbService
@@ -110,7 +110,7 @@ class StartUpProvider extends ChangeNotifier {
   }
 
 
-  /// update the local database to a new [version]
+  /// update the local database to a new [version].
   Future<bool> _updateLocalDatabase({@required int version}) async {
     try {
       var remoteDatabaseContent = await _remoteDbService.downloadDatabase();
