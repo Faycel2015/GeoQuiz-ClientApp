@@ -8,6 +8,7 @@ import 'package:app/ui/quiz/quiz_provider.dart';
 import 'package:app/ui/quiz/result/results_page.dart';
 import 'package:app/ui/shared/res/values.dart';
 import 'package:app/ui/shared/widgets/geoquiz_layout.dart';
+import 'package:app/ui/shared/widgets/will_pop_scope_warning.dart';
 import 'package:app/ui/themes/themes_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -112,12 +113,13 @@ class QuizPage extends StatefulWidget {
 }
 
 class _QuizPageState extends State<QuizPage> {
-
   /// false is it's the question time, false if it's the question result time
   bool showQuestionResults = false;
 
+  ///
   var questionKey = GlobalKey();
 
+  ///
   QuizProvider quizProvider;
 
   @override
@@ -127,48 +129,6 @@ class _QuizPageState extends State<QuizPage> {
       config: widget.quizConfig,
       localDbService: Locator.of<ILocalDatabaseRepository>()
     )..prepareGame();
-  }
-  
-  
-
-  Widget _getBody(QuizProvider quizProvider) {
-    switch (quizProvider.state) {
-      case QuizState.busy:
-        return FetchingQuestionsInProgress();
-      
-      case QuizState.inProgress:
-        final currentQuestion = quizProvider.currentQuestion;
-        return QuestionPage(
-          key: questionKey,
-          question: currentQuestion,
-          currentNumber: quizProvider.currentQuestionNumber,
-          totalNumber: quizProvider.totalQuestionNumber,
-          showResult: showQuestionResults,
-          onFinished: (answer) => !showQuestionResults ?
-            terminateRound(question: currentQuestion, answer: answer)
-            : nextRound()
-        );
-      
-      case QuizState.finished:
-        return ResultsPage();
-      
-      case QuizState.idle:
-      case QuizState.error:
-      default:
-        return FetchingQuestionsError();
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ChangeNotifierProvider<QuizProvider>.value(
-      value: quizProvider,
-      child: Consumer<QuizProvider>(
-        builder: (context, quizProvider, _) => AppLayout(
-          body: _getBody(quizProvider)
-        )
-      ),
-    );
   }
 
   /// Finish the current round and so to display result
@@ -194,5 +154,47 @@ class _QuizPageState extends State<QuizPage> {
       var correctQuestions = quizProvider.correctlyAnsweredQuestion;
       Locator.of<ThemesProvider>().updateProgressions(correctQuestions);
     }
+  }
+
+  Widget _getBody(QuizProvider quizProvider) {
+    switch (quizProvider.state) {
+      case QuizState.busy:
+        return FetchingQuestionsInProgress();
+      
+      case QuizState.inProgress:
+        final currentQuestion = quizProvider.currentQuestion;
+        return WillPopScopeWarning(
+          child:QuestionPage(
+            key: questionKey,
+            question: currentQuestion,
+            currentNumber: quizProvider.currentQuestionNumber,
+            totalNumber: quizProvider.totalQuestionNumber,
+            showResult: showQuestionResults,
+            onFinished: (answer) => !showQuestionResults ?
+              terminateRound(question: currentQuestion, answer: answer)
+              : nextRound()
+          )
+        );
+      
+      case QuizState.finished:
+        return ResultsPage();
+      
+      case QuizState.idle:
+      case QuizState.error:
+      default:
+        return FetchingQuestionsError();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider<QuizProvider>.value(
+      value: quizProvider,
+      child: Consumer<QuizProvider>(
+        builder: (context, quizProvider, _) => AppLayout(
+          body: _getBody(quizProvider)
+        )
+      ),
+    );
   }
 }

@@ -4,12 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
 class WillPopScopeWarning extends StatelessWidget {
-  final Widget child;
 
   WillPopScopeWarning({
     Key key,
-    @required this.child
+    @required this.child,
   }) : super(key: key);
+
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +20,7 @@ class WillPopScopeWarning extends StatelessWidget {
     );
   }
 
-   ///
+  ///
   ///
   ///
   Future<bool> preventMissReturned(context) {

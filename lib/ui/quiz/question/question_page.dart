@@ -77,65 +77,63 @@ class _QuestionPageState extends State<QuestionPage> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScopeWarning(
-      child: Stack(
-        children: <Widget>[
-          Align(
-            alignment: Alignment.topRight,
-            child: Padding(
-              padding: Dimens.screenMargin,
-              child: TimerWidget(
-                key: timerKey, // to restart the animation when the tree is rebuilt
-                onFinished: () => _onSelectedAnswer(null),
-                animatedColor: !widget.showResult,
-                colorSequence: timerColorTweenSequence,
-              ),
+    return Stack(
+      children: <Widget>[
+        Align(
+          alignment: Alignment.topRight,
+          child: Padding(
+            padding: Dimens.screenMargin,
+            child: TimerWidget(
+              key: timerKey, // to restart the animation when the tree is rebuilt
+              onFinished: () => _onSelectedAnswer(null),
+              animatedColor: !widget.showResult,
+              colorSequence: timerColorTweenSequence,
             ),
-          ), 
-          ScrollViewNoEffect(
-            controller: scrollController,
-            child: Padding(
-              padding: EdgeInsets.only(top: 50),
-              child:Column(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
-                    child: Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: ThemeEntitled(theme: widget.question.theme,)
-                        ),
-                        QuestionNumber(
-                          current: widget.currentNumber, 
-                          max: widget.totalNumber,
-                        ),
-                      ],
-                    ),
+          ),
+        ), 
+        ScrollViewNoEffect(
+          controller: scrollController,
+          child: Padding(
+            padding: EdgeInsets.only(top: 50),
+            child:Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: Dimens.screenMarginX),
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: ThemeEntitled(theme: widget.question.theme,)
+                      ),
+                      QuestionNumber(
+                        current: widget.currentNumber, 
+                        max: widget.totalNumber,
+                      ),
+                    ],
                   ),
-                  FlexSpacer(),
-                  QuestionEntitled(
-                    entitled: widget.question.entitled,
-                    onCompletelyRendered: () {
-                      _questionEntitledLoaded = true;
-                      if (ready) _startTimer();
-                    }
-                  ),
-                  FlexSpacer.big(),
-                  Answers(
-                    answers: widget.question.answers,
-                    onSelected: widget.showResult ? null : _onSelectedAnswer,
-                    selectedAnswer: selectedAnswer,
-                    onCompletelyRendered: () {
-                      _answersLoaded = true;
-                      if (ready) _startTimer();
-                    }
-                  )
-                ],
-              ),
+                ),
+                FlexSpacer(),
+                QuestionEntitled(
+                  entitled: widget.question.entitled,
+                  onCompletelyRendered: () {
+                    _questionEntitledLoaded = true;
+                    if (ready) _startTimer();
+                  }
+                ),
+                FlexSpacer.big(),
+                Answers(
+                  answers: widget.question.answers,
+                  onSelected: widget.showResult ? null : _onSelectedAnswer,
+                  selectedAnswer: selectedAnswer,
+                  onCompletelyRendered: () {
+                    _answersLoaded = true;
+                    if (ready) _startTimer();
+                  }
+                )
+              ],
             ),
-          )
-        ],
-      ),
+          ),
+        )
+      ]
     );
   }
 }
@@ -188,7 +186,10 @@ class QuestionEntitled extends StatelessWidget {
       future: _localPath,
       builder: (context, snap) {
         if (snap.hasData) {
-          return Image.file(File(entitled.resource), );
+          return ClipRRect(
+            borderRadius: Dimens.borderRadius,
+            child: Image.file(File(entitled.resource))
+          );
         } else {
           return CircularProgressIndicator();
         }
