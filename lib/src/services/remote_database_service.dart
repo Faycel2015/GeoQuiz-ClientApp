@@ -162,6 +162,7 @@ class _RemoteThemeAdapter extends QuizTheme {
     this.icon = data[_Identifiers.THEME_ICON];
     this.color = data[_Identifiers.THEME_COLOR];
     this.entitled = data[_Identifiers.THEME_ENTITLED];
+    this.order = data[_Identifiers.THEME_ORDER];
   }
 }
 
@@ -230,6 +231,7 @@ class _Identifiers {
   static const THEME_ICON = "icon";
   static const THEME_COLOR = "color";
   static const THEME_ENTITLED = "entitled";
+  static const THEME_ORDER = "order";
 
   static const QUESTION_ID = "id";
   static const QUESTION_THEME_ID = "theme";

@@ -17,6 +17,7 @@ class QuizTheme {
   String entitled;
   String icon;
   int color;
+  int order;
   QuizThemeProgression progression;
 
   bool operator ==(o) => o is QuizTheme && id == o.id;

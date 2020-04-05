@@ -43,6 +43,7 @@ class ThemesProvider extends ChangeNotifier {
     state = ThemeProviderState.not_init;
     try {
       themes = await _localRepo.getThemes();
+      themes.sort((t1, t2) => t1?.order?.compareTo(t2?.order??0)??0);
     } catch(_) {
       state = ThemeProviderState.error;
     }
