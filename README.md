@@ -3,6 +3,21 @@
 # GeoQuiz
 
 
+## Untracked files
+The following files / directories are not tracked by git and so no included in this repo :
+```
+android/key.properties
+android/app/google-services.json
+lib/env.dart
+deploy/
+```
+Add them with your own credentials in order to build the application.  
+- `key.properties` contains signin credentials as described [here](https://flutter.dev/docs/deployment/android#reference-the-keystore-from-the-app)  
+- `google-services.json` contains the Firebase project credentials  
+- `env.dart` contains the `String bugReportEmail` constant with the application author email
+- `deploy` dir contains the `key.jks` and `key.pwd` files.
+
+
 ## Manual installation
 1. [install Flutter 1.15.17](https://flutter.dev/docs/get-started/install).
 2. Clone of download the repo
