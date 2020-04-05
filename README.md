@@ -3,10 +3,19 @@
 # GeoQuiz
 
 
-TBD
+## Manual installation
+1. [install Flutter 1.15.17](https://flutter.dev/docs/get-started/install).
+2. Clone of download the repo
+3. Follow the following instructions :
+```
+cd [APP DIRECTORY]
+flutter clean
+flutter pub get
+```
 
+Then, you can run or build the application.
 
-## Docker
+## Installation with Docker
 [![](https://raw.githubusercontent.com/GeoQuiz-v2/documents/master/res/docker.png)](https://docs.docker.com/)
 
 An Docker image with the required environment is provided. Not exhaustively, this image contains :
@@ -16,13 +25,13 @@ An Docker image with the required environment is provided. Not exhaustively, thi
 
 You can use this image to **build** the application but also to **develop** inside a running container environment with VSCode. A script is provided to launch a container with the application project directory mounted inside this container file system.
 
-##### Download the image
+#### Download the image
 The image is available in [Docker Hub](https://hub.docker.com/repository/docker/romainguillot/geoquiz) :
 ```
 docker pull romainguillot/geoquiz-app
 ```
 
-##### Launch a container
+#### Launch a container
 Create a container named *geoquiz-app-container* :
 ```
 ./docker-create.sh
@@ -44,7 +53,7 @@ flutter run
 If the error message *No connected devices* appear, refer you to the **Others > Troubleshooting : no connected devices** part above.
 
 
-##### Developing inside a container environment (VSCode Remote - Container)
+#### Developing inside a container environment (VSCode Remote - Container)
 
 1. Install the extension **[Remote - Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers)**
 2. Launch a container (see above)
@@ -56,7 +65,7 @@ VSCode is now running in the container environment, you can so open the app fold
 
 Refer to **Other > Troubleshooting : VSCode, unable to find packages** if you vscode cannot find some packages.
 
-##### Others
+#### Others
 **Build image from the Dockerfile**  
 ```
 cd [APP DIRECTORY]
