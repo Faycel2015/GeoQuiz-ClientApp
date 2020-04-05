@@ -10,8 +10,8 @@ class Values {
   Values._();
 
   /// Time in milliseconds to let the user answer the question
-  static const questionDuration = 1500;
+  static const questionDuration = 5000;
   
   /// Time in milliseconds to let the user see the correct answer
-  static const resultDuration = 300;
+  static const resultDuration = 1500;
 }
