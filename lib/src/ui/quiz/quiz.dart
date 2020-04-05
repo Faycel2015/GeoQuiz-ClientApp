@@ -131,29 +131,20 @@ class _QuizPageState extends State<QuizPage> {
     )..prepareGame();
   }
 
-  /// Finish the current round and so to display result
-  /// Calls [QuizProvider.updateScore()] and sets state is called to rebuild the
-  /// tree (it will start a new timer and show correct and wrong answers)
-  terminateRound({QuizQuestion question, QuizAnswer answer}) {
-    bool isCorrect = answer?.isCorrect??false;
-    if (isCorrect)
-      quizProvider.addCorrectlyAnsweredQuestion(question);
-    setState(() => showQuestionResults = true);
-  }
-
-  /// End the current question result - time (set [showQuestionResults] to 
-  /// false) and ask the provider to provide the next question (if any)
-  /// Note: no need to call setState as the provider call will automatically
-  /// generate a rebuilt as the [QuizProvider.nextRound()] method notify 
-  /// the provider listeners.
-  nextRound() {
+  /// Ask the provider to get the next question
+  /// No need to call setState, because the provider will notify the widget.
+  nextQuestion() {
     questionKey = GlobalKey();
     showQuestionResults = false;
-    bool hasNext = quizProvider.nextRound();
-    if (!hasNext) {
-      var correctQuestions = quizProvider.correctlyAnsweredQuestion;
-      Locator.of<ThemesProvider>().updateProgressions(correctQuestions);
-    }
+    quizProvider.nextRound();
+  }
+
+  /// Time to show the results. We set the `showQuestionResults` to true and
+  /// rebuild the widget to take into consideration this changement.
+  /// The global user result are also updated thanks to the provider.
+  showResult({QuizQuestion question, QuizAnswer answer}) {
+    setState(() => showQuestionResults = true);
+    quizProvider.updateResult(question,  answer.isCorrect);
   }
 
   Widget _getBody(QuizProvider quizProvider) {
@@ -170,9 +161,9 @@ class _QuizPageState extends State<QuizPage> {
             currentNumber: quizProvider.currentQuestionNumber,
             totalNumber: quizProvider.totalQuestionNumber,
             showResult: showQuestionResults,
-            onFinished: (answer) => !showQuestionResults ?
-              terminateRound(question: currentQuestion, answer: answer)
-              : nextRound()
+            onFinished: (answer) => showQuestionResults
+              ? nextQuestion()
+              : showResult(question: currentQuestion, answer: answer)
           )
         );
       

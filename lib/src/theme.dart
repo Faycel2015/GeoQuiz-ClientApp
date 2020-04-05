@@ -68,7 +68,9 @@ final geoQuizTheme = ThemeData(
   
   textTheme: GoogleFonts.righteousTextTheme(TextTheme(
     headline1: TextStyle(fontSize: 37, height: 1.0, shadows: [Dimens.textShadow]),
-    headline2:  TextStyle(fontSize: 19),
+    headline2:  TextStyle(fontSize: 30),
+    headline3: TextStyle(fontSize: 20),
+
 
     bodyText1: TextStyle(fontSize: 16, shadows: [Dimens.textShadow]),
 

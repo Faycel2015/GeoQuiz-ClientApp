@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:app/src/locator.dart';
 import 'package:app/src/models/models.dart';
 import 'package:app/src/services/local_database_service.dart';
+import 'package:app/src/ui/themes/themes_provider.dart';
 import 'package:flutter/widgets.dart';
 
 ///
@@ -73,6 +75,8 @@ class QuizProvider extends ChangeNotifier {
 
   List<QuizQuestion> correctlyAnsweredQuestion = [];
 
+  List<bool> results = [];
+
   QuizQuestion get currentQuestion => _questionsIterator?.current;
 
   int totalQuestionNumber = 0;
@@ -84,18 +88,18 @@ class QuizProvider extends ChangeNotifier {
     if (state == QuizState.busy)
       return ;
     state = QuizState.busy;
-    correctlyAnsweredQuestion = [];
     var questions = await _prepareQuestion();
     _questionsIterator = questions.iterator;
     _questionsIterator.moveNext();
-    currentQuestionNumber = 0;
     totalQuestionNumber = questions.length;
     state = QuizState.inProgress;
   }
 
   ///
-  void addCorrectlyAnsweredQuestion(QuizQuestion question) {
-    correctlyAnsweredQuestion.add(question);
+  void updateResult(QuizQuestion question, bool isCorrect) {
+    results.add(isCorrect);
+    if (isCorrect)
+      correctlyAnsweredQuestion.add(question);
   }
 
   ///
@@ -105,6 +109,7 @@ class QuizProvider extends ChangeNotifier {
       currentQuestionNumber += 1;
     } else {
       state = QuizState.finished;
+      Locator.of<ThemesProvider>().updateProgressions(correctlyAnsweredQuestion);
     }
     notifyListeners();
     return res;
