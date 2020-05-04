@@ -11,7 +11,6 @@ import 'package:app/src/ui/shared/res/values.dart';
 import 'package:app/src/ui/shared/widgets/flex_spacer.dart';
 import 'package:app/src/ui/shared/widgets/scroll_view_no_effect.dart';
 import 'package:app/src/ui/shared/widgets/timer_widget.dart';
-import 'package:app/src/ui/shared/widgets/will_pop_scope_warning.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
@@ -20,15 +19,7 @@ import 'package:path_provider/path_provider.dart';
 /// No need to randomize
 /// No need to limit question lenght
 class QuestionPage extends StatefulWidget {
-  ///
-  QuestionPage({
-    Key key,
-    @required this.question, 
-    @required this.currentNumber,
-    @required this.totalNumber,
-    this.onFinished,
-    this.showResult = false,
-  }) : super(key: key);
+
 
   ///
   final QuizQuestion question;
@@ -47,6 +38,16 @@ class QuestionPage extends StatefulWidget {
 
   @override
   _QuestionPageState createState() => _QuestionPageState();
+
+    ///
+  QuestionPage({
+    Key key,
+    @required this.question, 
+    @required this.currentNumber,
+    @required this.totalNumber,
+    this.onFinished,
+    this.showResult = false,
+  }) : super(key: key);
 }
 
 class _QuestionPageState extends State<QuestionPage> {

@@ -9,7 +9,6 @@ import 'package:app/src/ui/quiz/result/results_page.dart';
 import 'package:app/src/ui/shared/res/values.dart';
 import 'package:app/src/ui/shared/widgets/geoquiz_layout.dart';
 import 'package:app/src/ui/shared/widgets/will_pop_scope_warning.dart';
-import 'package:app/src/ui/themes/themes_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
