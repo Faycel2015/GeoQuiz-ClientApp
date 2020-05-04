@@ -3,6 +3,7 @@
 if [ -p /dev/stdin ]; then
         NB_LINE=0
         while IFS= read line; do
+            echo $line
             ((NB_LINE=NB_LINE+1))
         done
         if (($NB_LINE != 2)); then

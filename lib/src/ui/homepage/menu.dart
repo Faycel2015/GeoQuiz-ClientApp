@@ -3,8 +3,6 @@ import 'package:app/src/ui/shared/res/strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:async';
-
 
 /// The menu of the app (contains clickable elements)
 ///
