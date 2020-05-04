@@ -6,5 +6,5 @@ sudo docker create \
 --mount type=bind,source=/dev/bus/usb,target=/dev/bus/usb \
 -P \
 --name geoquiz-app-container \
-geoquiz-app \
+romainguillot/geoquiz-app \
 bash

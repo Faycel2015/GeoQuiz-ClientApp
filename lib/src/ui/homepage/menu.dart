@@ -1,5 +1,6 @@
 import 'package:app/env.dart';
 import 'package:app/src/ui/shared/res/strings.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';

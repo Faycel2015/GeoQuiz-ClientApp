@@ -1,7 +1,7 @@
 {
-  "name": "Your Project",
+  "name": "GeoQuiz - Client App",
   "context": "..",
-  "dockerFile": "../Dockerfile",
-
+  "image": "romainguillot/geoquiz-app-container",
+  "extensions": ["Dart-Code.dart-code", "Dart-Code.flutter"]
 
 }
