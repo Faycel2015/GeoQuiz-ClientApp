@@ -8,8 +8,7 @@ before_install:
 
 install:
   - wget https://storage.googleapis.com/flutter_infra/releases/beta/linux/flutter_linux_v1.15.17-beta.tar.xz
-  - tar -xf flutter_linux_v1.15.17-beta.tar.x
-  - ./flutter/bin/flutter version v1.15.17
+  - tar -xf flutter_linux_v1.15.17-beta.tar.xz
   - ./flutter/bin/flutter doctor
   - ./flutter/bin/flutter pub get
   - ./flutter/bin/cache/dart-sdk/bin/dartanalyzer lib | internal/static_analyzer.sh
