@@ -5,6 +5,7 @@ dist: bionic
 install:
   - git clone https://github.com/flutter/flutter.git -b stable
   - ./flutter/bin/flutter doctor
+  - ./flutter/bin/flutter pub get
   - ./flutter/bin/cache/dart-sdk/bin/dartanalyzer lib | internal/static_analyzer.sh
 
 script:
