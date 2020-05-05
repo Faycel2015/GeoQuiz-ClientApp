@@ -71,6 +71,8 @@ jobs:
         - echo 'count=0' > ~/.android/repositories.cfg
         # Accept licenses before installing components, no need to echo y for each component
         - yes | sdkmanager --licenses >/dev/null
+        - echo "const String bugReportEmail = '';const String bugReportSubject = '';const String bugReportBody = '';" > lib/env.dart
+
       install:
         # Download SDK tools
         - sdkmanager "platform-tools" >/dev/null
