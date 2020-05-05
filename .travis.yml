@@ -1,5 +1,9 @@
 language: generic
 
+env:
+  global:
+    - ANDROID_HOME=${HOME}/android-sdk
+
 jobs:
   include:
     # - stage: Testing
@@ -25,8 +29,7 @@ jobs:
       env:
         - Run screenshots on Android
         - OS=linux
-        global:
-          - ANDROID_HOME=${HOME}/android-sdk
+
       language: generic
       dist: bionic
       cache:
