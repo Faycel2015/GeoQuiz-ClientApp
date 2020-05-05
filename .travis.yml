@@ -56,7 +56,8 @@ jobs:
         - wget -q "https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_TOOLS.zip" -O android-sdk-tools.zip
         - unzip -q android-sdk-tools.zip -d ${HOME}/android-sdk
         - rm android-sdk-tools.zip
-        - ls 
+        - ls ${HOME}/android-sdk
+        - ls ${HOME}/android-sdk/emulator
         # Avoid harmless sdkmanager warning
         - mkdir ~/.android
         - echo 'count=0' > ~/.android/repositories.cfg
