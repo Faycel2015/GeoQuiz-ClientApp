@@ -25,6 +25,8 @@ jobs:
       env:
         - Run screenshots on Android
         - OS=linux
+        global:
+          - ANDROID_HOME=${HOME}/android-sdk
       language: generic
       dist: bionic
       cache:
@@ -36,7 +38,7 @@ jobs:
         - ABI=x86
         - GOO=default
         - ANDROID_TOOLS=4333796 # android-28
-        - ANDROID_HOME=${HOME}/android-sdk
+
         - GRAVIS="https://raw.githubusercontent.com/DanySK/Gravis-CI/master/"
         - JDK="1.8" # the JDK used for running tests
         - TOOLS=${ANDROID_HOME}/tools
