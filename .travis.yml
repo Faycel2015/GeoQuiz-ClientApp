@@ -37,7 +37,8 @@ jobs:
           - ${HOME}/.pub-cache
       before_install:
         # envs
-        - echo "$GOOGLE_SERVICES" | base64 --decode > android/app/google-services.json
+        - echo $GOOGLE_SERVICES
+        - echo $GOOGLE_SERVICES | base64 --decode > android/app/google-services.json
         - cat android/app/google-services.json
         - API=28
         - ABI=x86
