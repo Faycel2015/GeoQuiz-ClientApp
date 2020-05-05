@@ -65,17 +65,15 @@ jobs:
         - wget --quiet --output-document=flutter.tar.xz https://storage.googleapis.com/flutter_infra/releases/beta/linux/flutter_linux_v1.15.17-beta.tar.xz
         - tar xf flutter.tar.xz -C $(dirname ${HOME}/flutter)
         - rm flutter.tar.xz
-        - ls
-        - flutter doctor -v
         # ANDROID SDK AND TOOLS
-        - sdkmanager "platform-tools"
-        - sdkmanager "tools"
-        - sdkmanager "build-tools;28.0.3"  
-        - sdkmanager "platforms;android-$API" 
-        - sdkmanager "platforms;android-28" 
-        - sdkmanager "emulator" 
-        - sdkmanager "extras;android;m2repository"
-        - sdkmanager "system-images;android-$API;$GOO;$ABI"
+        - sdkmanager "platform-tools" >/dev/null
+        - sdkmanager "tools" >/dev/null
+        - sdkmanager "build-tools;28.0.3" >/dev/null
+        - sdkmanager "platforms;android-$API" >/dev/null
+        - sdkmanager "platforms;android-28" >/dev/null
+        - sdkmanager "emulator" >/dev/null
+        - sdkmanager "extras;android;m2repository" >/dev/null
+        - sdkmanager "system-images;android-$API;$GOO;$ABI" >/dev/null
         - echo no | avdmanager --verbose create avd --force -n test -k "system-images;android-$API;$GOO;$ABI"
         - sudo -E sudo -u $USER -E bash -c "emulator -avd test -no-window -no-audio &"
         #
