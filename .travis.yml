@@ -66,16 +66,16 @@ jobs:
         - tar xf flutter.tar.xz -C $(dirname ${HOME}/flutter)
         - rm flutter.tar.xz
         # ANDROID SDK AND TOOLS
-        - sdkmanager "platform-tools" >/dev/null
-        - sdkmanager "tools" >/dev/null
-        - sdkmanager "build-tools;28.0.3" >/dev/null
-        - sdkmanager "platforms;android-$API" >/dev/null
-        - sdkmanager "platforms;android-28" >/dev/null
-        - sdkmanager "emulator" >/dev/null
-        - sdkmanager "extras;android;m2repository" >/dev/null
-        - sdkmanager "system-images;android-$API;$GOO;$ABI" >/dev/null
+        - sdkmanager "platform-tools" > /dev/null
+        - sdkmanager "tools" > /dev/null
+        - sdkmanager "build-tools;28.0.3" > /dev/null 
+        - sdkmanager "platforms;android-$API" > /dev/null
+        - sdkmanager "platforms;android-28" > /dev/null
+        - sdkmanager "emulator" > /dev/null
+        - sdkmanager "extras;android;m2repository" > /dev/null
+        - sdkmanager "system-images;android-$API;$GOO;$ABI" > /dev/null 
         - echo no | avdmanager --verbose create avd --force -n test -k "system-images;android-$API;$GOO;$ABI"
-        - ls $HOME/android-sdk
+        - ls ${HOME}/android-sdk/emulator
         - sudo -E sudo -u $USER -E bash -c "emulator -avd test -no-window -no-audio &"
         #
         - JDK="${TARGET_JDK}"
