@@ -39,7 +39,11 @@ jobs:
         - ANDROID_HOME=${HOME}/android-sdk
         - GRAVIS="https://raw.githubusercontent.com/DanySK/Gravis-CI/master/"
         - JDK="1.8" # the JDK used for running tests
-        # kvm
+        # UPDATE PATH
+        - export PATH="${HOME}/android-sdk/emulator:${HOME}/android-sdk/tools/bin:${HOME}/android-sdk/platform-tools:$PATH"
+        - export PATH="${HOME}/flutter/bin/cache/dart-sdk/bin:$PATH"
+        - export PATH="$PATH":"$HOME/.pub-cache/bin"
+        # KVM
         - sudo apt-get -y --no-install-recommends install bridge-utils libpulse0 libvirt-bin qemu-kvm virtinst ubuntu-vm-builder > /dev/null
         # add travis user to groups
         - sudo adduser $USER libvirt
@@ -62,10 +66,6 @@ jobs:
         - tar -xf flutter_linux_v1.15.17-beta.tar.xz
         - rm flutter.tar.xz
         - flutter doctor -v
-        # UPDATE PATH
-        - export PATH="${HOME}/android-sdk/emulator:${HOME}/android-sdk/tools/bin:${HOME}/android-sdk/platform-tools:$PATH"
-        - export PATH="${HOME}/flutter/bin/cache/dart-sdk/bin:$PATH"
-        - export PATH="$PATH":"$HOME/.pub-cache/bin"
         # ANDROID SDK AND TOOLS
         - sdkmanager "platform-tools" > /dev/null
         - sdkmanager "tools" > /dev/null
