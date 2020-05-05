@@ -15,7 +15,6 @@ locales:
 devices:
   android:
     emulator-5554:
-      orientation: Portrait
       frame: false
 
 # Frame screenshots
