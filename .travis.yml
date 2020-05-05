@@ -107,3 +107,5 @@ jobs:
       file: 
         - $HOME/screenshots.zip
       skip_cleanup: 'true'
+      on:
+        all_branches: true # DEBUG

@@ -6,7 +6,7 @@
 - Firebase Storage
 - SQL with SQLite
 - Crashlytics (formerly *Fabric*)
-- Fastlane (Deployment automation)
+- Travis CI + Fastlane (CI/CD - Integration and deployment automation)
 - Docker (development environment)
 
 
