@@ -14,7 +14,7 @@ locales:
 # A list of devices to run tests on
 devices:
   android:
-    test:
+    emulator-5554:
       orientation: Portrait
       frame: false
 
