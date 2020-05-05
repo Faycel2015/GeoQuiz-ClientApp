@@ -62,9 +62,9 @@ jobs:
         - yes | sdkmanager --licenses >/dev/null
       install:
         # INSTALL FLUTTER
-        - wget https://storage.googleapis.com/flutter_infra/releases/beta/linux/flutter_linux_v1.15.17-beta.tar.xz
-        - tar -xf flutter_linux_v1.15.17-beta.tar.xz -C $(dirname ${HOME})
-        - rm flutter_linux_v1.15.17-beta.tar.xz
+        - wget --quiet --output-document=flutter.tar.xz https://storage.googleapis.com/flutter_infra/releases/beta/linux/flutter_linux_v1.15.17-beta.tar.xz
+        - tar xf flutter.tar.xz -C $(dirname ${HOME}/flutter)
+        - rm flutter.tar.xz
         - ls
         - flutter doctor -v
         # ANDROID SDK AND TOOLS
