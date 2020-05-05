@@ -102,7 +102,7 @@ jobs:
         - adb shell getprop
 
       script:
-        - (cd example; screenshots -c screenshots_android.yaml -v) # ignore cd
+        - screenshots -v # ignore cd
 
       before_cache:
         - pwd
