@@ -99,6 +99,7 @@ jobs:
       before_script:
         - pub global activate screenshots
         - ./internal/android-wait-for-emulator.sh
+        - flutter devices
         - adb shell getprop ro.product.cpu.abi # 'x86_64' (device)
         - adb shell getprop ro.hardware # 'ranchu' (emulator)
         - adb shell getprop ro.build.characteristics # 'emulator' (emulator)
