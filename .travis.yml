@@ -2,24 +2,24 @@ language: generic
 
 jobs:
   include:
-    - stage: Testing
-      language: generic
-      dist: bionic
-      before_install:
-        - sudo apt-get -y install wget
-        - sudo apt-get -y install tar
-      install:
-        - wget https://storage.googleapis.com/flutter_infra/releases/beta/linux/flutter_linux_v1.15.17-beta.tar.xz
-        - tar -xf flutter_linux_v1.15.17-beta.tar.xz
-        - ./flutter/bin/flutter doctor
-        - ./flutter/bin/flutter pub get
-        - ./flutter/bin/cache/dart-sdk/bin/dartanalyzer lib | internal/static_analyzer.sh
-      script:
-        - echo "Begin script"
-        - ./flutter/bin/flutter test
-      cache:
-        directories:
-          - $HOME/.pub-cache
+    # - stage: Testing
+    #   language: generic
+    #   dist: bionic
+    #   before_install:
+    #     - sudo apt-get -y install wget
+    #     - sudo apt-get -y install tar
+    #   install:
+    #     - wget https://storage.googleapis.com/flutter_infra/releases/beta/linux/flutter_linux_v1.15.17-beta.tar.xz
+    #     - tar -xf flutter_linux_v1.15.17-beta.tar.xz
+    #     - ./flutter/bin/flutter doctor
+    #     - ./flutter/bin/flutter pub get
+    #     - ./flutter/bin/cache/dart-sdk/bin/dartanalyzer lib | internal/static_analyzer.sh
+    #   script:
+    #     - echo "Begin script"
+    #     - ./flutter/bin/flutter test
+    #   cache:
+    #     directories:
+    #       - $HOME/.pub-cache
 
 
     - stage: Screenshots
@@ -64,7 +64,7 @@ jobs:
         # INSTALL FLUTTER
         - wget https://storage.googleapis.com/flutter_infra/releases/beta/linux/flutter_linux_v1.15.17-beta.tar.xz
         - tar -xf flutter_linux_v1.15.17-beta.tar.xz
-        - rm flutter.tar.xz
+        - rm flutter_linux_v1.15.17-beta.tar.xz
         - flutter doctor -v
         # ANDROID SDK AND TOOLS
         - sdkmanager "platform-tools" > /dev/null
