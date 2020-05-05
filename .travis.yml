@@ -77,7 +77,7 @@ jobs:
         - sdkmanager "extras;android;m2repository" > /dev/null
         - sdkmanager "system-images;android-$API;$GOO;$ABI" > /dev/null 
         - echo no | avdmanager --verbose create avd --force -n test -k "system-images;android-$API;$GOO;$ABI"
-        - sudo -E sudo -u $USER -E bash -c "emulator -avd test -no-window -no-audio &"
+        - sudo -E sudo -u $USER -E bash -c "emulator-headless -avd test -no-window -no-audio &"
         #
         - JDK="${TARGET_JDK}"
         - source ~/.install-jdk-travis.sh
