@@ -37,6 +37,8 @@ jobs:
           - ${HOME}/.pub-cache
       before_install:
         # envs
+        - echo "$GOOGLE_SERVICES" | base64 --decode > android/app/google-services.json
+        - cat android/app/google-services.json
         - API=28
         - ABI=x86
         - GOO=default
@@ -72,7 +74,7 @@ jobs:
         # Accept licenses before installing components, no need to echo y for each component
         - yes | sdkmanager --licenses >/dev/null
         - echo "const String bugReportEmail = '';const String bugReportSubject = '';const String bugReportBody = '';" > lib/env.dart
-        - echo "$GOOGLE_SERVICES" | base64 --decode > android/app/google-services.json 
+
       install:
         # Download SDK tools
         - sdkmanager "platform-tools" >/dev/null
