@@ -33,6 +33,14 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_driver:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  test: ^1.5.1
+  screenshots: ^2.1.1
+  intl: ">=0.15.0 <1.0.0"
+
 
 
 flutter:
