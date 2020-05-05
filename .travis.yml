@@ -102,16 +102,8 @@ jobs:
     - zip -r $HOME/screenshots.zip example/android/fastlane/metadata/android/*/images
     deploy:
       provider: releases
-      skip_cleanup: true
       api_key:
-        secure: f211d2df9087d1ee408926f0ae9fed27e79de248
-      file:
-      - 
-      - "$HOME/screenshots.zip"
-deploy:
-  provider: releases
-  api_key:
-    secure: k7yJQrTXh9RP2BKbd/DJe/ajGD4eKJV3PbXkjkWXymzYu4eqBWOeRAvDBe4E0XMqj3DbnixHlCqZ+4iVOrhijJtWb4YUu002KTXgXHCHKCevtsa5q7/wu816uGbeJdGRyh7uASP6+hsU+iSbGJLx7V/TAIoQuPOjtbw9bdeiqpm5VGSou7xfy1RfGL9UW5uytDSSn0qpVtSON9+Y0nGQb0bn2TJHFEW2sBi159BRqcadzazaqAEC+7EA7hCBsKr7cgUPC3v6S+Sg+4fKN1WAtZx/D/eMNsI5D5MUz7zglSsiP1eXPkEKVUhuSviOrCW/DqG1SAlv8AnzSW8ySILMowdOWZBrys8T0OtDP9G+SVEaSPJZiIRsARhMRkl1LLWPYuvKD/6IMWZIsEjZ64JsMfiEV0Lx9uBzSTgb5aUfroWCwcyPN0PS4D0x6ulyCvojuSG5VVSOyQYKaYH9Y7Rz8ZhPuAa3t8Rd0Zn5zmIWfLv4wocNAzEBm9ZwD/KN/zEfcACqUdabosqkKxcmwN2GuOXlTABAZN6kxLnySmjYU/dQdm+dnRchWL0/7COPdNcGCNf3jPy+NgO+nJj2s8altPVo/OmAbYaRSm4TboADe+jNSC9Ih/kI6PolbG9dObRpsyB+KZfz8BA5/JL+rU9mMf14oz6/bCezUYcPkOJ+bAw=
-  file: 
-    - $HOME/screenshots.zip
-  skip_cleanup: 'true'
+        secure: k7yJQrTXh9RP2BKbd/DJe/ajGD4eKJV3PbXkjkWXymzYu4eqBWOeRAvDBe4E0XMqj3DbnixHlCqZ+4iVOrhijJtWb4YUu002KTXgXHCHKCevtsa5q7/wu816uGbeJdGRyh7uASP6+hsU+iSbGJLx7V/TAIoQuPOjtbw9bdeiqpm5VGSou7xfy1RfGL9UW5uytDSSn0qpVtSON9+Y0nGQb0bn2TJHFEW2sBi159BRqcadzazaqAEC+7EA7hCBsKr7cgUPC3v6S+Sg+4fKN1WAtZx/D/eMNsI5D5MUz7zglSsiP1eXPkEKVUhuSviOrCW/DqG1SAlv8AnzSW8ySILMowdOWZBrys8T0OtDP9G+SVEaSPJZiIRsARhMRkl1LLWPYuvKD/6IMWZIsEjZ64JsMfiEV0Lx9uBzSTgb5aUfroWCwcyPN0PS4D0x6ulyCvojuSG5VVSOyQYKaYH9Y7Rz8ZhPuAa3t8Rd0Zn5zmIWfLv4wocNAzEBm9ZwD/KN/zEfcACqUdabosqkKxcmwN2GuOXlTABAZN6kxLnySmjYU/dQdm+dnRchWL0/7COPdNcGCNf3jPy+NgO+nJj2s8altPVo/OmAbYaRSm4TboADe+jNSC9Ih/kI6PolbG9dObRpsyB+KZfz8BA5/JL+rU9mMf14oz6/bCezUYcPkOJ+bAw=
+      file: 
+        - $HOME/screenshots.zip
+      skip_cleanup: 'true'
