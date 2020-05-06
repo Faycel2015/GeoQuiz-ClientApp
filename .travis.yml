@@ -99,7 +99,7 @@ jobs:
     - rm -rf ${HOME}/.gradle/caches/journal-1
     - find ${HOME}/.gradle/caches/ -name "*.lock" -type f -delete || echo -n
     before_deploy:
-    - zip -r $HOME/screenshots.zip example/android/fastlane/metadata/android/*/images
+    - zip -r $HOME/screenshots.zip android/fastlane/metadata/android/*/images
     deploy:
       provider: releases
       api_key:
