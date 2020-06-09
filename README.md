@@ -47,8 +47,8 @@ An Docker image with the required environment is provided. Not exhaustively, thi
 
 You can use this image to **build** the application but also to **develop** inside a running container environment with VSCode. A script is provided to launch a container with the application project directory mounted inside this container file system.
 
-#### Download the image
-The image is available in [Docker Hub](https://hub.docker.com/repository/docker/romainguillot/geoquiz) :
+#### Image
+The image is available in [Docker Hub](https://hub.docker.com/repository/docker/romainguillot/geoquiz).
 ```
 docker pull romainguillot/geoquiz-app
 ```
@@ -56,7 +56,7 @@ docker pull romainguillot/geoquiz-app
 #### Launch a container
 Create a container named *geoquiz-app-container* :
 ```
-./docker-create.sh
+internal/docker-create.sh
 ```
 Note: It will mount the application folder into `home/developer/app`, it will mount the folder `/dev/bus/usb` at the same location, and expose the container on the 8080 port.
 
