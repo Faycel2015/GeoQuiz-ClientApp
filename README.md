@@ -2,6 +2,13 @@
 
 # GeoQuiz
 
+- Flutter / Dart
+- Firebase Storage
+- SQL with SQLite
+- Crashlytics (formerly *Fabric*)
+- Travis CI + Fastlane (CI/CD - Integration and deployment automation)
+- Docker (development environment)
+
 
 ## Untracked files
 The following files / directories are not tracked by git and so no included in this repo :

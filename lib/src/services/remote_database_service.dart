@@ -5,12 +5,9 @@ import 'package:app/src/services/remote_resource_downloader_service.dart';
 import 'package:app/src/utils/database_content_wrapper.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
+import 'package:logger/logger.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-
-import 'package:logger/logger.dart';
-
-
 
 /// Repository to manage data stored in a remote database.
 abstract class IRemoteDatabaseRepository {
@@ -143,8 +140,8 @@ class FirebaseRemoteDatabaseRepository implements IRemoteDatabaseRepository {
         final theme = themes.where((t) => t.id == questionThemeID).first;
         final question = _RemoteQuestionAdapter(data: questionData, theme: theme, resources: resources);
         questions.add(question);
-      } catch(e) {
-        logger.e("Unable to get $questionData. $e");
+      } catch(e, s) {
+        logger.e("Unable to get $questionData. $e", e, s);
       }
     }
     return questions;

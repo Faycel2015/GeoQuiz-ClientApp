@@ -1,6 +1,5 @@
 import 'package:app/src/models/models.dart';
 import 'package:app/src/services/sqlite_helper.dart';
-import 'package:sqflite/sqflite.dart';
 
 
 /// Service used to handle to local progression of [QuizTheme]

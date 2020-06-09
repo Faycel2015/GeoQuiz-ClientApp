@@ -1,0 +1,111 @@
+language: generic
+env:
+  global:
+  - ANDROID_HOME=${HOME}/android-sdk
+jobs:
+  include:
+  - stage: Testing
+    env:
+    - Run screenshots on Android
+    - OS=linux
+    language: generic
+    dist: bionic
+    cache:
+      directories:
+      - "${HOME}/.pub-cache"
+    before_install:
+    - echo $GOOGLE_SERVICES
+    - echo $GOOGLE_SERVICES | base64 --decode > android/app/google-services.json
+    - cat android/app/google-services.json
+    - API=28
+    - ABI=x86
+    - GOO=default
+    - ANDROID_TOOLS=4333796
+    - GRAVIS="https://raw.githubusercontent.com/DanySK/Gravis-CI/master/"
+    - JDK="1.8"
+    - TOOLS=${ANDROID_HOME}/tools
+    - PATH=${ANDROID_HOME}:${ANDROID_HOME}/emulator:${TOOLS}:${TOOLS}/bin:${ANDROID_HOME}/platform-tools:${PATH}
+    - FLUTTER_CHANNEL=beta
+    - FLUTTER_VERSION=1.15.17-${FLUTTER_CHANNEL}
+    - FLUTTER_HOME=${HOME}/flutter
+    - PATH=${HOME}/.pub-cache/bin:${PATH}
+    - PATH=${FLUTTER_HOME}/bin:${FLUTTER_HOME}/bin/cache/dart-sdk/bin:${PATH}
+    - java -version
+    - sudo apt-get -y --no-install-recommends install bridge-utils libpulse0 libvirt-bin
+      qemu-kvm virtinst ubuntu-vm-builder > /dev/null
+    - sudo adduser $USER libvirt
+    - sudo adduser $USER kvm
+    - curl "${GRAVIS}.install-jdk-travis.sh" --output ~/.install-jdk-travis.sh
+    - export TARGET_JDK="${JDK}"
+    - JDK="1.8"
+    - source ~/.install-jdk-travis.sh
+    - wget -q "https://dl.google.com/android/repository/sdk-tools-linux-$ANDROID_TOOLS.zip"
+      -O android-sdk-tools.zip
+    - unzip -q android-sdk-tools.zip -d ${ANDROID_HOME}
+    - rm android-sdk-tools.zip
+    - mkdir ~/.android
+    - echo 'count=0' > ~/.android/repositories.cfg
+    - yes | sdkmanager --licenses >/dev/null
+    - echo "const String bugReportEmail = '';const String bugReportSubject = '';const
+      String bugReportBody = '';" > lib/env.dart
+    install:
+    - sdkmanager "platform-tools" >/dev/null
+    - sdkmanager "tools" >/dev/null
+    - sdkmanager "build-tools;28.0.3" >/dev/null
+    - sdkmanager "platforms;android-$API" >/dev/null
+    - sdkmanager "platforms;android-28" >/dev/null
+    - sdkmanager "emulator" >/dev/null
+    - "${ANDROID_HOME}/emulator/emulator -version"
+    - sdkmanager "extras;android;m2repository" >/dev/null
+    - sdkmanager "system-images;android-$API;$GOO;$ABI" >/dev/null
+    - echo no | avdmanager --verbose create avd --force -n emulator-5554 -k "system-images;android-$API;$GOO;$ABI"
+    - EMU_PARAMS=" -avd emulator-5554 -no-window -no-audio "
+    - EMU_COMMAND="emulator"
+    - sudo -E sudo -u $USER -E bash -c "${ANDROID_HOME}/emulator/${EMU_COMMAND} ${EMU_PARAMS}
+      &"
+    - wget --quiet --output-document=flutter.tar.xz https://storage.googleapis.com/flutter_infra/releases/${FLUTTER_CHANNEL}/linux/flutter_linux_v${FLUTTER_VERSION}.tar.xz
+    - tar xf flutter.tar.xz -C $(dirname ${FLUTTER_HOME})
+    - rm flutter.tar.xz
+    - JDK="${TARGET_JDK}"
+    - source ~/.install-jdk-travis.sh
+    - flutter doctor -v
+    before_script:
+    - pub global activate screenshots
+    - "./internal/android-wait-for-emulator.sh"
+    - flutter devices
+    - adb shell getprop ro.product.cpu.abi
+    - adb shell getprop ro.hardware
+    - adb shell getprop ro.build.characteristics
+    - adb shell getprop ro.build.version.release
+    - adb shell getprop ro.build.version.sdk
+    - adb shell getprop
+    script:
+    - screenshots -v
+    before_cache:
+    - pwd
+    - echo GRADLE_VERSION = $GRADLE_VERSION
+    - ls -la
+    - GRADLE_VERSION=$(./example/android/gradlew -version | grep Gradle | awk '{print
+      $2}')
+    - echo GRADLE_VERSION = $GRADLE_VERSION
+    - echo $HOME
+    - echo ~
+    - |
+      if [[ ! -z "$GRADLE_VERSION" ]];
+      then
+        rm -rf ${HOME}/.gradle/caches/$GRADLE_VERSION/
+      fi
+    - rm -rf ${HOME}/.gradle/caches/transforms-1
+    - rm -rf ${HOME}/.gradle/caches/journal-1
+    - find ${HOME}/.gradle/caches/ -name "*.lock" -type f -delete || echo -n
+    before_deploy:
+    - zip -r $HOME/screenshots.zip android/fastlane/metadata/android/*/images
+    deploy:
+      provider: releases
+      api_key:
+        secure: k7yJQrTXh9RP2BKbd/DJe/ajGD4eKJV3PbXkjkWXymzYu4eqBWOeRAvDBe4E0XMqj3DbnixHlCqZ+4iVOrhijJtWb4YUu002KTXgXHCHKCevtsa5q7/wu816uGbeJdGRyh7uASP6+hsU+iSbGJLx7V/TAIoQuPOjtbw9bdeiqpm5VGSou7xfy1RfGL9UW5uytDSSn0qpVtSON9+Y0nGQb0bn2TJHFEW2sBi159BRqcadzazaqAEC+7EA7hCBsKr7cgUPC3v6S+Sg+4fKN1WAtZx/D/eMNsI5D5MUz7zglSsiP1eXPkEKVUhuSviOrCW/DqG1SAlv8AnzSW8ySILMowdOWZBrys8T0OtDP9G+SVEaSPJZiIRsARhMRkl1LLWPYuvKD/6IMWZIsEjZ64JsMfiEV0Lx9uBzSTgb5aUfroWCwcyPN0PS4D0x6ulyCvojuSG5VVSOyQYKaYH9Y7Rz8ZhPuAa3t8Rd0Zn5zmIWfLv4wocNAzEBm9ZwD/KN/zEfcACqUdabosqkKxcmwN2GuOXlTABAZN6kxLnySmjYU/dQdm+dnRchWL0/7COPdNcGCNf3jPy+NgO+nJj2s8altPVo/OmAbYaRSm4TboADe+jNSC9Ih/kI6PolbG9dObRpsyB+KZfz8BA5/JL+rU9mMf14oz6/bCezUYcPkOJ+bAw=
+      file: 
+        - $HOME/screenshots.zip
+      skip_cleanup: 'true'
+      on:
+        all_branches: true # DEBUG

@@ -1,3 +1,4 @@
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:logger/logger.dart';
 
 
@@ -32,6 +33,11 @@ class SimpleLogPrinter extends LogPrinter {
   void log(Level level, message, error, StackTrace stackTrace) {
     var color = PrettyPrinter.levelColors[level];
     var emoji = PrettyPrinter.levelEmojis[level];
-    println(color('$emoji $className - $message'));
+    var log = '$emoji $className - $message';
+    Crashlytics.instance.log(log);
+    println(color(log));
+    if (level != Level.info) {
+      Crashlytics.instance.recordError(error, null);
+    }
   }
 }

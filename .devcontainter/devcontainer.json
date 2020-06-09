@@ -1,7 +1,0 @@
-{
-  "name": "Your Project",
-  "context": "..",
-  "dockerFile": "../Dockerfile",
-
-
-}

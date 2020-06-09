@@ -55,21 +55,21 @@ class Locator {
     _registerProviders();
   }
 
-  static _registerServices() {
+  static void _registerServices() {
     _locator.registerLazySingleton<ILocalDatabaseRepository>(
       () => SQLiteLocalDatabaseRepository(
-        AppLogger("SQLiteLocalDatabaseRepository"),
+        AppLogger('SQLiteLocalDatabaseRepository'),
         localProgressionRepo: _locator<ILocalProgressionRepository>()
       )
     );
     _locator.registerLazySingleton<IRemoteResourcesDownloader>(
       () => FirebaseResourceDownloader(
-        AppLogger("FirebaseResourceDownloader")
+        AppLogger('FirebaseResourceDownloader')
       )
     );
     _locator.registerLazySingleton<IRemoteDatabaseRepository>(
       () => FirebaseRemoteDatabaseRepository(
-        AppLogger("FirebaseRemoteDatabaseRepository"),
+        AppLogger('FirebaseRemoteDatabaseRepository'),
         resourceDownloader: _locator<IRemoteResourcesDownloader>()
       )
     );
@@ -78,7 +78,7 @@ class Locator {
     );
   }
 
-  static _registerProviders() {
+  static void _registerProviders() {
     _locator.registerLazySingleton<StartUpProvider>(() => 
       StartUpProvider(
         localDbService: _locator<ILocalDatabaseRepository>(),

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:app/src/locator.dart';
 import 'package:app/src/router.dart';
 import 'package:app/src/theme.dart';
@@ -7,7 +9,8 @@ import 'package:app/src/ui/shared/widgets/provider_notifier.dart';
 import 'package:app/src/ui/startup/startup_page.dart';
 import 'package:app/src/ui/startup/startup_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+// import 'package:sqflite/sqflite.dart';
 
 /// Entry point for the application. Set up the [Locator] and create the
 /// widget tree.
@@ -26,11 +29,18 @@ import 'package:sqflite/sqflite.dart';
 ///  * [MaterialApp], which if the root of the application.
 ///  * [Locator], which if the service locator.
 ///   
-void main() async {
+void main() {
   Locator.setupLocator();
   // WidgetsFlutterBinding.ensureInitialized();
   // await deleteDatabase("database.db");
-  runApp(GeoQuizApp());
+  Crashlytics.instance.enableInDevMode = true;
+  FlutterError.onError = Crashlytics.instance.recordFlutterError;
+  runZoned(() async {
+    runApp(GeoQuizApp());
+  }, onError: (dynamic e, StackTrace s) {
+    print(e);
+    Crashlytics.instance.recordError(e, s);
+  });
 } 
 
 /// Root of the application, it builds a [MaterialApp].
@@ -49,7 +59,8 @@ class GeoQuizApp extends StatelessWidget {
       theme: geoQuizTheme,
       onGenerateRoute: Router.generateRoute,
       home: ProviderNotifier<StartUpProvider>(
-        builder: (context, startUpProvider, _) => startUpProvider.isReady
+        builder: (BuildContext context, StartUpProvider startUpProvider, _) => 
+            startUpProvider.isReady
             ? HomePage()
             : StartUpPage(status: startUpProvider.status)
       ),

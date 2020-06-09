@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-
 /// The menu of the app (contains clickable elements)
 ///
 /// It is a shrink [ListView] with menu items :
